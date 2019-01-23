@@ -1,0 +1,27 @@
+.loaf-component{
+    padding-left: 25px;
+    padding-right: 25px;
+}
+.company-name{
+    font-size: 72px;
+    font-family: 'Abril Fatface', cursive;
+}
+.ticker-name{
+    font-size: 36px;
+    font-family: 'Open Sans', sans-serif;
+    margin-top: -12px;
+}
+.price-metric{
+    font-size: 48px;
+    font-family: 'Abril Fatface', cursive;
+}
+.percent-metric{
+    font-size: 48px;
+    font-family: 'Abril Fatface', cursive;
+}
+.loaf-label{
+    font-size: 12px;
+    font-family: 'Open Sans', sans-serif;
+    color: #b3b3b3;
+    margin-top: -10px;
+}
