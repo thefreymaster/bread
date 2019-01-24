@@ -35,6 +35,17 @@
 .flex-column{
     flex-direction: column;
 }
+.flex-grow{
+    flex-grow: 1;
+}
+.flex-center{
+    align-items: center;
+    justify-content: center;
+}
+.width-33{
+    max-width: 33%;
+    min-width: 33%;
+}
 .width-40{
     max-width: 40%;
     min-width: 40%;
@@ -46,4 +57,7 @@
 .width-60{
     max-width: 60%;
     min-width: 60%;
+}
+.ant-list-item{
+    padding: 20px 0 !important;
 }

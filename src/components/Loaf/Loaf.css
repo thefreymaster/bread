@@ -1,6 +1,7 @@
 .loaf-component{
     padding-left: 25px;
     padding-right: 25px;
+    padding-bottom: 25px;
 }
 .company-name{
     font-size: 72px;
@@ -23,5 +24,7 @@
     font-size: 12px;
     font-family: 'Open Sans', sans-serif;
     color: #b3b3b3;
-    margin-top: -10px;
+}
+.border-right{
+    box-shadow: inset -2px 0px 0px 0 #72727224;
 }

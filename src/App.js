@@ -6,13 +6,14 @@ import { Layout } from 'antd';
 
 import AddCompany from './components/AddCompany/AddCompany';
 import Loaf from './components/Loaf/Loaf';
+import CompanyStatistics from './components/CompanyStatistics/CompanyStatistics';
 
 const {
   Header, Footer, Sider, Content,
 } = Layout;
 
 class App extends Component {
-  constructor(){
+  constructor() {
     super()
     this.state = {
       screen: {
@@ -28,14 +29,23 @@ class App extends Component {
     return (
       <main>
         <Layout>
-          <Header style={{marginBottom: 20}}>Loaf</Header>
+          <Header style={{ marginBottom: 20 }}>Loaf</Header>
           <Layout style={{ minHeight: window.innerHeight - 84 }}>
-            <Sider className="left-sider"><AddCompany></AddCompany></Sider>
+            <Sider className="left-sider">
+              <AddCompany />
+            </Sider>
             <Content>
               <Loaf />
             </Content>
-            {this.state.screen.lg || this.state.screen.xl ? <Sider className="right-sider">Sider</Sider> : null}
-            
+            {
+              this.state.screen.lg || this.state.screen.xl ?
+                <Sider className="right-sider">
+                  <CompanyStatistics />
+                </Sider>
+                :
+                null
+            }
+
           </Layout>
         </Layout>
       </main>
