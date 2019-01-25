@@ -3,10 +3,22 @@ import { ResponsiveLine } from '@nivo/line'
 import { getChartData } from '../../HTTP/ChartAPI';
 
 
-class LineGraph extends Component {
+class LineChart extends Component {
+    determineGraphColor = (data) => {
+        if(data[0].data[0].y < data[0].data[data[0].data.length-1].y)
+        {
+            return this.state.green;
+        }
+        else{
+            return this.state.red;
+        }
+    }
     constructor(props) {
         super(props)
-        this.state = {}
+        this.state = {
+            green: "#2ec061",
+            red: "#c61515"
+        }
     }
     componentWillMount() {
         let data = getChartData(this.props.ticker, this.props.timeframe, this.props.interval);
@@ -43,7 +55,7 @@ class LineGraph extends Component {
                         axisLeft={null}
                         enableGridX={false}
                         enableGridY={false}
-                        colors={this.props.color}
+                        colors={this.determineGraphColor(this.state.data)}
                         dotSize={10}
                         dotColor="inherit:darker(0.3)"
                         dotBorderWidth={2}
@@ -62,4 +74,4 @@ class LineGraph extends Component {
     }
 }
 
-export default LineGraph;
+export default LineChart;

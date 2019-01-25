@@ -23,7 +23,7 @@ class App extends Component {
         lg: false,
         xl: false,
       },
-      activeTicker: 'amd'
+      activeTicker: 'aapl'
     }
   }
   render() {
