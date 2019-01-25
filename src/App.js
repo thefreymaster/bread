@@ -22,7 +22,8 @@ class App extends Component {
         md: false,
         lg: false,
         xl: false,
-      }
+      },
+      activeTicker: 'amd'
     }
   }
   render() {
@@ -35,7 +36,7 @@ class App extends Component {
               <AddCompany />
             </Sider>
             <Content>
-              <Loaf />
+              <Loaf activeTicker={this.state.activeTicker} />
             </Content>
             {
               this.state.screen.lg || this.state.screen.xl ?

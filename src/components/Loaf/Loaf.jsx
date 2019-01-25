@@ -20,12 +20,12 @@ class Loaf extends Component {
                     <YourShares userHasShares={true} />
                 </div>
                 <div className="flex flex-row">
-                    <Graph timeframe={'1day'} color={this.state.green} />
-                    <Graph timeframe={'6m'} color={this.state.red} />
+                    <Graph ticker={this.props.activeTicker} timeframe={'1d'} interval={20} color={this.state.green} />
+                    <Graph ticker={this.props.activeTicker} timeframe={'6m'} interval={10} color={this.state.red} />
                 </div>
                 <div className="flex flex-row">
-                    <Graph timeframe={'1y'} color={this.state.green} />
-                    <Graph timeframe={'5y'} color={this.state.red} />
+                    <Graph ticker={this.props.activeTicker} timeframe={'1y'} interval={10} color={this.state.green} />
+                    <Graph ticker={this.props.activeTicker} timeframe={'5y'} interval={50} color={this.state.red} />
                 </div>
             </div>
         )

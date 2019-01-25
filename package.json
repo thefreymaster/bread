@@ -5,6 +5,7 @@
   "dependencies": {
     "@nivo/line": "^0.52.1",
     "antd": "^3.12.4",
+    "axios": "^0.18.0",
     "nivo": "^0.31.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
