@@ -3,10 +3,12 @@ import React from 'react';
 function Metric(props) {
     const inline = {
         title: {
-            fontSize: props.titleFontSize
+            fontSize: props.titleFontSize,
+            color: props.color ? props.color : '#000000a6'
         },
         label: {
-            fontSize: props.labelFontSize
+            fontSize: props.labelFontSize,
+            marginTop: props.labelCloseToTitle ? -20 : 0,
         },
         parent: {
             alignItems: props.align,

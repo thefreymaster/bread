@@ -16,16 +16,16 @@ class Loaf extends Component {
         return (
             <div className="flex flex-column">
                 <div className="flex flex-row">
-                    <Today />
-                    <YourShares userHasShares={false} />
+                    <Today ticker={this.props.activeTicker} />
+                    <YourShares ticker={this.props.activeTicker} userHasShares={false} />
                 </div>
                 <div className="flex flex-row">
-                    <LineChart ticker={this.props.activeTicker} timeframe={'1d'} interval={20} color={this.state.green} />
-                    <LineChart ticker={this.props.activeTicker} timeframe={'6m'} interval={10} color={this.state.red} />
+                    <LineChart ticker={this.props.activeTicker} timeframe={'1d'} interval={10} title='1 Day' />
+                    <LineChart ticker={this.props.activeTicker} timeframe={'6m'} interval={2} title='6 Month' />
                 </div>
                 <div className="flex flex-row">
-                    <LineChart ticker={this.props.activeTicker} timeframe={'1y'} interval={10} color={this.state.green} />
-                    <LineChart ticker={this.props.activeTicker} timeframe={'5y'} interval={50} color={this.state.red} />
+                    <LineChart ticker={this.props.activeTicker} timeframe={'1y'} interval={5} title='1 Year' />
+                    <LineChart ticker={this.props.activeTicker} timeframe={'5y'} interval={10} title='5 Year' />
                 </div>
             </div>
         )

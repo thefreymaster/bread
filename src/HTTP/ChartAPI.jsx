@@ -10,6 +10,7 @@ function getChartData(ticker, timeframe, interval) {
                 data.push({
                     x: time.label,
                     y: time.close,
+                    changeOverTime: time.changeOverTime
                 })
             }
             return [{

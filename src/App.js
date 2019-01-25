@@ -4,7 +4,7 @@ import './App.css';
 import 'antd/dist/antd.css';
 import { Layout } from 'antd';
 
-import AddCompany from './components/AddCompany/AddCompany';
+import Companies from './components/Companies/Companies';
 import Loaf from './components/Loaf/Loaf';
 import CompanyStatistics from './components/CompanyStatistics/CompanyStatistics';
 
@@ -13,6 +13,11 @@ const {
 } = Layout;
 
 class App extends Component {
+  setActiveTicker = (value) => {
+    this.setState({
+      activeTicker: value
+    })
+  }
   constructor() {
     super()
     this.state = {
@@ -23,7 +28,7 @@ class App extends Component {
         lg: false,
         xl: false,
       },
-      activeTicker: 'aapl'
+      activeTicker: 'nflx'
     }
   }
   render() {
@@ -33,7 +38,7 @@ class App extends Component {
           <Header style={{ marginBottom: 20 }}>Loaf</Header>
           <Layout style={{ minHeight: window.innerHeight - 84 }}>
             <Sider className="left-sider">
-              <AddCompany />
+              <Companies setActiveTicker={this.setActiveTicker} />
             </Sider>
             <Content>
               <Loaf activeTicker={this.state.activeTicker} />
@@ -41,7 +46,7 @@ class App extends Component {
             {
               this.state.screen.lg || this.state.screen.xl ?
                 <Sider className="right-sider">
-                  <CompanyStatistics />
+                  <CompanyStatistics activeTicker={this.state.activeTicker}/>
                 </Sider>
                 :
                 null

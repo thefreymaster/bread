@@ -42,6 +42,10 @@
     align-items: center;
     justify-content: center;
 }
+.flex-center-start{
+    align-items: center;
+    justify-content: flex-start;
+}
 .width-33{
     max-width: 33%;
     min-width: 33%;
@@ -61,3 +65,34 @@
 .ant-list-item{
     padding: 20px 0 !important;
 }
+.ant-layout-content{
+    overflow: hidden !important;
+}
+.absolute{
+    position: absolute;
+}
+.abril{
+    font-family: 'Abril Fatface', cursive;
+}
+.open-sans{
+    font-family: 'Open Sans', sans-serif;
+}
+.grey{
+    color: #80808069;
+}
+.size20{
+    font-size: 20px;
+}
+.show-zoom-animation{
+    animation: show 0.5s 1;
+    -webkit-animation: show 0.5s 1;
+    animation-fill-mode: forwards;
+  }
+  @keyframes show{
+    from {opacity :0; transform: scale(1.1);}
+    to {opacity :1;transform: scale(1.0);}
+  }
+
+  .padding10{
+      padding: 10px;
+  }
