@@ -26,7 +26,7 @@ class LineChart extends Component {
     }
     componentWillUpdate(prevProps) {
         if (this.props.ticker !== prevProps.ticker) {
-            let data = getChartData(this.props.ticker, this.props.timeframe, this.props.interval);
+            let data = getChartData(prevProps.ticker, this.props.timeframe, this.props.interval);
             data.then(response => {
                 this.setState({ data: response })
             })
