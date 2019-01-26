@@ -3,6 +3,7 @@ import '../Companies/AddCompany/AddCompany.css';
 import { Button } from 'antd';
 import { getAllSymbols } from '../../HTTP/SymbolsAPI';
 import AddCompany from '../Companies/AddCompany/AddCompany';
+import Metric from '../Loaf/Metric';
 
 class Companies extends Component {
     openAddCompanySideBar = () => {
@@ -30,6 +31,18 @@ class Companies extends Component {
     render() {
         return (
             <div className="padding10">
+                {!this.props.trackedCompanies
+                    ?
+                    null
+                    :
+                    this.props.trackedCompanies.map((company) => {
+                        return(
+                            <div className='padding10'>
+                                <Metric titleFontSize={12} title={company.name} labelFontSize={11} label={company.symbol} />
+                            </div>
+                        )
+                    })
+                }
                 {
                     this.state.open
                     ?

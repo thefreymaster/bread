@@ -13,9 +13,17 @@ const {
 } = Layout;
 
 class App extends Component {
-  setActiveTicker = (value) => {
+  setActiveTicker = (value, company) => {
+
     this.setState({
-      activeTicker: value
+      activeTicker: value,
+    }, this.addCompanyToTrackedCompanies(company))
+  }
+  addCompanyToTrackedCompanies = (company) => {
+    let _trackedCompanies = this.state.trackedCompanies;
+    _trackedCompanies.push(company)
+    this.setState({
+      trackedCompanies: _trackedCompanies
     })
   }
   constructor() {
@@ -28,7 +36,8 @@ class App extends Component {
         lg: false,
         xl: false,
       },
-      activeTicker: 'nflx'
+      activeTicker: 'nflx',
+      trackedCompanies: []
     }
   }
   render() {
@@ -38,7 +47,7 @@ class App extends Component {
           <Header style={{ marginBottom: 20 }}>Loaf</Header>
           <Layout style={{ minHeight: window.innerHeight - 84 }}>
             <Sider className="left-sider">
-              <Companies setActiveTicker={this.setActiveTicker} />
+              <Companies trackedCompanies={this.state.trackedCompanies} setActiveTicker={this.setActiveTicker} />
             </Sider>
             <Content>
               <Loaf activeTicker={this.state.activeTicker} />
