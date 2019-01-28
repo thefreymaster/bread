@@ -9,7 +9,7 @@ function SearchedCompanies(props) {
             props.searchedCompanies.map((company, index) => {
                 if(index < 5)
                 return (
-                    <div className="padding10" onClick={() => {props.setActiveTicker(company.symbol, company); props.closeAddCompanySideBar()}}>
+                    <div className=" loaf-button-hover-action paddingTop10 paddingLeft10 paddingButtom10" onClick={() => {props.setActiveTicker(company.symbol, company, true); props.closeAddCompanySideBar()}}>
                         <Metric titleFontSize={14} title={company.name} labelFontSize={11} label={company.symbol} />
                     </div>
                 )

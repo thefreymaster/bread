@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import '../Companies/AddCompany/AddCompany.css';
 import { Button } from 'antd';
 import { getAllSymbols } from '../../HTTP/SymbolsAPI';
@@ -18,7 +18,7 @@ class Companies extends Component {
     }
     constructor(props) {
         super(props)
-        this.state = {open: false}
+        this.state = { open: false }
     }
     componentWillMount() {
         let data = getAllSymbols();
@@ -30,32 +30,37 @@ class Companies extends Component {
     }
     render() {
         return (
-            <div className="padding10">
+            <div>
                 {!this.props.trackedCompanies
                     ?
                     null
                     :
-                    this.props.trackedCompanies.map((company) => {
-                        return(
-                            <div className='padding10'>
-                                <Metric titleFontSize={12} title={company.name} labelFontSize={11} label={company.symbol} />
-                            </div>
-                        )
-                    })
+                    <Fragment>
+                        {this.props.trackedCompanies.map((company) => {
+                            return (
+                                <div className={company.symbol.toUpperCase() === this.props.activeTicker ? 'active-loaf-button paddingTop10 paddingLeft10 paddingButtom10' : 'loaf-button-hover-action paddingTop10 paddingLeft10 paddingButtom10'} onClick={() => this.props.setActiveTicker(company.symbol, company, false)}>
+                                    <Metric titleFontSize={12} title={company.name} labelFontSize={11} label={company.symbol} />
+                                </div>
+                            )
+                        })}
+                        <div className="marginBottom10"></div>
+                    </Fragment>
                 }
                 {
                     this.state.open
-                    ?
-                    null
-                    :
-                    <Button onClick={this.openAddCompanySideBar} className="width100 loaf-button">Add Company</Button>
+                        ?
+                        null
+                        :
+                        <div className='padding10'>
+                            <Button onClick={this.openAddCompanySideBar} className="width100 loaf-button">Add Company</Button>
+                        </div>
                 }
                 {
                     this.state.open
-                    ?
-                    <AddCompany setActiveTicker={this.props.setActiveTicker} closeAddCompanySideBar={this.closeAddCompanySideBar} activeTicker={this.state.activeTicker} />
-                    :
-                    null
+                        ?
+                        <AddCompany setActiveTicker={this.props.setActiveTicker} closeAddCompanySideBar={this.closeAddCompanySideBar} activeTicker={this.state.activeTicker} />
+                        :
+                        null
                 }
             </div>
         )

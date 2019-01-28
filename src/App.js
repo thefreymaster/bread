@@ -13,15 +13,17 @@ const {
 } = Layout;
 
 class App extends Component {
-  setActiveTicker = (value, company) => {
+  setActiveTicker = (value, company, addCompanyToTrackedList) => {
 
     this.setState({
       activeTicker: value,
-    }, this.addCompanyToTrackedCompanies(company))
+    }, addCompanyToTrackedList ? this.addCompanyToTrackedCompanies(company) : null)
   }
   addCompanyToTrackedCompanies = (company) => {
     let _trackedCompanies = this.state.trackedCompanies;
     _trackedCompanies.push(company)
+    localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
+    
     this.setState({
       trackedCompanies: _trackedCompanies
     })
@@ -36,7 +38,7 @@ class App extends Component {
         lg: false,
         xl: false,
       },
-      activeTicker: 'nflx',
+      activeTicker: '',
       trackedCompanies: []
     }
   }
@@ -47,7 +49,7 @@ class App extends Component {
           <Header style={{ marginBottom: 20 }}>Loaf</Header>
           <Layout style={{ minHeight: window.innerHeight - 84 }}>
             <Sider className="left-sider">
-              <Companies trackedCompanies={this.state.trackedCompanies} setActiveTicker={this.setActiveTicker} />
+              <Companies activeTicker={this.state.activeTicker} trackedCompanies={this.state.trackedCompanies} setActiveTicker={this.setActiveTicker} />
             </Sider>
             <Content>
               <Loaf activeTicker={this.state.activeTicker} />
@@ -67,6 +69,13 @@ class App extends Component {
     );
   }
   componentDidMount() {
+    if(localStorage.getItem("trackedCompanies"))
+    {
+      let _trackedCompanies = JSON.parse(localStorage.getItem("trackedCompanies"));
+      this.setState({
+        trackedCompanies: _trackedCompanies
+      }, this.setActiveTicker(_trackedCompanies[0].symbol, _trackedCompanies[0], false))
+    }
     this.checkDeviceSize();
     window.addEventListener('resize', () => {
       this.checkDeviceSize();

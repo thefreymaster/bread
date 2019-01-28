@@ -22,9 +22,14 @@
 .width100{
     min-width: 100%;
 }
-.loaf-button{
-    background-color: #4d4d4d;
-    color: white;
+.active-loaf-button{
+    background-color: #72727224;
+}
+
+.loaf-button-hover-action:hover{
+    cursor: pointer;
+    background-color: #72727224;
+    transition: background-color 100ms ease-in-out;
 }
 .flex{
     display: flex
@@ -96,3 +101,15 @@
   .padding10{
       padding: 10px;
   }
+  .paddingTop10{
+      padding-top: 10px;
+  }
+  .paddingButtom10 {
+      padding-bottom: 10px;
+  }
+  .paddingLeft10 {
+    padding-left: 10px;
+}
+.paddingRight10 {
+    padding-right: 10px;
+}

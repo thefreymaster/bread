@@ -45,11 +45,14 @@ class AddCompany extends Component {
     render() {
         return (
             <div className="add-company-component">
-                <Search
-                    placeholder="Search"
-                    onSearch={value => this.search(value)}
-                    style={{ width: '100%' }}
-                />
+                <div className="padding10">
+                    <Search
+                        autoFocus
+                        placeholder="Search"
+                        onSearch={value => this.search(value)}
+                        style={{ width: '100%' }}
+                    />
+                </div>
                 <SearchedCompanies closeAddCompanySideBar={this.props.closeAddCompanySideBar} setActiveTicker={this.props.setActiveTicker} searchedCompanies={this.state.searchedCompanies} />
             </div>
         )

@@ -23,14 +23,16 @@ class Today extends Component {
         }
     }
     componentWillMount() {
-        let data = getBatchData(this.props.ticker, 'quote,price,stats');
-        data.then(response => {
-            this.setState({
-                stats: response.stats,
-                price: response.price,
-                quote: response.quote,
+        if(this.props.ticker){
+            let data = getBatchData(this.props.ticker, 'quote,price,stats');
+            data.then(response => {
+                this.setState({
+                    stats: response.stats,
+                    price: response.price,
+                    quote: response.quote,
+                })
             })
-        })
+        }
     }
     render() {
         if (!this.state.stats)
@@ -51,13 +53,18 @@ class Today extends Component {
                     <div className="flex flex-row">
                         <div className='width-60'>
                             <Metric
-                                title={'$' + parseFloat(this.state.price).toFixed(2)}
+                                title={parseFloat(this.state.price).toFixed(2)}
                                 label="Latest Price"
-                                color={this.state.quote.changePercent > 0 ? GREEN : RED} />
+                                number
+                                fontFamily={'Open Sans'}
+                                prefix={'$'}/>
                         </div>
                         <Metric
-                            title={parseFloat(this.state.quote.changePercent * 100).toFixed(2) + '%'}
-                            color={this.state.quote.changePercent > 0 ? GREEN : RED}
+                            number
+                            suffix={'%'}
+                            fontFamily={'Open Sans'}
+                            title={parseFloat(this.state.quote.changePercent * 100).toFixed(2)}
+                            color={parseFloat(this.state.quote.changePercent).toFixed(2) > 0 ? GREEN : RED}
                             label="Percent Change Today" />
                     </div>
                 </div>
