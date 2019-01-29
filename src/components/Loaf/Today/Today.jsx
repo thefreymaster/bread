@@ -3,6 +3,7 @@ import Metric from "../Metric";
 import { getBatchData } from './../../../HTTP/StatsAPI';
 import Loader from 'react-loader-spinner'
 import { GREEN, RED } from '../../../Constants';
+import { Button } from '../../../../node_modules/antd';
 
 class Today extends Component {
     constructor(props) {
@@ -23,7 +24,7 @@ class Today extends Component {
         }
     }
     componentWillMount() {
-        if(this.props.ticker){
+        if (this.props.ticker) {
             let data = getBatchData(this.props.ticker, 'quote,price,stats');
             data.then(response => {
                 this.setState({
@@ -57,7 +58,7 @@ class Today extends Component {
                                 label="Latest Price"
                                 number
                                 fontFamily={'Open Sans'}
-                                prefix={'$'}/>
+                                prefix={'$'} />
                         </div>
                         <Metric
                             number
@@ -67,6 +68,15 @@ class Today extends Component {
                             color={parseFloat(this.state.quote.changePercent).toFixed(2) > 0 ? GREEN : RED}
                             label="Percent Change Today" />
                     </div>
+                    {
+                        this.props.trackedCompanies.length !== 1
+                            ?
+                            <div className="paddingTop10 flex flex-center-end ">
+                                <Button onClick={() => this.props.removeCompanyFromTrackedCompanies(this.props.ticker)} className={'width-50'}>Remove Company</Button>
+                            </div>
+                            :
+                            null
+                    }
                 </div>
             )
         }

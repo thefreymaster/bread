@@ -6,7 +6,8 @@ function Metric(props) {
         title: {
             fontSize: props.titleFontSize,
             color: props.color,
-            fontFamily: props.fontFamily ? props.fontFamily : null
+            fontFamily: props.fontFamily ? props.fontFamily : null,
+            fontWeight: props.fontWeight ? props.fontWeight : null
         },
         label: {
             fontSize: props.labelFontSize,

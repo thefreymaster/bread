@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import '../Companies/AddCompany/AddCompany.css';
 import { Button } from 'antd';
 import { getAllSymbols } from '../../HTTP/SymbolsAPI';
+import { getPrice } from '../../HTTP/StatsAPI';
 import AddCompany from '../Companies/AddCompany/AddCompany';
 import Metric from '../Loaf/Metric';
 
@@ -30,7 +31,7 @@ class Companies extends Component {
     }
     render() {
         return (
-            <div>
+            <div style={{maxHeight: window.innerHeight-84, overflowY: 'scroll'}}>
                 {!this.props.trackedCompanies
                     ?
                     null
@@ -38,8 +39,8 @@ class Companies extends Component {
                     <Fragment>
                         {this.props.trackedCompanies.map((company) => {
                             return (
-                                <div className={company.symbol.toUpperCase() === this.props.activeTicker ? 'active-loaf-button paddingTop10 paddingLeft10 paddingButtom10' : 'loaf-button-hover-action paddingTop10 paddingLeft10 paddingButtom10'} onClick={() => this.props.setActiveTicker(company.symbol, company, false)}>
-                                    <Metric titleFontSize={12} title={company.name} labelFontSize={11} label={company.symbol} />
+                                <div className={company.symbol.toUpperCase() === this.props.activeTicker ? 'active-loaf-button paddingTop10 paddingLeft10 paddingButtom10' : 'loaf-button-hover-action paddingTop10 paddingLeft10 paddingButtom10'} onClick={() => {this.props.setActiveTicker(company.symbol, company, false); this.closeAddCompanySideBar()}}>
+                                    <Metric fontFamily={'Open Sans'} fontWeight={900} titleFontSize={14} title={company.symbol} labelFontSize={10} label={company.name} />
                                 </div>
                             )
                         })}
@@ -51,8 +52,8 @@ class Companies extends Component {
                         ?
                         null
                         :
-                        <div className='padding10'>
-                            <Button onClick={this.openAddCompanySideBar} className="width100 loaf-button">Add Company</Button>
+                        <div className='padding10 add-new-button'>
+                            <Button onClick={this.openAddCompanySideBar} className="width100 loaf-button">Add New Company</Button>
                         </div>
                 }
                 {

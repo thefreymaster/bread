@@ -23,7 +23,7 @@
     min-width: 100%;
 }
 .active-loaf-button{
-    background-color: #72727224;
+    background-color: #bcb8b824;
 }
 
 .loaf-button-hover-action:hover{
@@ -50,6 +50,10 @@
 .flex-center-start{
     align-items: center;
     justify-content: flex-start;
+}
+.flex-center-end{
+    align-items: center;
+    justify-content: flex-end;
 }
 .width-33{
     max-width: 33%;
@@ -112,4 +116,9 @@
 }
 .paddingRight10 {
     padding-right: 10px;
+}
+.add-new-button{
+    position: absolute;
+    bottom: 0;
+    min-width: 100%;
 }

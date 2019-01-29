@@ -28,6 +28,27 @@ class App extends Component {
       trackedCompanies: _trackedCompanies
     })
   }
+  removeCompanyFromTrackedCompanies = (symbol) => {
+    let that = this;
+    let _trackedCompanies = that.state.trackedCompanies;
+    for(let [index, item] of _trackedCompanies.entries()){
+      if(item.symbol === symbol)
+      {
+        _trackedCompanies.splice(index, 1)
+        localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
+        that.setState({
+          trackedCompanies: _trackedCompanies
+        }, () => {
+          if(index === _trackedCompanies.length){
+            that.setActiveTicker(that.state.trackedCompanies[index-1].symbol, that.state.trackedCompanies[index-1], false)
+          }
+          else{
+            that.setActiveTicker(that.state.trackedCompanies[index].symbol, that.state.trackedCompanies[index], false)
+          }
+        })
+      }
+    }
+  }
   constructor() {
     super()
     this.state = {
@@ -48,11 +69,11 @@ class App extends Component {
         <Layout>
           <Header style={{ marginBottom: 20 }}>Loaf</Header>
           <Layout style={{ minHeight: window.innerHeight - 84 }}>
-            <Sider className="left-sider">
+            <Sider className="left-sider" style={{maxHeight: window.innerHeight-84}}>
               <Companies activeTicker={this.state.activeTicker} trackedCompanies={this.state.trackedCompanies} setActiveTicker={this.setActiveTicker} />
             </Sider>
             <Content>
-              <Loaf activeTicker={this.state.activeTicker} />
+              <Loaf removeCompanyFromTrackedCompanies={this.removeCompanyFromTrackedCompanies} trackedCompanies={this.state.trackedCompanies} activeTicker={this.state.activeTicker} />
             </Content>
             {
               this.state.screen.lg || this.state.screen.xl ?

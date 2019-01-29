@@ -16,7 +16,7 @@ class Loaf extends Component {
         return (
             <div className="flex flex-column">
                 <div className="flex flex-row">
-                    <Today ticker={this.props.activeTicker} />
+                    <Today trackedCompanies={this.props.trackedCompanies} removeCompanyFromTrackedCompanies={this.props.removeCompanyFromTrackedCompanies} ticker={this.props.activeTicker} />
                     <YourShares ticker={this.props.activeTicker} userHasShares={false} />
                 </div>
                 <div className="flex flex-row">
