@@ -1,10 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import '../Companies/AddCompany/AddCompany.css';
 import { Button } from 'antd';
-import { getAllSymbols } from '../../HTTP/SymbolsAPI';
-import { getPrice } from '../../HTTP/StatsAPI';
+import { getAllSymbols } from '../../api/SymbolsAPI';
+import { getPrice } from '../../api/StatsAPI';
 import AddCompany from '../Companies/AddCompany/AddCompany';
 import Metric from '../Loaf/Metric';
+import classnames from 'classnames';
 
 class Companies extends Component {
     openAddCompanySideBar = () => {
@@ -31,20 +32,28 @@ class Companies extends Component {
     }
     render() {
         return (
-            <div style={{maxHeight: window.innerHeight-84, overflowY: 'scroll'}}>
+            <div style={{ maxHeight: window.innerHeight - 84, overflowY: 'scroll' }}>
                 {!this.props.trackedCompanies
                     ?
                     null
                     :
                     <Fragment>
-                        {this.props.trackedCompanies.map((company) => {
+                        {Object.keys(this.props.trackedCompanies).map((index) => {
+                            const company = this.props.trackedCompanies[index];
                             return (
-                                <div className={company.symbol.toUpperCase() === this.props.activeTicker ? 'active-loaf-button paddingTop10 paddingLeft10 paddingButtom10' : 'loaf-button-hover-action paddingTop10 paddingLeft10 paddingButtom10'} onClick={() => {this.props.setActiveTicker(company.symbol, company, false); this.closeAddCompanySideBar()}}>
-                                    <Metric fontFamily={'Open Sans'} fontWeight={900} titleFontSize={14} title={company.symbol} labelFontSize={10} label={company.name} />
+                                <div className={classnames('padding10 box-shadow-bottom loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === this.props.activeTicker })} onClick={() => { this.props.setActiveTicker(company.symbol, company, false, index); this.closeAddCompanySideBar() }}>
+                                    <Metric
+                                        fontFamily={'Open Sans'}
+                                        fontWeight={900}
+                                        titleFontSize={14}
+                                        title={company.symbol}
+                                        labelFontSize={11}
+                                        label={this.props.screen.xs || this.props.screen.sm ? null : company.name}
+                                        center={this.props.screen.xs || this.props.screen.sm ? true : false} />
                                 </div>
                             )
                         })}
-                        <div className="marginBottom10"></div>
+                        <div className="marginBottom54"></div>
                     </Fragment>
                 }
                 {
@@ -53,13 +62,17 @@ class Companies extends Component {
                         null
                         :
                         <div className='padding10 add-new-button'>
-                            <Button onClick={this.openAddCompanySideBar} className="width100 loaf-button">Add New Company</Button>
+                            <Button onClick={this.openAddCompanySideBar} className="width100 loaf-button">{this.props.screen.xs || this.props.screen.sm ? 'Track' : 'Track New Company'}</Button>
                         </div>
                 }
                 {
                     this.state.open
                         ?
-                        <AddCompany setActiveTicker={this.props.setActiveTicker} closeAddCompanySideBar={this.closeAddCompanySideBar} activeTicker={this.state.activeTicker} />
+                        <AddCompany
+                            setActiveTicker={this.props.setActiveTicker}
+                            closeAddCompanySideBar={this.closeAddCompanySideBar}
+                            screen={this.props.screen}
+                            activeTicker={this.state.activeTicker} />
                         :
                         null
                 }

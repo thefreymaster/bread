@@ -7,7 +7,9 @@ function Metric(props) {
             fontSize: props.titleFontSize,
             color: props.color,
             fontFamily: props.fontFamily ? props.fontFamily : null,
-            fontWeight: props.fontWeight ? props.fontWeight : null
+            fontWeight: props.fontWeight ? props.fontWeight : null,
+            textAlign: props.center ? 'center' : 'left',
+            transition: 'text-align 300ms ease-in-out'
         },
         label: {
             fontSize: props.labelFontSize,
@@ -29,7 +31,7 @@ function Metric(props) {
                         separator="," 
                         suffix={props.suffix} 
                         className="price-metric" 
-                        decimals={2} 
+                        decimals={props.decimals} 
                         decimal="." 
                         start={0} 
                         duration={props.duration}

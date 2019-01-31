@@ -10,7 +10,7 @@ function SearchedCompanies(props) {
                 if(index < 5)
                 return (
                     <div className=" loaf-button-hover-action paddingTop10 paddingLeft10 paddingButtom10" onClick={() => {props.setActiveTicker(company.symbol, company, true); props.closeAddCompanySideBar()}}>
-                        <Metric titleFontSize={14} title={company.name} labelFontSize={11} label={company.symbol} />
+                        <Metric fontFamily={'Open Sans'} fontWeight={900} titleFontSize={14} title={company.name} labelFontSize={11} label={company.symbol} />
                     </div>
                 )
             })

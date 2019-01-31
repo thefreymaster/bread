@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import 'antd/dist/antd.css';
 import { Layout } from 'antd';
+import classnames from 'classnames';
 
 import Companies from './components/Companies/Companies';
 import Loaf from './components/Loaf/Loaf';
@@ -13,14 +14,33 @@ const {
 } = Layout;
 
 class App extends Component {
-  setActiveTicker = (value, company, addCompanyToTrackedList) => {
-
+  setActiveTicker = (value, company, addCompanyToTrackedList, index) => {
+    if(index === undefined){
+      index = 0;
+    }
     this.setState({
       activeTicker: value,
+      activeTickerIndex: parseInt(index)
     }, addCompanyToTrackedList ? this.addCompanyToTrackedCompanies(company) : null)
   }
+  saveShares = (price, count) => {
+    let that = this;
+    let _trackedCompanies = that.state.trackedCompanies;
+    for(let index of _trackedCompanies.keys())
+    {
+      if(_trackedCompanies[index].symbol === this.state.activeTicker){
+        _trackedCompanies[index].shares = { price: price, count: count, hasShares: true };
+        localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
+        that.setState({
+          trackedCompanies: _trackedCompanies
+        })
+      }
+    }
+
+}
   addCompanyToTrackedCompanies = (company) => {
     let _trackedCompanies = this.state.trackedCompanies;
+    company['shares'] = {price: '', count: '', hasShares: false};
     _trackedCompanies.push(company)
     localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
     
@@ -69,15 +89,21 @@ class App extends Component {
         <Layout>
           <Header style={{ marginBottom: 20 }}>Loaf</Header>
           <Layout style={{ minHeight: window.innerHeight - 84 }}>
-            <Sider className="left-sider" style={{maxHeight: window.innerHeight-84}}>
-              <Companies activeTicker={this.state.activeTicker} trackedCompanies={this.state.trackedCompanies} setActiveTicker={this.setActiveTicker} />
+            <Sider className={classnames("left-sider paddingLeft10 paddingRight10", {"left-sider-small" : this.state.screen.xs || this.state.screen.sm})} style={{maxHeight: window.innerHeight-84}}>
+              <Companies screen={this.state.screen} activeTicker={this.state.activeTicker} trackedCompanies={this.state.trackedCompanies} setActiveTicker={this.setActiveTicker} />
             </Sider>
             <Content>
-              <Loaf removeCompanyFromTrackedCompanies={this.removeCompanyFromTrackedCompanies} trackedCompanies={this.state.trackedCompanies} activeTicker={this.state.activeTicker} />
+              <Loaf 
+               saveShares={this.saveShares}
+               screen={this.state.screen} 
+               removeCompanyFromTrackedCompanies={this.removeCompanyFromTrackedCompanies} 
+               trackedCompanies={this.state.trackedCompanies} 
+               activeTicker={this.state.activeTicker}
+               activeTickerIndex={this.state.activeTickerIndex} />
             </Content>
             {
               this.state.screen.lg || this.state.screen.xl ?
-                <Sider className="right-sider">
+                <Sider className="right-sider padding10">
                   <CompanyStatistics activeTicker={this.state.activeTicker}/>
                 </Sider>
                 :

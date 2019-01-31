@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Metric from '../Loaf/Metric';
 import { List } from 'antd';
-import { getBatchData } from '../../HTTP/StatsAPI';
+import { getBatchData } from '../../api/StatsAPI';
 import { GREEN, RED } from '../../Constants';
 
 const data = [
@@ -32,9 +32,9 @@ class CompanyStatistics extends Component {
         super(props)
         this.state = {}
     }
-    componentWillMount() {
-        if (this.props.ticker) {
-
+    componentDidMount() {
+        if (this.props.activeTicker) {
+            
             let data = getBatchData(this.props.activeTicker, 'quote,stats');
             data.then(response => {
                 this.setState({
@@ -89,6 +89,7 @@ class CompanyStatistics extends Component {
     componentDidUpdate(prevProps) {
         if (this.props.activeTicker !== prevProps.activeTicker) // Check if it's a new user, you can also use some unique property, like the ID
         {
+            
             let data = getBatchData(this.props.activeTicker, 'quote,stats');
             data.then(response => {
                 this.setState({
@@ -145,7 +146,6 @@ class CompanyStatistics extends Component {
             return null
         else {
             return (
-                <div className="padding10">
                     <List
                         itemLayout="horizontal"
                         dataSource={this.state.data}
@@ -165,7 +165,6 @@ class CompanyStatistics extends Component {
                             </List.Item>
                         )}
                     />
-                </div>
             )
         }
     }

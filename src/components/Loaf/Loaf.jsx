@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import classnames from 'classnames';
 import "./Loaf.css";
 import Today from './Today/Today';
 import YourShares from './YourShares/YourShares';
@@ -13,22 +14,31 @@ class Loaf extends Component {
         }
     }
     render() {
-        return (
-            <div className="flex flex-column">
-                <div className="flex flex-row">
-                    <Today trackedCompanies={this.props.trackedCompanies} removeCompanyFromTrackedCompanies={this.props.removeCompanyFromTrackedCompanies} ticker={this.props.activeTicker} />
-                    <YourShares ticker={this.props.activeTicker} userHasShares={false} />
+        if(this.props.activeTickerIndex === undefined)
+            return null;
+        else{
+            const userHasShares = this.props.trackedCompanies[this.props.activeTickerIndex].shares.hasShares
+            const count = this.props.trackedCompanies[this.props.activeTickerIndex].shares.count;
+            const price = this.props.trackedCompanies[this.props.activeTickerIndex].shares.price;
+            const index = this.props.activeTickerIndex;
+            return (
+                <div className="flex flex-column">
+                    <div className={classnames("flex", {"flex-column": this.props.screen.xs || this.props.screen.sm, "flex-row": !this.props.screen.xs || !this.props.screen.sm})}>
+                        <Today trackedCompanies={this.props.trackedCompanies} removeCompanyFromTrackedCompanies={this.props.removeCompanyFromTrackedCompanies} ticker={this.props.activeTicker} />
+                        <YourShares index={index} count={count} price={price} trackedCompanies={this.props.trackedCompanies} saveShares={this.props.saveShares} ticker={this.props.activeTicker} userHasShares={userHasShares} />
+                    </div>
+                    <div className="flex flex-row">
+                        <LineChart ticker={this.props.activeTicker} timeframe={'1d'} interval={10} title='1 Day' />
+                        <LineChart ticker={this.props.activeTicker} timeframe={'6m'} interval={2} title='6 Month' />
+                    </div>
+                    <div className="flex flex-row">
+                        <LineChart ticker={this.props.activeTicker} timeframe={'1y'} interval={5} title='1 Year' />
+                        <LineChart ticker={this.props.activeTicker} timeframe={'5y'} interval={10} title='5 Year' />
+                    </div>
                 </div>
-                <div className="flex flex-row">
-                    <LineChart ticker={this.props.activeTicker} timeframe={'1d'} interval={10} title='1 Day' />
-                    <LineChart ticker={this.props.activeTicker} timeframe={'6m'} interval={2} title='6 Month' />
-                </div>
-                <div className="flex flex-row">
-                    <LineChart ticker={this.props.activeTicker} timeframe={'1y'} interval={5} title='1 Year' />
-                    <LineChart ticker={this.props.activeTicker} timeframe={'5y'} interval={10} title='5 Year' />
-                </div>
-            </div>
-        )
+            )
+        }
+
     }
 }
 

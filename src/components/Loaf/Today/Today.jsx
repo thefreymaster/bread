@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Metric from "../Metric";
-import { getBatchData } from './../../../HTTP/StatsAPI';
+import { getBatchData } from './../../../api/StatsAPI';
 import Loader from 'react-loader-spinner'
 import { GREEN, RED } from '../../../Constants';
 import { Button } from '../../../../node_modules/antd';
@@ -57,12 +57,14 @@ class Today extends Component {
                                 title={parseFloat(this.state.price).toFixed(2)}
                                 label="Latest Price"
                                 number
+                                decimals={2}
                                 fontFamily={'Open Sans'}
                                 prefix={'$'} />
                         </div>
                         <Metric
                             number
                             suffix={'%'}
+                            decimals={2}
                             fontFamily={'Open Sans'}
                             title={parseFloat(this.state.quote.changePercent * 100).toFixed(2)}
                             color={parseFloat(this.state.quote.changePercent).toFixed(2) > 0 ? GREEN : RED}

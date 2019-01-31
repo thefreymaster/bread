@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ResponsiveLine } from '@nivo/line'
-import { getChartData } from '../../HTTP/ChartAPI';
+import { getChartData } from '../../api/ChartAPI';
 import Loader from 'react-loader-spinner'
 import { GREEN, RED } from './../../Constants';
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button } from 'antd';
-import { getAllSymbols } from '../../../HTTP/SymbolsAPI';
+import { getAllSymbols } from '../../../api/SymbolsAPI';
 import { Input } from 'antd';
 import SearchedCompanies from '../AddCompany/SearchedCompanies';
 const Search = Input.Search;
@@ -43,8 +43,13 @@ class AddCompany extends Component {
         }
     }
     render() {
+        const inline = {
+            addcompany: {
+                left: this.props.screen.xs || this.props.screen.sm ? 100 : 200,
+            }
+        }
         return (
-            <div className="add-company-component">
+            <div className="add-company-component" style={inline.addcompany}>
                 <div className="padding10">
                     <Search
                         autoFocus
