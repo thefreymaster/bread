@@ -15,8 +15,11 @@ const {
 
 class App extends Component {
   setActiveTicker = (value, company, addCompanyToTrackedList, index) => {
-    if(index === undefined){
+    if(index === undefined && addCompanyToTrackedList === false){
       index = 0;
+    }
+    else if(addCompanyToTrackedList === true){
+      index = this.state.trackedCompanies.length;
     }
     this.setState({
       activeTicker: value,
