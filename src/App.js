@@ -60,13 +60,14 @@ class App extends Component {
         _trackedCompanies.splice(index, 1)
         localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
         that.setState({
-          trackedCompanies: _trackedCompanies
+          trackedCompanies: _trackedCompanies,
+          activeTickerIndex: index-1
         }, () => {
           if(index === _trackedCompanies.length){
-            that.setActiveTicker(that.state.trackedCompanies[index-1].symbol, that.state.trackedCompanies[index-1], false)
+            that.setActiveTicker(that.state.trackedCompanies[index-1].symbol, that.state.trackedCompanies[index-1], false, index-1)
           }
           else{
-            that.setActiveTicker(that.state.trackedCompanies[index].symbol, that.state.trackedCompanies[index], false)
+            that.setActiveTicker(that.state.trackedCompanies[index].symbol, that.state.trackedCompanies[index], false, index)
           }
         })
       }

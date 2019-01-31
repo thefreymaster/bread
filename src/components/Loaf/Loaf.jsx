@@ -17,10 +17,10 @@ class Loaf extends Component {
         if(this.props.activeTickerIndex === undefined)
             return null;
         else{
-            const userHasShares = this.props.trackedCompanies[this.props.activeTickerIndex].shares.hasShares
-            const count = this.props.trackedCompanies[this.props.activeTickerIndex].shares.count;
-            const price = this.props.trackedCompanies[this.props.activeTickerIndex].shares.price;
             const index = this.props.activeTickerIndex;
+            const userHasShares = this.props.trackedCompanies[index].shares.hasShares
+            const count = this.props.trackedCompanies[index].shares.count;
+            const price = this.props.trackedCompanies[index].shares.price;
             return (
                 <div className="flex flex-column">
                     <div className={classnames("flex", {"flex-column": this.props.screen.xs || this.props.screen.sm, "flex-row": !this.props.screen.xs || !this.props.screen.sm})}>
