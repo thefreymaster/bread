@@ -49,3 +49,13 @@ app.get('/api/quick-quote/:symbols', function (req, res) {
         res.send(body);
     });
 })
+
+app.get('/quote', function (request, response) {
+    response.sendFile(path.resolve(__dirname, 'build/index.html'));
+});
+app.get('/add', function (request, response) {
+    response.sendFile(path.resolve(__dirname, 'build/index.html'));
+});
+app.get('*', function(req, res) {
+    res.render('404 Error!  Page not found.');
+  });

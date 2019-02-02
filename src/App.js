@@ -80,6 +80,26 @@ class App extends Component {
       }
     }
   }
+  findRoute() {
+    if (this.state.trackedCompanies.length === 0) {
+      return (
+        <AddCompany
+          setActiveTicker={this.setActiveTicker}
+          screen={this.state.screen} />
+      )
+    }
+    else {
+      return (
+        <Body
+          saveShares={this.saveShares}
+          screen={this.state.screen}
+          removeCompanyFromTrackedCompanies={this.removeCompanyFromTrackedCompanies}
+          trackedCompanies={this.state.trackedCompanies}
+          activeTicker={this.state.activeTicker}
+          activeTickerIndex={this.state.activeTickerIndex} />
+      )
+    }
+  }
   constructor() {
     super()
     this.state = {
