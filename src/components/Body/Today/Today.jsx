@@ -40,7 +40,7 @@ class Today extends Component {
             return (
                 <div className="flex flex-row flex-center show-zoom-animation" style={{ height: 200, width: '50%' }}>
                     <Loader
-                        type="ThreeDots"
+                        type="Bars"
                         color="#000000a6"
                         height="20"
                         width="20"
@@ -49,7 +49,7 @@ class Today extends Component {
             )
         else {
             return (
-                <div className="loaf-component flex flex-column width-50 border-right">
+                <div className="loaf-component flex flex-column width-50 border-right" style={{ height: (window.innerHeight-84)*0.40, width: '50%' }}>
                     <Metric titleFontSize={72} title={this.state.stats.symbol} labelFontSize={24} label={this.state.stats.companyName} labelCloseToTitle={true} />
                     <div className="flex flex-row">
                         <div className='width-60'>
@@ -57,6 +57,7 @@ class Today extends Component {
                                 title={parseFloat(this.state.price).toFixed(2)}
                                 label="Latest Price"
                                 number
+                                duration={1}
                                 decimals={2}
                                 fontFamily={'Open Sans'}
                                 prefix={'$'} />
@@ -65,9 +66,10 @@ class Today extends Component {
                             number
                             suffix={'%'}
                             decimals={2}
+                            duration={1}
                             fontFamily={'Open Sans'}
                             title={parseFloat(this.state.quote.changePercent * 100).toFixed(2)}
-                            color={parseFloat(this.state.quote.changePercent).toFixed(2) > 0 ? GREEN : RED}
+                            color={this.state.quote.changePercent > 0 ? GREEN : RED}
                             label="Percent Change Today" />
                     </div>
                     {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Metric from '../Loaf/Metric';
+import Metric from '../Body/Metric';
 import { List } from 'antd';
 import { getBatchData } from '../../api/StatsAPI';
 import { GREEN, RED } from '../../Constants';
@@ -47,7 +47,7 @@ class CompanyStatistics extends Component {
                             decimals: 0,
                             suffix: '',
                             prefix: '',
-                            duration: 4
+                            duration: 1
                         },
                         {
                             title: parseFloat(response.quote.week52High).toFixed(2),
@@ -55,7 +55,7 @@ class CompanyStatistics extends Component {
                             decimals: 2,
                             suffix: '',
                             prefix: '$',
-                            duration: 3.5
+                            duration: 1
                         },
                         {
                             title: parseFloat(response.quote.week52Low).toFixed(2),
@@ -63,7 +63,7 @@ class CompanyStatistics extends Component {
                             decimals: 2,
                             suffix: '',
                             prefix: '$',
-                            duration: 3
+                            duration: 1
                         },
                         {
                             title: parseFloat(response.quote.ytdChange * 100).toFixed(2),
@@ -71,7 +71,7 @@ class CompanyStatistics extends Component {
                             decimals: 2,
                             suffix: '%',
                             prefix: '',
-                            duration: 2.5
+                            duration: 1
                         },
                         {
                             title: parseFloat(response.stats.profitMargin).toFixed(2),
@@ -79,7 +79,7 @@ class CompanyStatistics extends Component {
                             decimals: 2,
                             suffix: '%',
                             prefix: '',
-                            duration: 2
+                            duration: 1
                         },
                     ]
                 })
@@ -102,7 +102,7 @@ class CompanyStatistics extends Component {
                             decimals: 0,
                             suffix: '',
                             prefix: '',
-                            duration: 4
+                            duration: 1
                         },
                         {
                             title: parseFloat(response.quote.week52High).toFixed(2),
@@ -110,7 +110,7 @@ class CompanyStatistics extends Component {
                             decimals: 2,
                             suffix: '',
                             prefix: '$',
-                            duration: 3.5
+                            duration: 1
                         },
                         {
                             title: parseFloat(response.quote.week52Low).toFixed(2),
@@ -118,7 +118,7 @@ class CompanyStatistics extends Component {
                             decimals: 2,
                             suffix: '',
                             prefix: '$',
-                            duration: 3
+                            duration: 1
                         },
                         {
                             title: parseFloat(response.quote.ytdChange * 100).toFixed(2),
@@ -126,7 +126,7 @@ class CompanyStatistics extends Component {
                             decimals: 2,
                             suffix: '%',
                             prefix: '',
-                            duration: 2.5
+                            duration: 1
                         },
                         {
                             title: parseFloat(response.stats.profitMargin).toFixed(2),
@@ -134,7 +134,7 @@ class CompanyStatistics extends Component {
                             decimals: 2,
                             suffix: '%',
                             prefix: '',
-                            duration: 2
+                            duration: 1
                         },
                     ]
                 })
@@ -153,6 +153,8 @@ class CompanyStatistics extends Component {
                             <List.Item>
                                 <Metric
                                     number
+                                    fontFamily={'Open Sans'}
+                                    fontWeight={900}
                                     paddingleft
                                     duration={item.duration}
                                     suffix={item.suffix}

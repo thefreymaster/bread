@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
-import { Button } from 'antd';
+import { Button, Icon } from 'antd';
 import { getAllSymbols } from '../../../api/SymbolsAPI';
 import { Input } from 'antd';
 import SearchedCompanies from '../AddCompany/SearchedCompanies';
 const Search = Input.Search;
 
 class AddCompany extends Component {
-    search = (value) => {
+    search = (e) => {
         let searchedCompanies = []
         for (let symbol of this.state.symbols) {
-            if (symbol.symbol.toUpperCase().includes(value.toUpperCase())) {
+            if (symbol.symbol.toUpperCase().includes(e.target.value.toUpperCase())) {
                 searchedCompanies.push(symbol)
             }
-            else if (symbol.name.toUpperCase().includes(value.toUpperCase())) {
+            else if (symbol.name.toUpperCase().includes(e.target.value.toUpperCase())) {
                 searchedCompanies.push(symbol)
             }
         }
@@ -22,22 +22,29 @@ class AddCompany extends Component {
     }
     constructor(props) {
         super(props)
-        this.state = {}
+        this.state = {
+            symbolsFetched: false
+        }
     }
     componentWillMount() {
         let data = getAllSymbols();
         data.then(response => {
             this.setState({
-                symbols: response
+                symbols: response,
+                symbolsFetched: true,
             })
         })
     }
     componentDidUpdate(prevProps) {
         if (this.props.activeTicker !== prevProps.activeTicker) {
+            this.setState({
+                symbolsFetched: false,
+            })
             let data = getAllSymbols();
             data.then(response => {
                 this.setState({
-                    symbols: response
+                    symbols: response,
+                    symbolsFetched: true,
                 })
             })
         }
@@ -49,16 +56,18 @@ class AddCompany extends Component {
             }
         }
         return (
-            <div className="add-company-component" style={inline.addcompany}>
+            <div style={inline.addcompany}>
                 <div className="padding10">
                     <Search
+                        addonBefore={this.state.symbolsFetched ? null : <Icon type="loading" />}
+                        disabled={!this.state.symbolsFetched}
                         autoFocus
                         placeholder="Search"
-                        onSearch={value => this.search(value)}
+                        onKeyUp={e => this.search(e)}
                         style={{ width: '100%' }}
                     />
                 </div>
-                <SearchedCompanies closeAddCompanySideBar={this.props.closeAddCompanySideBar} setActiveTicker={this.props.setActiveTicker} searchedCompanies={this.state.searchedCompanies} />
+                <SearchedCompanies setActiveTicker={this.props.setActiveTicker} searchedCompanies={this.state.searchedCompanies} />
             </div>
         )
     }

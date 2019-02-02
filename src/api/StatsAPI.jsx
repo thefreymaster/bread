@@ -37,5 +37,24 @@ function getBatchData(ticker, types) {
             console.log(error);
         });
 }
+function getBatchDataGroupedByCompany(ticker, types) {
+    return axios.get('https://api.iextrading.com/1.0/stock/market/batch?symbols=' + ticker + '&types=' + types)
+        .then(function (response) {
+            return response.data;
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+}
+function getQuickQuotes(tickers) {
+    return axios.get('/api/quick-quote/' + tickers)
+        .then(function (response) {
+            return response.data;
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+}
 
-export { getStatsData, getQuote, getPrice, getBatchData }
+
+export { getStatsData, getQuote, getPrice, getBatchData, getQuickQuotes }

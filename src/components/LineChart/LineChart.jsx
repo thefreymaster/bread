@@ -33,11 +33,12 @@ class LineChart extends Component {
         }
     }
     render() {
+        
         if (!this.state.data)
             return (
                 <div className="flex flex-row flex-center show-zoom-animation" style={{ height: 200, width: '50%' }}>
                     <Loader
-                        type="ThreeDots"
+                        type="Bars"
                         color="#000000a6"
                         height="20"
                         width="20"
@@ -46,7 +47,7 @@ class LineChart extends Component {
             )
         else {
             return (
-                <div className="flex flex-column flex-center-start show-zoom-animation" style={{ height: 200, width: '50%' }}>
+                <div className="flex flex-column flex-center-start show-zoom-animation" style={{ height: (window.innerHeight-84)*0.3, width: '50%' }}>
                     <div className='absolute open-sans grey size20'>{this.props.title}</div>
                     <ResponsiveLine
                         data={this.state.data}

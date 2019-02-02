@@ -1,6 +1,4 @@
-import React from 'react';
 import axios from 'axios';
-
 
 function getChartData(ticker, timeframe, interval) {
     return axios.get('https://api.iextrading.com/1.0/stock/' + ticker + '/chart/' + timeframe + '?chartInterval=' + interval)

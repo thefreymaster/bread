@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import Metric from '../Metric';
 import { Button } from 'antd';
 

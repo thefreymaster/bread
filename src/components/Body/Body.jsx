@@ -1,6 +1,6 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import classnames from 'classnames';
-import "./Loaf.css";
+import "./Body.css";
 import Today from './Today/Today';
 import YourShares from './YourShares/YourShares';
 import LineChart from '../LineChart/LineChart';
@@ -23,7 +23,7 @@ class Loaf extends Component {
             const price = this.props.trackedCompanies[index].shares.price;
             return (
                 <div className="flex flex-column">
-                    <div className={classnames("flex", {"flex-column": this.props.screen.xs || this.props.screen.sm, "flex-row": !this.props.screen.xs || !this.props.screen.sm})}>
+                    <div className={classnames("flex", {"flex-column": this.props.screen.xs, "flex-row": !this.props.screen.xs || !this.props.screen.sm})}>
                         <Today trackedCompanies={this.props.trackedCompanies} removeCompanyFromTrackedCompanies={this.props.removeCompanyFromTrackedCompanies} ticker={this.props.activeTicker} />
                         <YourShares index={index} count={count} price={price} trackedCompanies={this.props.trackedCompanies} saveShares={this.props.saveShares} ticker={this.props.activeTicker} userHasShares={userHasShares} />
                     </div>
