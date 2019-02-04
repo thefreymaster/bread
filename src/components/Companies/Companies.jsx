@@ -21,13 +21,23 @@ class Companies extends Component {
             open: false,
         })
     }
+    getColor(company) {
+        if (this.state.quickQuotes[company.symbol]) {
+            if(this.state.quickQuotes[company.symbol].quote.changePercent > 0)
+            {
+                return GREEN;
+            }
+            else {
+                return RED;
+            }
+        }
+    }
     getPercentAndPrice(company) {
         if (this.props.screen.xs || this.props.screen.sm) {
             return ''
         }
         else {
-            if(this.state.quickQuotes[company.symbol])
-            {
+            if (this.state.quickQuotes[company.symbol]) {
                 return (this.state.quickQuotes[company.symbol].quote.changePercent * 100).toFixed(2) + '% • $' + (this.state.quickQuotes[company.symbol].quote.latestPrice)
             }
         }
@@ -45,15 +55,56 @@ class Companies extends Component {
                 symbols: response
             })
         })
-        
+        this.setState({
+            fetchQuickQuotes: true
+        })
+        let symbols = []
+        for (let symbol in that.props.trackedCompanies) {
+            symbols.push(that.props.trackedCompanies[symbol].symbol)
+        }
+        let quote = getQuickQuotes(symbols);
+        quote.then(response => {
+            this.setState({
+                quickQuotes: response,
+                fetchQuickQuotes: false
+            })
+        })
+
     }
-    componentDidUpdate(prevProps) {
-        let that = this;
-        if (this.props.trackedCompanies !== prevProps.trackedCompanies) {
-            let symbols = []
+    componentWillReceiveProps(nextProps) {
+        if (this.props.activeTicker !== nextProps.activeTicker && this.props.trackedCompanies.length > 0) {
+            console.log(nextProps);
             this.setState({
                 fetchQuickQuotes: true
             })
+            let symbols = []
+            let that = this;
+            for (let symbol in that.props.trackedCompanies) {
+                symbols.push(that.props.trackedCompanies[symbol].symbol)
+            }
+            let quote = getQuickQuotes(symbols);
+            quote.then(response => {
+                this.setState({
+                    quickQuotes: response,
+                    fetchQuickQuotes: false
+                })
+            })
+        }
+    }
+    componentDidUpdate(prevProps) {
+        let that = this;
+        if (this.props.activeTicker !== prevProps.activeTicker) {
+            let that = this;
+            let data = getAllSymbols();
+            data.then(response => {
+                this.setState({
+                    symbols: response
+                })
+            })
+            this.setState({
+                fetchQuickQuotes: true
+            })
+            let symbols = []
             for (let symbol in that.props.trackedCompanies) {
                 symbols.push(that.props.trackedCompanies[symbol].symbol)
             }
@@ -70,17 +121,7 @@ class Companies extends Component {
     render() {
         return (
             <div style={{ maxHeight: window.innerHeight - 84, overflowY: 'scroll' }}>
-                {!this.props.trackedCompanies || this.state.fetchQuickQuotes
-                    ?
-                    <div className="flex flex-center" style={{ height: window.innerHeight - 82 }}>
-                        <Loader
-                            type="Bars"
-                            color="#000000a6"
-                            height="20"
-                            width="20"
-                        />
-                    </div>
-                    :
+                {
                     <Fragment>
                         {Object.keys(this.props.trackedCompanies).map((index) => {
                             const company = this.props.trackedCompanies[index];
@@ -99,8 +140,8 @@ class Companies extends Component {
                                             fontFamily={'Open Sans'}
                                             fontWeight={500}
                                             titleFontSize={14}
-                                            // color={this.state.quickQuotes[company.symbol].quote.changePercent > 0 ? GREEN : RED}
-                                            title={this.props.screen.xs || this.props.screen.sm ? null : this.getPercentAndPrice(company)}
+                                            color={!this.state.quickQuotes ? null : this.getColor(company)}
+                                            title={this.props.screen.xs || this.props.screen.sm || !this.state.quickQuotes ? null : this.getPercentAndPrice(company)}
                                             labelFontSize={11}
                                             label={this.props.screen.xs || this.props.screen.sm ? null : company.name}
                                             center={this.props.screen.xs || this.props.screen.sm ? true : false}

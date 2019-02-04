@@ -40,6 +40,9 @@
 .box-shadow-bottom{
     box-shadow: inset 0px -1px 0px 0 #72727224;
 }
+.margin-auto{
+    margin: auto;
+}
 .hide{
     display: none;
 }

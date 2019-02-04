@@ -14,6 +14,7 @@ function Metric(props) {
         label: {
             fontSize: props.labelFontSize,
             marginTop: props.labelCloseToTitle ? -20 : 0,
+            textAlign: props.center ? 'center' : 'left',
         },
         parent: {
             alignItems: props.align,

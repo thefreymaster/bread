@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
 import './App.css';
 import 'antd/dist/antd.css';
 import { Layout } from 'antd';
+import { writeUserData, getFirebaseAuthObject } from './api/FirebaseAPI';
 
 import classnames from 'classnames';
 
@@ -13,10 +14,10 @@ import Navigation from './components/Navigation/Navigation';
 import GetStarted from './components/GetStarted/GetStarted';
 import NoMatch from './components/NoMatch/NoMatch';
 import AddCompany from './components/Companies/AddCompany/AddCompany';
+import Login from './components/Login/Login';
 
-
-
-
+const firebase = getFirebaseAuthObject();
+console.log(firebase);
 
 const {
   Header, Footer, Sider, Content,
@@ -146,13 +147,16 @@ class App extends Component {
               </Sider>
               <Content>
                 <Switch>
-                  <Route path="/getstarted" render={props => <AddCompany
+                  <Route path="/login" render={props => <Login
                     setActiveTicker={this.setActiveTicker}
+                    trackedCompanies={this.state.trackedCompanies}
                     screen={this.state.screen} />
                   } />
                   <Route path="/add" render={props => <AddCompany
                     setActiveTicker={this.setActiveTicker}
-                    screen={this.state.screen} />
+                    trackedCompanies={this.state.trackedCompanies}
+                    screen={this.state.screen}
+                    firebase={firebase} />
                   } />
                   <Route path="/quote" render={props => <Body
                     saveShares={this.saveShares}
@@ -162,6 +166,25 @@ class App extends Component {
                     activeTicker={this.state.activeTicker}
                     activeTickerIndex={this.state.activeTickerIndex}
                   />} />
+                  <Route
+                    render={props =>
+                      this.state.trackedCompanies.length > 0 ? (
+                        <Redirect
+                        to={{
+                          pathname: "/quote",
+                          state: { from: props.location }
+                        }}
+                      />
+                      ) : (
+                          <Redirect
+                            to={{
+                              pathname: "/add",
+                              state: { from: props.location }
+                            }}
+                          />
+                        )
+                    }
+                  />
                 </Switch>
 
                 {/* <Router /> */}

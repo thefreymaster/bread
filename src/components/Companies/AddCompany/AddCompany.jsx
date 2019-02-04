@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, Icon } from 'antd';
 import { getAllSymbols } from '../../../api/SymbolsAPI';
 import { Input } from 'antd';
+import Metric from '../../Body/Metric';
 import SearchedCompanies from '../AddCompany/SearchedCompanies';
 const Search = Input.Search;
 
@@ -57,7 +58,15 @@ class AddCompany extends Component {
         }
         return (
             <div style={inline.addcompany}>
-                <div className="padding10">
+                <Metric
+                    fontWeight={500}
+                    titleFontSize={54}
+                    title={'Find a Company'}
+                    labelFontSize={18}
+                    label={'Search by the company name, or the company symbol'}
+                    center={true}
+                />
+                <div className="padding10 width-40 flex flex-center-center margin-auto">
                     <Search
                         addonBefore={this.state.symbolsFetched ? null : <Icon type="loading" />}
                         disabled={!this.state.symbolsFetched}
@@ -67,6 +76,7 @@ class AddCompany extends Component {
                         style={{ width: '100%' }}
                     />
                 </div>
+
                 <SearchedCompanies setActiveTicker={this.props.setActiveTicker} searchedCompanies={this.state.searchedCompanies} />
             </div>
         )
