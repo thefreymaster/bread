@@ -56,6 +56,12 @@ app.get('/quote', function (request, response) {
 app.get('/add', function (request, response) {
     response.sendFile(path.resolve(__dirname, 'build/index.html'));
 });
+app.get('/login', function (request, response) {
+    response.sendFile(path.resolve(__dirname, 'build/index.html'));
+});
+app.get('/rise', function (request, response) {
+    response.sendFile(path.resolve(__dirname, 'build/index.html'));
+});
 app.get('*', function(req, res) {
     res.render('404 Error!  Page not found.');
   });
