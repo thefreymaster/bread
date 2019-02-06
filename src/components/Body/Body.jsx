@@ -14,7 +14,7 @@ class Loaf extends Component {
         }
     }
     render() {
-        if(this.props.activeTickerIndex === undefined)
+        if(this.props.activeTickerIndex === undefined || this.props.trackedCompanies.length === 0)
             return null;
         else{
             const index = this.props.activeTickerIndex;

@@ -2,12 +2,9 @@ import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom'
 import { Button } from 'antd';
 import Metric from '../Body/Metric';
+import { signOutUser } from './../../api/FirebaseAPI';
 
 class Navigation extends Component {
-    signOut = () => {
-        localStorage.removeItem('firebaseui::rememberedAccounts')
-        window.location.reload();
-    }
     constructor(props) {
         super(props)
         this.state = {}
@@ -18,7 +15,7 @@ class Navigation extends Component {
                 <div>{this.props.title}</div>
                 <div className='flex-grow'></div>
                 {
-                    localStorage.getItem('firebaseui::rememberedAccounts') === null
+                    localStorage.getItem('LOAF_USER') === null
                         ?
                         <Fragment>
                             <Link to="/login">
@@ -34,10 +31,10 @@ class Navigation extends Component {
                                 fontWeight={500}
                                 titleFontSize={14}
                                 fontFamily={'Open Sans'}
-                                title={'Hi there, ' + JSON.parse(localStorage.getItem('firebaseui::rememberedAccounts'))[0].displayName}
+                                title={'Hi there, ' + JSON.parse(localStorage.getItem('LOAF_USER')).displayName}
                                 center={true}
                             />
-                            <Button onClick={this.signOut} className={'loaf-button open-sans'} style={{ marginLeft: 10 }} type="default" shape="round" size={'lg'}>Sign Out</Button>
+                            <Button onClick={signOutUser} className={'loaf-button open-sans'} style={{ marginLeft: 10 }} type="default" shape="round" size={'lg'}>Sign Out</Button>
                         </Fragment>
 
                 }

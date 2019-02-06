@@ -47,7 +47,7 @@ class Companies extends Component {
         super(props)
         this.state = { open: false, fetchQuickQuotes: true }
     }
-    componentWillMount() {
+    componentDidMount() {
         let that = this;
         let data = getAllSymbols();
         data.then(response => {
@@ -132,13 +132,13 @@ class Companies extends Component {
                                         <Metric
                                             fontFamily={'Open Sans'}
                                             fontWeight={900}
-                                            titleFontSize={16}
+                                            titleFontSize={18}
                                             title={company.symbol}
                                             center={this.props.screen.xs || this.props.screen.sm ? true : false}
                                         />
                                         <Metric
                                             fontFamily={'Open Sans'}
-                                            fontWeight={500}
+                                            fontWeight={900}
                                             titleFontSize={14}
                                             color={!this.state.quickQuotes ? null : this.getColor(company)}
                                             title={this.props.screen.xs || this.props.screen.sm || !this.state.quickQuotes ? null : this.getPercentAndPrice(company)}

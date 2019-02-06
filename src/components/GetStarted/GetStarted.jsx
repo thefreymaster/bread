@@ -1,20 +1,45 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Metric from '../Body/Metric';
+import { Button } from 'antd';
+import {  Redirect } from "react-router-dom";
 
-const GetStarted = (props) => {
-    return (
-        // <Metric
-        //     number
-        //     suffix={'%'}
-        //     decimals={2}
-        //     duration={1}
-        //     fontFamily={'Open Sans'}
-        //     title={"Loaf"}
-        //     label="Add your first company" 
 
-        // />
-        <div>Get Started</div>
-    )
+
+class GetStarted extends Component {
+    redirect = () => {
+        this.setState({
+            redirect: true
+        })
+    }
+    constructor(props) {
+        super(props)
+        this.state = {}
+    }
+    render() {
+        const inline = {
+            getstarted: {
+                height: window.innerHeight - 84,
+                position: 'relative',
+                top: -80
+            }
+        }
+        return (
+            <div style={inline.getstarted} className="flex flex-center flex-column">
+                <Metric
+                    fontWeight={500}
+                    titleFontSize={72}
+                    title={'Loaf'}
+                    labelFontSize={18}
+                    label={'Track stocks, find trends, rise above the grain'}
+                    center={true}
+                />
+                <div className='padding10 width-40'>
+                    <Button onClick={this.redirect} className="width100 loaf-button">{'Get Rising'}</Button>
+                    {!this.state.redirect ? null : <Redirect to='/add' />}
+                </div>
+            </div>
+        )
+    }
 }
 
 export default GetStarted;

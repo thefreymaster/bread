@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
 import './App.css';
 import 'antd/dist/antd.css';
 import { Layout } from 'antd';
-import { writeUserData, getFirebaseAuthObject } from './api/FirebaseAPI';
+import { writeUserData, getFirebaseAuthObject, readUserCompanyData, updateUserCompanyData, updateUserCompanyShareData } from './api/FirebaseAPI';
 
 import classnames from 'classnames';
 
@@ -15,6 +15,7 @@ import GetStarted from './components/GetStarted/GetStarted';
 import NoMatch from './components/NoMatch/NoMatch';
 import AddCompany from './components/Companies/AddCompany/AddCompany';
 import Login from './components/Login/Login';
+import Load from './components/Load';
 
 const firebase = getFirebaseAuthObject();
 console.log(firebase);
@@ -41,8 +42,15 @@ class App extends Component {
     let _trackedCompanies = that.state.trackedCompanies;
     for (let index of _trackedCompanies.keys()) {
       if (_trackedCompanies[index].symbol === this.state.activeTicker) {
-        _trackedCompanies[index].shares = { price: price, count: count, hasShares: true };
-        localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
+        if (localStorage.getItem('LOAF_USER')) {
+          _trackedCompanies[index].shares = { price: price, count: count, hasShares: true };
+          let userID = JSON.parse(localStorage.getItem('LOAF_USER')).uid;
+          updateUserCompanyShareData(userID, _trackedCompanies, index)
+        }
+        else {
+          _trackedCompanies[index].shares = { price: price, count: count, hasShares: true };
+          localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
+        }
         that.setState({
           trackedCompanies: _trackedCompanies
         })
@@ -53,9 +61,14 @@ class App extends Component {
   addCompanyToTrackedCompanies = (company) => {
     let _trackedCompanies = this.state.trackedCompanies;
     company['shares'] = { price: '', count: '', hasShares: false };
-    _trackedCompanies.push(company)
-    localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
-
+    _trackedCompanies.push(company);
+    if (localStorage.getItem('LOAF_USER')) {
+      let userID = JSON.parse(localStorage.getItem('LOAF_USER')).uid;
+      updateUserCompanyData(userID, _trackedCompanies)
+    }
+    else {
+      localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
+    }
     this.setState({
       trackedCompanies: _trackedCompanies
     })
@@ -65,8 +78,14 @@ class App extends Component {
     let _trackedCompanies = that.state.trackedCompanies;
     for (let [index, item] of _trackedCompanies.entries()) {
       if (item.symbol === symbol) {
-        _trackedCompanies.splice(index, 1)
-        localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
+        _trackedCompanies.splice(index, 1);
+        if (localStorage.getItem('LOAF_USER')) {
+          let userID = JSON.parse(localStorage.getItem('LOAF_USER')).uid;
+          updateUserCompanyData(userID, _trackedCompanies)
+        }
+        else {
+          localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
+        }
         that.setState({
           trackedCompanies: _trackedCompanies,
           activeTickerIndex: index === 0 ? index : index - 1
@@ -81,25 +100,16 @@ class App extends Component {
       }
     }
   }
-  findRoute() {
-    if (this.state.trackedCompanies.length === 0) {
-      return (
-        <AddCompany
-          setActiveTicker={this.setActiveTicker}
-          screen={this.state.screen} />
-      )
-    }
-    else {
-      return (
-        <Body
-          saveShares={this.saveShares}
-          screen={this.state.screen}
-          removeCompanyFromTrackedCompanies={this.removeCompanyFromTrackedCompanies}
-          trackedCompanies={this.state.trackedCompanies}
-          activeTicker={this.state.activeTicker}
-          activeTickerIndex={this.state.activeTickerIndex} />
-      )
-    }
+  fetchingTrackedCompanies = () => {
+    this.setState({
+      fetchingTrackedCompanies: true
+    })
+  }
+
+  fetchingTrackedCompaniesComplete = () => {
+    this.setState({
+      fetchingTrackedCompanies: false
+    })
   }
   constructor() {
     super()
@@ -111,104 +121,129 @@ class App extends Component {
         lg: false,
         xl: false,
       },
+      fetchingTrackedCompanies: false,
       activeTicker: '',
       trackedCompanies: []
     }
   }
 
   render() {
-    const Router = () => {
-      switch (this.state.trackedCompanies.length) {
-        case 0:
-          return <GetStarted />
-          break;
-        default:
-          return <Body
-            saveShares={this.saveShares}
-            screen={this.state.screen}
-            removeCompanyFromTrackedCompanies={this.removeCompanyFromTrackedCompanies}
-            trackedCompanies={this.state.trackedCompanies}
-            activeTicker={this.state.activeTicker}
-            activeTickerIndex={this.state.activeTickerIndex}
-          />
-          break;
-      }
-    }
-    return (
-      <BrowserRouter>
-        <main>
-          <Layout>
-            <Header style={{ marginBottom: 20 }}>
-              <Navigation title={'Loaf'} />
-            </Header>
-            <Layout style={{ minHeight: window.innerHeight - 84 }}>
-              <Sider className={classnames("left-sider", { "left-sider-small": this.state.screen.xs || this.state.screen.sm })} style={{ maxHeight: window.innerHeight - 84 }}>
-                <Companies screen={this.state.screen} activeTicker={this.state.activeTicker} trackedCompanies={this.state.trackedCompanies} setActiveTicker={this.setActiveTicker} />
-              </Sider>
-              <Content>
-                <Switch>
-                  <Route path="/login" render={props => <Login
-                    setActiveTicker={this.setActiveTicker}
-                    trackedCompanies={this.state.trackedCompanies}
-                    screen={this.state.screen} />
-                  } />
-                  <Route path="/add" render={props => <AddCompany
-                    setActiveTicker={this.setActiveTicker}
-                    trackedCompanies={this.state.trackedCompanies}
-                    screen={this.state.screen}
-                    firebase={firebase} />
-                  } />
-                  <Route path="/quote" render={props => <Body
-                    saveShares={this.saveShares}
-                    screen={this.state.screen}
-                    removeCompanyFromTrackedCompanies={this.removeCompanyFromTrackedCompanies}
-                    trackedCompanies={this.state.trackedCompanies}
-                    activeTicker={this.state.activeTicker}
-                    activeTickerIndex={this.state.activeTickerIndex}
-                  />} />
-                  <Route
-                    render={props =>
-                      this.state.trackedCompanies.length > 0 ? (
+    if (this.state.fetchingTrackedCompanies)
+      return <Load />;
+    else {
+      return (
+        <BrowserRouter>
+          <main>
+            <Layout>
+              <Header style={{ marginBottom: 20 }}>
+                <Navigation title={'Loaf'} />
+              </Header>
+              <Layout style={{ minHeight: window.innerHeight - 84 }}>
+                <Sider className={classnames("left-sider", { "left-sider-small": this.state.screen.xs || this.state.screen.sm })} style={{ maxHeight: window.innerHeight - 84 }}>
+                  {this.state.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false
+                    ?
+                    null
+                    :
+                    <Companies screen={this.state.screen} activeTicker={this.state.activeTicker} trackedCompanies={this.state.trackedCompanies} setActiveTicker={this.setActiveTicker} />
+                  }
+                </Sider>
+                <Content>
+                  <Switch>
+                    <Route path="/login" render={props =>
+                      localStorage.getItem('LOAF_USER')
+                        ?
                         <Redirect
-                        to={{
-                          pathname: "/quote",
-                          state: { from: props.location }
-                        }}
-                      />
-                      ) : (
-                          <Redirect
-                            to={{
-                              pathname: "/add",
-                              state: { from: props.location }
-                            }}
-                          />
-                        )
-                    }
-                  />
-                </Switch>
+                          to={'/quote'}
+                        />
+                        :
+                        <Login
+                          setActiveTicker={this.setActiveTicker}
+                          trackedCompanies={this.state.trackedCompanies}
+                          screen={this.state.screen} />
+                    } />
+                    <Route path="/add" render={props => <AddCompany
+                      setActiveTicker={this.setActiveTicker}
+                      trackedCompanies={this.state.trackedCompanies}
+                      screen={this.state.screen}
+                      firebase={firebase} />
+                    } />
+                    <Route path="/rise" render={props => <GetStarted />
+                    } />
+                    <Route path="/quote" render={props =>
+                      this.state.trackedCompanies.length === 0
+                        ?
+                        <Redirect
+                          to={'/add'}
+                        />
+                        :
+                        <Body
+                          saveShares={this.saveShares}
+                          screen={this.state.screen}
+                          removeCompanyFromTrackedCompanies={this.removeCompanyFromTrackedCompanies}
+                          trackedCompanies={this.state.trackedCompanies}
+                          activeTicker={this.state.activeTicker}
+                          activeTickerIndex={this.state.activeTickerIndex}
+                        />}
+                    />
+                    <Route path="/" render={props =>
+                      this.state.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
+                        ?
+                        <Redirect
+                          to={'/rise'}
+                        />
+                        :
+                        <Redirect
+                          to={'/quote'}
+                        />}
+                    />
 
-                {/* <Router /> */}
-              </Content>
-              {
-                this.state.screen.lg || this.state.screen.xl ?
-                  <Sider className="right-sider padding10">
-                    <CompanyStatistics activeTicker={this.state.activeTicker} />
-                  </Sider>
-                  :
-                  null
-              }
+                  </Switch>
 
+                  {/* <Router /> */}
+                </Content>
+                {
+                  this.state.screen.lg || this.state.screen.xl ?
+                    <Sider className="right-sider padding10">
+                      <CompanyStatistics activeTicker={this.state.activeTicker} />
+                    </Sider>
+                    :
+                    null
+                }
+
+              </Layout>
             </Layout>
-          </Layout>
-        </main>
-      </BrowserRouter>
+          </main>
+        </BrowserRouter>
 
-    );
+      );
+    }
+
+
 
   }
 
   componentDidMount() {
-    if (localStorage.getItem("trackedCompanies")) {
+    if (localStorage.getItem('LOAF_USER')) {
+      this.fetchingTrackedCompanies();
+      let userID = JSON.parse(localStorage.getItem('LOAF_USER')).uid;
+      let _trackedCompanies = readUserCompanyData(userID);
+      _trackedCompanies = _trackedCompanies.then((companies) => {
+        if (companies) {
+          companies.sort(function (a, b) {
+            if (a.symbol < b.symbol) { return -1; }
+            if (a.symbol > b.symbol) { return 1; }
+            return 0;
+          })
+          this.setState({
+            trackedCompanies: companies,
+            fetchingTrackedCompanies: false,
+          }, this.setActiveTicker(companies[0].symbol, companies[0], false))
+        }
+        this.fetchingTrackedCompaniesComplete();
+      });
+    }
+    else if (localStorage.getItem("trackedCompanies")) {
+      this.fetchingTrackedCompanies();
       let _trackedCompanies = JSON.parse(localStorage.getItem("trackedCompanies"));
       _trackedCompanies.sort(function (a, b) {
         if (a.symbol < b.symbol) { return -1; }
@@ -217,7 +252,8 @@ class App extends Component {
       })
 
       this.setState({
-        trackedCompanies: _trackedCompanies
+        trackedCompanies: _trackedCompanies,
+        fetchingTrackedCompanies: false,
       }, this.setActiveTicker(_trackedCompanies[0].symbol, _trackedCompanies[0], false))
     }
     this.checkDeviceSize();
