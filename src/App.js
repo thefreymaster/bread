@@ -128,7 +128,7 @@ class App extends Component {
   }
 
   render() {
-    if (this.state.fetchingTrackedCompanies)
+    if (this.state.fetchingTrackedCompanies )
       return <Load />;
     else {
       return (
@@ -149,6 +149,13 @@ class App extends Component {
                 </Sider>
                 <Content>
                   <Switch>
+
+                    <Route path="/add" render={props => <AddCompany
+                      setActiveTicker={this.setActiveTicker}
+                      trackedCompanies={this.state.trackedCompanies}
+                      screen={this.state.screen}
+                      firebase={firebase} />
+                    } />
                     <Route path="/login" render={props =>
                       localStorage.getItem('LOAF_USER')
                         ?
@@ -161,20 +168,16 @@ class App extends Component {
                           trackedCompanies={this.state.trackedCompanies}
                           screen={this.state.screen} />
                     } />
-                    <Route path="/add" render={props => <AddCompany
-                      setActiveTicker={this.setActiveTicker}
-                      trackedCompanies={this.state.trackedCompanies}
-                      screen={this.state.screen}
-                      firebase={firebase} />
-                    } />
                     <Route path="/rise" render={props => <GetStarted />
                     } />
                     <Route path="/quote" render={props =>
-                      this.state.trackedCompanies.length === 0
+                        this.state.trackedCompanies.length === 0
                         ?
-                        <Redirect
-                          to={'/add'}
-                        />
+                        <AddCompany
+                        setActiveTicker={this.setActiveTicker}
+                        trackedCompanies={this.state.trackedCompanies}
+                        screen={this.state.screen}
+                        firebase={firebase} />
                         :
                         <Body
                           saveShares={this.saveShares}
@@ -203,7 +206,7 @@ class App extends Component {
                 </Content>
                 {
                   this.state.screen.lg || this.state.screen.xl ?
-                    <Sider className="right-sider padding10">
+                    <Sider className="right-sider paddingLeft10 paddingRight10">
                       <CompanyStatistics activeTicker={this.state.activeTicker} />
                     </Sider>
                     :

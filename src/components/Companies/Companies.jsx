@@ -132,14 +132,14 @@ class Companies extends Component {
                                         <Metric
                                             fontFamily={'Open Sans'}
                                             fontWeight={900}
-                                            titleFontSize={18}
+                                            titleFontSize={14}
                                             title={company.symbol}
                                             center={this.props.screen.xs || this.props.screen.sm ? true : false}
                                         />
                                         <Metric
                                             fontFamily={'Open Sans'}
-                                            fontWeight={900}
-                                            titleFontSize={14}
+                                            fontWeight={600}
+                                            titleFontSize={12}
                                             color={!this.state.quickQuotes ? null : this.getColor(company)}
                                             title={this.props.screen.xs || this.props.screen.sm || !this.state.quickQuotes ? null : this.getPercentAndPrice(company)}
                                             labelFontSize={11}

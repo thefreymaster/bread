@@ -160,7 +160,7 @@ class CompanyStatistics extends Component {
                                     suffix={item.suffix}
                                     prefix={item.prefix}
                                     decimals={item.decimals}
-                                    titleFontSize={18}
+                                    titleFontSize={14}
                                     title={item.title}
                                     labelFontSize={11}
                                     label={item.label} />
