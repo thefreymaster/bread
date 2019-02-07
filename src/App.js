@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
 import './App.css';
 import 'antd/dist/antd.css';
@@ -16,6 +16,7 @@ import NoMatch from './components/NoMatch/NoMatch';
 import AddCompany from './components/Companies/AddCompany/AddCompany';
 import Login from './components/Login/Login';
 import Load from './components/Load';
+import Metric from './components/Body/Metric';
 
 const firebase = getFirebaseAuthObject();
 console.log(firebase);
@@ -128,7 +129,7 @@ class App extends Component {
   }
 
   render() {
-    if (this.state.fetchingTrackedCompanies )
+    if (this.state.fetchingTrackedCompanies)
       return <Load />;
     else {
       return (
@@ -139,80 +140,95 @@ class App extends Component {
                 <Navigation title={'Loaf'} />
               </Header>
               <Layout style={{ minHeight: window.innerHeight - 84 }}>
-                <Sider className={classnames("left-sider", { "left-sider-small": this.state.screen.xs || this.state.screen.sm })} style={{ maxHeight: window.innerHeight - 84 }}>
-                  {this.state.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false
-                    ?
-                    null
-                    :
-                    <Companies screen={this.state.screen} activeTicker={this.state.activeTicker} trackedCompanies={this.state.trackedCompanies} setActiveTicker={this.setActiveTicker} />
-                  }
-                </Sider>
-                <Content>
-                  <Switch>
-
-                    <Route path="/add" render={props => <AddCompany
-                      setActiveTicker={this.setActiveTicker}
-                      trackedCompanies={this.state.trackedCompanies}
-                      screen={this.state.screen}
-                      firebase={firebase} />
-                    } />
-                    <Route path="/login" render={props =>
-                      localStorage.getItem('LOAF_USER')
+                {this.state.screen.xs || this.state.screen.sm
+                  ?
+                  <div className={'flex flex-center'} style={{height: window.innerHeight-84}}>
+                    <Metric
+                      fontWeight={500}
+                      titleFontSize={24}
+                      title={'Loaf for mobile'}
+                      labelFontSize={12}
+                      label={"Looks like you're on a mobile device, the mobile experience isn't quite ready yet.  Please check back soon."}
+                      center={true}
+                    />
+                  </div>
+                  :
+                  <Fragment>
+                    <Sider className={classnames("left-sider", { "left-sider-small": this.state.screen.xs || this.state.screen.sm })} style={{ maxHeight: window.innerHeight - 84 }}>
+                      {this.state.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false
                         ?
-                        <Redirect
-                          to={'/quote'}
-                        />
+                        null
                         :
-                        <Login
+                        <Companies screen={this.state.screen} activeTicker={this.state.activeTicker} trackedCompanies={this.state.trackedCompanies} setActiveTicker={this.setActiveTicker} />
+                      }
+                    </Sider>
+                    <Content>
+                      <Switch>
+
+                        <Route path="/add" render={props => <AddCompany
                           setActiveTicker={this.setActiveTicker}
                           trackedCompanies={this.state.trackedCompanies}
-                          screen={this.state.screen} />
-                    } />
-                    <Route path="/rise" render={props => <GetStarted />
-                    } />
-                    <Route path="/quote" render={props =>
-                        this.state.trackedCompanies.length === 0
-                        ?
-                        <AddCompany
-                        setActiveTicker={this.setActiveTicker}
-                        trackedCompanies={this.state.trackedCompanies}
-                        screen={this.state.screen}
-                        firebase={firebase} />
-                        :
-                        <Body
-                          saveShares={this.saveShares}
                           screen={this.state.screen}
-                          removeCompanyFromTrackedCompanies={this.removeCompanyFromTrackedCompanies}
-                          trackedCompanies={this.state.trackedCompanies}
-                          activeTicker={this.state.activeTicker}
-                          activeTickerIndex={this.state.activeTickerIndex}
-                        />}
-                    />
-                    <Route path="/" render={props =>
-                      this.state.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
-                        ?
-                        <Redirect
-                          to={'/rise'}
+                          firebase={firebase} />
+                        } />
+                        <Route path="/login" render={props =>
+                          localStorage.getItem('LOAF_USER')
+                            ?
+                            <Redirect
+                              to={'/quote'}
+                            />
+                            :
+                            <Login
+                              setActiveTicker={this.setActiveTicker}
+                              trackedCompanies={this.state.trackedCompanies}
+                              screen={this.state.screen} />
+                        } />
+                        <Route path="/rise" render={props => <GetStarted />
+                        } />
+                        <Route path="/quote" render={props =>
+                          this.state.trackedCompanies.length === 0
+                            ?
+                            <AddCompany
+                              setActiveTicker={this.setActiveTicker}
+                              trackedCompanies={this.state.trackedCompanies}
+                              screen={this.state.screen}
+                              firebase={firebase} />
+                            :
+                            <Body
+                              saveShares={this.saveShares}
+                              screen={this.state.screen}
+                              removeCompanyFromTrackedCompanies={this.removeCompanyFromTrackedCompanies}
+                              trackedCompanies={this.state.trackedCompanies}
+                              activeTicker={this.state.activeTicker}
+                              activeTickerIndex={this.state.activeTickerIndex}
+                            />}
                         />
+                        <Route path="/" render={props =>
+                          this.state.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
+                            ?
+                            <Redirect
+                              to={'/rise'}
+                            />
+                            :
+                            <Redirect
+                              to={'/quote'}
+                            />}
+                        />
+
+                      </Switch>
+
+                      {/* <Router /> */}
+                    </Content>
+                    {
+                      this.state.screen.lg || this.state.screen.xl ?
+                        <Sider className="right-sider paddingLeft10 paddingRight10">
+                          <CompanyStatistics activeTicker={this.state.activeTicker} />
+                        </Sider>
                         :
-                        <Redirect
-                          to={'/quote'}
-                        />}
-                    />
-
-                  </Switch>
-
-                  {/* <Router /> */}
-                </Content>
-                {
-                  this.state.screen.lg || this.state.screen.xl ?
-                    <Sider className="right-sider paddingLeft10 paddingRight10">
-                      <CompanyStatistics activeTicker={this.state.activeTicker} />
-                    </Sider>
-                    :
-                    null
+                        null
+                    }
+                  </Fragment>
                 }
-
               </Layout>
             </Layout>
           </main>
