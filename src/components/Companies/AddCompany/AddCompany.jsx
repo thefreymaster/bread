@@ -4,6 +4,7 @@ import { getAllSymbols } from '../../../api/SymbolsAPI';
 import { Input } from 'antd';
 import Metric from '../../Body/Metric';
 import SearchedCompanies from '../AddCompany/SearchedCompanies';
+import classnames from 'classnames';
 const Search = Input.Search;
 
 class AddCompany extends Component {
@@ -53,6 +54,7 @@ class AddCompany extends Component {
     render() {
         const inline = {
             addcompany: {
+                height: window.innerHeight - 84,
                 left: this.props.screen.xs || this.props.screen.sm ? 100 : 200,
             }
         }
@@ -60,17 +62,18 @@ class AddCompany extends Component {
             <div style={inline.addcompany}>
                 <Metric
                     fontWeight={500}
-                    titleFontSize={54}
+                    titleFontSize={36}
                     title={'Find a Company'}
-                    labelFontSize={18}
+                    labelFontSize={12}
                     label={'Search by the company name, or the company symbol'}
                     center={true}
                 />
-                <div className="padding10 width-40 flex flex-center-center margin-auto">
+                <div className={classnames("padding10 flex margin-auto", {'width-40': this.props.screen.md || this.props.screen.lg || this.props.screen.xl, 'width-100': this.props.screen.xs || this.props.screen.sm})}>
                     <Search
                         addonBefore={this.state.symbolsFetched ? null : <Icon type="loading" />}
                         disabled={!this.state.symbolsFetched}
                         autoFocus
+                        size="large"
                         placeholder="Search"
                         onKeyUp={e => this.search(e)}
                         style={{ width: '100%' }}

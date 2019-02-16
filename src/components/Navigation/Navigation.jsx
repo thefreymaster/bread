@@ -31,7 +31,7 @@ class Navigation extends Component {
                                 fontWeight={500}
                                 titleFontSize={14}
                                 fontFamily={'Open Sans'}
-                                title={'Hi there, ' + JSON.parse(localStorage.getItem('LOAF_USER')).displayName}
+                                title={this.props.screen.xs || this.props.screen.sm ? null : 'Hi there, ' + JSON.parse(localStorage.getItem('LOAF_USER')).displayName}
                                 center={true}
                             />
                             <Button onClick={signOutUser} className={'loaf-button open-sans'} style={{ marginLeft: 10 }} type="default" shape="round" size={'lg'}>Sign Out</Button>

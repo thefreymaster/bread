@@ -33,7 +33,7 @@ class GetStarted extends Component {
                     label={'Track stocks, find trends, rise above the grain'}
                     center={true}
                 />
-                <div className='padding10 width-40'>
+                <div className='padding10 width-60'>
                     <Button onClick={this.redirect} className="width100 loaf-button">{'Get Rising'}</Button>
                     {!this.state.redirect ? null : <Redirect to='/add' />}
                 </div>

@@ -28,12 +28,12 @@ class Loaf extends Component {
                         <YourShares index={index} count={count} price={price} trackedCompanies={this.props.trackedCompanies} saveShares={this.props.saveShares} ticker={this.props.activeTicker} userHasShares={userHasShares} />
                     </div>
                     <div className="flex flex-row">
-                        <LineChart ticker={this.props.activeTicker} timeframe={'1d'} interval={10} title='1 Day' />
-                        <LineChart ticker={this.props.activeTicker} timeframe={'6m'} interval={2} title='6 Month' />
+                        <LineChart width={'50%'} ticker={this.props.activeTicker} timeframe={'1d'} interval={10} title='1 Day' />
+                        <LineChart width={'50%'} ticker={this.props.activeTicker} timeframe={'6m'} interval={2} title='6 Month' />
                     </div>
                     <div className="flex flex-row">
-                        <LineChart ticker={this.props.activeTicker} timeframe={'1y'} interval={5} title='1 Year' />
-                        <LineChart ticker={this.props.activeTicker} timeframe={'5y'} interval={10} title='5 Year' />
+                        <LineChart width={'50%'} ticker={this.props.activeTicker} timeframe={'1y'} interval={5} title='1 Year' />
+                        <LineChart width={'50%'} ticker={this.props.activeTicker} timeframe={'5y'} interval={10} title='5 Year' />
                     </div>
                 </div>
             )

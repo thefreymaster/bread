@@ -16,17 +16,18 @@ class Login extends Component {
     render() {
         const inline = {
             addcompany: {
+                height: window.innerHeight - 84,
                 left: this.props.screen.xs || this.props.screen.sm ? 100 : 200,
             }
         }
         const trackedCompanies = this.props.trackedCompanies;
         return (
-            <div style={inline.addcompany}>
+            <div style={inline.addcompany} className="flex flex-center flex-column">
                 <Metric
                     fontWeight={500}
-                    titleFontSize={54}
+                    titleFontSize={36}
                     title={'Sign / Register'}
-                    labelFontSize={18}
+                    labelFontSize={12}
                     label={'Save your tracked companies for good by creating an account.'}
                     center={true}
                 />
@@ -34,7 +35,7 @@ class Login extends Component {
                     ?
                     null
                     :
-                    <div className='padding10 width-40 flex flex-center margin-auto'>
+                    <div className='padding10 width-60 flex'>
                         <Button onClick={() => signinWithGoogle(trackedCompanies)} className="width100 loaf-button">{'Sign In with Google'}</Button>
                         {/* <Button onClick={() => readUserCompanyData(JSON.parse(localStorage.getItem('LOAF_USER')).uid)} className="width100 loaf-button">{this.props.screen.xs || this.props.screen.sm ? 'Track' : 'Read User Datas'}</Button> */}
                         {/* <Redirect to="/quote" /> */}

@@ -136,22 +136,60 @@ class App extends Component {
         <BrowserRouter>
           <main>
             <Layout>
-              <Header style={{ marginBottom: 20 }}>
-                <Navigation title={'Loaf'} />
+              <Header style={{ marginBottom: this.state.screen.xs || this.state.screen.sm ? 0 : 20 }}>
+                <Navigation title={'Loaf'} screen={this.state.screen} />
               </Header>
               <Layout style={{ minHeight: window.innerHeight - 84 }}>
                 {this.state.screen.xs || this.state.screen.sm
                   ?
-                  <div className={'flex flex-center'} style={{height: window.innerHeight-84}}>
-                    <Metric
-                      fontWeight={500}
-                      titleFontSize={24}
-                      title={'Loaf for mobile'}
-                      labelFontSize={12}
-                      label={"Looks like you're on a mobile device, the mobile experience isn't quite ready yet.  Please check back soon."}
-                      center={true}
+                  <Switch>
+
+                    <Route path="/add" render={props => <AddCompany
+                      setActiveTicker={this.setActiveTicker}
+                      trackedCompanies={this.state.trackedCompanies}
+                      screen={this.state.screen}
+                      firebase={firebase} />
+                    } />
+                    <Route path="/login" render={props =>
+                      localStorage.getItem('LOAF_USER')
+                        ?
+                        <Redirect
+                          to={'/quote'}
+                        />
+                        :
+                        <Login
+                          setActiveTicker={this.setActiveTicker}
+                          trackedCompanies={this.state.trackedCompanies}
+                          screen={this.state.screen} />
+                    } />
+                    <Route path="/rise" render={props => <GetStarted />
+                    } />
+                    <Route path="/quote" render={props =>
+                      this.state.trackedCompanies.length === 0
+                        ?
+                        <AddCompany
+                          setActiveTicker={this.setActiveTicker}
+                          trackedCompanies={this.state.trackedCompanies}
+                          screen={this.state.screen}
+                          firebase={firebase} />
+                        :
+                        <div className={'flex flex-center'} style={{ height: window.innerHeight - 84 }}>
+                          <Companies screen={this.state.screen} activeTicker={this.state.activeTicker} trackedCompanies={this.state.trackedCompanies} setActiveTicker={this.setActiveTicker} />
+                        </div>}
                     />
-                  </div>
+                    <Route path="/" render={props =>
+                      this.state.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
+                        ?
+                        <Redirect
+                          to={'/rise'}
+                        />
+                        :
+                        <Redirect
+                          to={'/quote'}
+                        />}
+                    />
+
+                  </Switch>
                   :
                   <Fragment>
                     <Sider className={classnames("left-sider", { "left-sider-small": this.state.screen.xs || this.state.screen.sm })} style={{ maxHeight: window.innerHeight - 84 }}>
@@ -216,8 +254,6 @@ class App extends Component {
                         />
 
                       </Switch>
-
-                      {/* <Router /> */}
                     </Content>
                     {
                       this.state.screen.lg || this.state.screen.xl ?
