@@ -12,7 +12,9 @@ class Navigation extends Component {
     render() {
         return (
             <div className="flex flex-row flex-center-start">
-                <div>{this.props.title}</div>
+                <Link to="/quote">
+                    <div>{this.props.title}</div>
+                </Link>
                 <div className='flex-grow'></div>
                 {
                     localStorage.getItem('LOAF_USER') === null

@@ -131,7 +131,7 @@ class Companies extends Component {
 
     render() {
         return (
-            <div style={{ maxHeight: window.innerHeight - 84, overflowY: 'scroll', minWidth: '100%' }}>
+            <div className='webkit-scroll' style={{ maxHeight: window.innerHeight - 84, overflowY: 'scroll', minWidth: '100%' }}>
                 {
                     <Fragment>
                         {Object.keys(this.props.trackedCompanies).map((index) => {

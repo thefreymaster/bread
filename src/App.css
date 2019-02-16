@@ -39,7 +39,7 @@
     transition: box-shadow 350ms ease-in-out;
 }
 .box-shadow-bottom{
-    box-shadow: 0px 2px 8px 0 #00000024;
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.25);
 }
 .margin-auto{
     margin: auto;
@@ -155,4 +155,8 @@
 .add-button-button-desktop{
     border-top-right-radius: 5px;
     border-right: 2px solid #eeeeee;
+}
+.webkit-scroll{
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
 }
