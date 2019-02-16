@@ -13,18 +13,45 @@
 .ant-layout-footer{
     background-color: white !important;
 }
-.left-sider{
-    box-shadow: inset -2px 0px 0px 0 #72727224;
+
+.left-sider-small{
+    max-width: 100px !important;
+    min-width: 100px !important;
+    width: 100px !important;
 }
+
 .right-sider{
     box-shadow: inset 2px 0px 0px 0 #72727224;
 }
 .width100{
     min-width: 100%;
 }
-.loaf-button{
-    background-color: #4d4d4d;
-    color: white;
+.active-loaf-button{
+    box-shadow: 0px 0px 4px 0 #00000024 !important;
+    background-color: #fafafa;
+    transition: box-shadow 350ms ease-in-out;
+    border-left: 4px solid #c3c3c3;
+}
+
+.loaf-button-hover-action:hover{
+    cursor: pointer;
+    background-color: #fafafa;
+    transition: box-shadow 350ms ease-in-out;
+}
+.box-shadow-bottom{
+    box-shadow: 0px 2px 8px 0 #00000024;
+}
+.margin-auto{
+    margin: auto;
+}
+.margin10{
+    margin: 10px;
+}
+.companies-button{
+    transition: box-shadow 350ms ease-in-out;
+}
+.hide{
+    display: none;
 }
 .flex{
     display: flex
@@ -34,6 +61,28 @@
 }
 .flex-column{
     flex-direction: column;
+}
+.flex-grow{
+    flex-grow: 1;
+}
+.flex-center{
+    align-items: center;
+    justify-content: center;
+}
+.flex-center-start{
+    align-items: center;
+    justify-content: flex-start;
+}
+.flex-center-end{
+    align-items: center;
+    justify-content: flex-end;
+}
+.height-100{
+    min-height: 100%;
+}
+.width-33{
+    max-width: 33%;
+    min-width: 33%;
 }
 .width-40{
     max-width: 40%;
@@ -46,4 +95,58 @@
 .width-60{
     max-width: 60%;
     min-width: 60%;
+}
+.ant-list-item{
+    padding: 20px 0 !important;
+}
+.ant-layout-content{
+    overflow: hidden !important;
+}
+.absolute{
+    position: absolute;
+}
+.abril{
+    font-family: 'Abril Fatface', cursive;
+}
+.open-sans{
+    font-family: 'Open Sans', sans-serif !important;
+}
+.grey{
+    color: #80808069;
+}
+.size20{
+    font-size: 20px;
+}
+.show-zoom-animation{
+    animation: show 0.5s 1;
+    -webkit-animation: show 0.5s 1;
+    animation-fill-mode: forwards;
+  }
+  @keyframes show{
+    from {opacity :0; transform: scale(1.1);}
+    to {opacity :1;transform: scale(1.0);}
+  }
+.marginBottom54{
+    margin-bottom: 54px;
+}
+  .padding10{
+      padding: 10px;
+  }
+  .paddingTop10{
+      padding-top: 10px;
+  }
+  .paddingButtom10 {
+      padding-bottom: 10px;
+  }
+  .paddingLeft10 {
+    padding-left: 10px;
+}
+.paddingRight10 {
+    padding-right: 10px;
+}
+.add-new-button{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    min-width: 100%;
 }

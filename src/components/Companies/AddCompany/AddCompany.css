@@ -1,0 +1,11 @@
+.add-company-component{
+    z-index: 1;
+    position: absolute;
+    width: 250px;
+    background-color: white;
+    border-top: 2px solid #ebebeb;
+    height: 450px;
+    border-right: 2px solid #ebebeb;
+    border-bottom: 2px solid #ebebeb;
+    top: 20px;
+}
