@@ -13,9 +13,7 @@
 .ant-layout-footer{
     background-color: white !important;
 }
-.left-sider{
-    box-shadow: inset -2px 0px 0px 0 #72727224;
-}
+
 .left-sider-small{
     max-width: 100px !important;
     min-width: 100px !important;
@@ -29,19 +27,28 @@
     min-width: 100%;
 }
 .active-loaf-button{
-    background-color: #bcb8b824;
+    box-shadow: 0px 0px 4px 0 #00000024 !important;
+    background-color: #fafafa;
+    transition: box-shadow 350ms ease-in-out;
+    border-left: 4px solid #c3c3c3;
 }
 
 .loaf-button-hover-action:hover{
     cursor: pointer;
-    background-color: #72727224;
-    transition: background-color 100ms ease-in-out;
+    background-color: #fafafa;
+    transition: box-shadow 350ms ease-in-out;
 }
 .box-shadow-bottom{
-    box-shadow: inset 0px -1px 0px 0 #72727224;
+    box-shadow: 0px 2px 8px 0 #00000024;
 }
 .margin-auto{
     margin: auto;
+}
+.margin10{
+    margin: 10px;
+}
+.companies-button{
+    transition: box-shadow 350ms ease-in-out;
 }
 .hide{
     display: none;

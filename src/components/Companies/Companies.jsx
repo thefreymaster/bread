@@ -128,7 +128,9 @@ class Companies extends Component {
                             const that = this;
                             return (
                                 <Link to="/quote">
-                                    <div className={classnames('padding10 loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === that.props.activeTicker, 'box-shadow-bottom': that.props.trackedCompanies.length !== parseInt(index) + 1 })} onClick={() => { this.props.setActiveTicker(company.symbol, company, false, index); this.closeAddCompanySideBar() }}>
+                                    <div 
+                                        className={classnames('padding10 margin10 companies-button loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === that.props.activeTicker, 'box-shadow-bottom': that.props.trackedCompanies.length !== parseInt(index)})} 
+                                        onClick={() => { this.props.setActiveTicker(company.symbol, company, false, index); this.closeAddCompanySideBar() }}>
                                         <Metric
                                             fontFamily={'Open Sans'}
                                             fontWeight={900}

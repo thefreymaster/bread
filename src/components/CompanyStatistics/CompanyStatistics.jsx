@@ -4,28 +4,6 @@ import { List } from 'antd';
 import { getBatchData } from '../../api/StatsAPI';
 import { GREEN, RED } from '../../Constants';
 
-const data = [
-    {
-        title: '',
-        label: 'Latest Volume',
-    },
-    {
-        title: '',
-        label: 'Volume Change since last trading day',
-    },
-    {
-        title: '',
-        label: '52 Week High',
-    },
-    {
-        title: '',
-        label: '52 Week Low',
-    },
-    {
-        title: '',
-        label: 'Profit Margin',
-    },
-];
 
 class CompanyStatistics extends Component {
     constructor(props) {
@@ -42,16 +20,9 @@ class CompanyStatistics extends Component {
                     quote: response.quote,
                     data: [
                         {
-                            title: parseFloat(response.quote.latestVolume),
-                            label: 'Latest Volume',
-                            decimals: 0,
-                            suffix: '',
-                            prefix: '',
-                            duration: 1
-                        },
-                        {
                             title: parseFloat(response.quote.week52High).toFixed(2),
                             label: '52 Week High',
+                            color: response.quote.week52High > 0 ? GREEN : RED,
                             decimals: 2,
                             suffix: '',
                             prefix: '$',
@@ -59,10 +30,20 @@ class CompanyStatistics extends Component {
                         },
                         {
                             title: parseFloat(response.quote.week52Low).toFixed(2),
+                            color: response.quote.week52Low > 0 ? GREEN : RED,
                             label: '52 Week Low',
                             decimals: 2,
                             suffix: '',
                             prefix: '$',
+                            duration: 1
+                        },
+                        {
+                            title: parseFloat(response.stats.week52change).toFixed(2),
+                            color: response.stats.week52change > 0 ? GREEN : RED,
+                            label: '52 Week Change',
+                            decimals: 2,
+                            suffix: '%',
+                            prefix: '',
                             duration: 1
                         },
                         {
@@ -71,13 +52,32 @@ class CompanyStatistics extends Component {
                             decimals: 2,
                             suffix: '%',
                             prefix: '',
+                            color: response.quote.ytdChange > 0 ? GREEN : RED,
                             duration: 1
                         },
                         {
                             title: parseFloat(response.stats.profitMargin).toFixed(2),
+                            color: response.stats.profitMargin > 0 ? GREEN : RED,
                             label: 'Profit Margin',
                             decimals: 2,
                             suffix: '%',
+                            prefix: '',
+                            duration: 1
+                        },
+                        {
+                            title: parseFloat(response.stats.priceToSales).toFixed(2),
+                            label: 'Price To Sales',
+                            color: response.stats.priceToSales > 0 ? GREEN : RED,
+                            decimals: 2,
+                            suffix: '%',
+                            prefix: '',
+                            duration: 1
+                        },
+                        {
+                            title: parseFloat(response.quote.latestVolume),
+                            label: 'Latest Volume',
+                            decimals: 0,
+                            suffix: '',
                             prefix: '',
                             duration: 1
                         },
@@ -97,16 +97,9 @@ class CompanyStatistics extends Component {
                     quote: response.quote,
                     data: [
                         {
-                            title: parseFloat(response.quote.latestVolume),
-                            label: 'Latest Volume',
-                            decimals: 0,
-                            suffix: '',
-                            prefix: '',
-                            duration: 1
-                        },
-                        {
                             title: parseFloat(response.quote.week52High).toFixed(2),
                             label: '52 Week High',
+                            color: response.quote.week52High > 0 ? GREEN : RED,
                             decimals: 2,
                             suffix: '',
                             prefix: '$',
@@ -114,10 +107,20 @@ class CompanyStatistics extends Component {
                         },
                         {
                             title: parseFloat(response.quote.week52Low).toFixed(2),
+                            color: response.quote.week52Low > 0 ? GREEN : RED,
                             label: '52 Week Low',
                             decimals: 2,
                             suffix: '',
                             prefix: '$',
+                            duration: 1
+                        },
+                        {
+                            title: parseFloat(response.stats.week52change).toFixed(2),
+                            color: response.stats.week52change > 0 ? GREEN : RED,
+                            label: '52 Week Change',
+                            decimals: 2,
+                            suffix: '%',
+                            prefix: '',
                             duration: 1
                         },
                         {
@@ -126,13 +129,32 @@ class CompanyStatistics extends Component {
                             decimals: 2,
                             suffix: '%',
                             prefix: '',
+                            color: response.quote.ytdChange > 0 ? GREEN : RED,
                             duration: 1
                         },
                         {
                             title: parseFloat(response.stats.profitMargin).toFixed(2),
+                            color: response.stats.profitMargin > 0 ? GREEN : RED,
                             label: 'Profit Margin',
                             decimals: 2,
                             suffix: '%',
+                            prefix: '',
+                            duration: 1
+                        },
+                        {
+                            title: parseFloat(response.stats.priceToSales).toFixed(2),
+                            label: 'Price To Sales',
+                            color: response.stats.priceToSales > 0 ? GREEN : RED,
+                            decimals: 2,
+                            suffix: '%',
+                            prefix: '',
+                            duration: 1
+                        },
+                        {
+                            title: parseFloat(response.quote.latestVolume),
+                            label: 'Latest Volume',
+                            decimals: 0,
+                            suffix: '',
                             prefix: '',
                             duration: 1
                         },
@@ -154,6 +176,7 @@ class CompanyStatistics extends Component {
                                 <Metric
                                     number
                                     fontFamily={'Open Sans'}
+                                    color={item.color}
                                     fontWeight={900}
                                     paddingleft
                                     duration={item.duration}
