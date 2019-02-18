@@ -36,7 +36,7 @@ class Login extends Component {
                     null
                     :
                     <div className='padding10 width-60 flex'>
-                        <Button onClick={() => signinWithGoogle(trackedCompanies)} className="width100 loaf-button">{'Sign In with Google'}</Button>
+                        <Button  style={{borderRadius: 50}} onClick={() => signinWithGoogle(trackedCompanies)} className="width100 loaf-button">{'Sign In with Google'}</Button>
                         {/* <Button onClick={() => readUserCompanyData(JSON.parse(localStorage.getItem('LOAF_USER')).uid)} className="width100 loaf-button">{this.props.screen.xs || this.props.screen.sm ? 'Track' : 'Read User Datas'}</Button> */}
                         {/* <Redirect to="/quote" /> */}
                     </div>

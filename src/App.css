@@ -19,6 +19,9 @@
     min-width: 100px !important;
     width: 100px !important;
 }
+.radius50{
+    border-radius: 50px;
+}
 
 .right-sider{
     box-shadow: inset 2px 0px 0px 0 #72727224;

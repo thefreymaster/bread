@@ -192,7 +192,7 @@ class App extends Component {
                   </Switch>
                   :
                   <Fragment>
-                    <Sider className={classnames("left-sider", { "left-sider-small": this.state.screen.xs || this.state.screen.sm })} style={{ maxHeight: window.innerHeight - 84 }}>
+                    <Sider className={classnames("", { "left-sider-small": this.state.screen.xs || this.state.screen.sm })} style={{ maxHeight: window.innerHeight - 84 }}>
                       {this.state.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false
                         ?
                         null

@@ -21,10 +21,10 @@ class Navigation extends Component {
                         ?
                         <Fragment>
                             <Link to="/login">
-                                <Button className={'loaf-button open-sans'} type="default" shape="round" icon="lock" size={'lg'}>Sign In</Button>
+                                <Button  style={{borderRadius: 50}} className={'loaf-button open-sans'} type="default" shape="round" icon="lock" size={'lg'}>Sign In</Button>
                             </Link>
                             <Link to="/login">
-                                <Button className={'loaf-button open-sans'} style={{ marginLeft: 10 }} type="default" shape="round" icon="user-add" size={'lg'}>Register</Button>
+                                <Button className={'loaf-button open-sans'} style={{ marginLeft: 10, borderRadius: 50 }} type="default" shape="round" icon="user-add" size={'lg'}>Register</Button>
                             </Link>
                         </Fragment>
                         :
@@ -36,7 +36,7 @@ class Navigation extends Component {
                                 title={this.props.screen.xs || this.props.screen.sm ? null : 'Hi there, ' + JSON.parse(localStorage.getItem('LOAF_USER')).displayName}
                                 center={true}
                             />
-                            <Button onClick={signOutUser} className={'loaf-button open-sans'} style={{ marginLeft: 10 }} type="default" shape="round" size={'lg'}>Sign Out</Button>
+                            <Button onClick={signOutUser} className={'loaf-button open-sans'} style={{ marginLeft: 10, borderRadius: 50 }} type="default" shape="round" size={'lg'}>Sign Out</Button>
                         </Fragment>
 
                 }
