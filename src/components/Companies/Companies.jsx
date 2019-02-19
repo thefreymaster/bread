@@ -8,7 +8,7 @@ import { getQuickQuotes } from '../../api/StatsAPI';
 import { Link } from "react-router-dom";
 import Metric from '../Body/Metric';
 import classnames from 'classnames';
-import { RED, GREEN } from '../../Constants';
+import { RED, GREEN, GREY } from '../../Constants';
 import LineChart from './../LineChart/LineChart';
 import { Badge } from 'antd';
 
@@ -28,8 +28,11 @@ class Companies extends Component {
             if (this.state.quickQuotes[company.symbol].quote.changePercent > 0) {
                 return GREEN;
             }
-            else {
+            else if (this.state.quickQuotes[company.symbol].quote.changePercent < 0) {
                 return RED;
+            }
+            else{
+                return GREY;
             }
         }
     }

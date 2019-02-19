@@ -2,10 +2,23 @@ import React, { Component } from 'react';
 import Metric from "../Metric";
 import { getBatchData } from './../../../api/StatsAPI';
 import Loader from 'react-loader-spinner'
-import { GREEN, RED } from '../../../Constants';
+import { GREEN, RED, GREY } from '../../../Constants';
 import { Button } from '../../../../node_modules/antd';
 
 class Today extends Component {
+    getColor(percept) {
+        if (percept) {
+            if (percept > 0) {
+                return GREEN;
+            }
+            else if (percept < 0) {
+                return RED;
+            }
+            else{
+                return GREY;
+            }
+        }
+    }
     constructor(props) {
         super(props)
         this.state = {}
@@ -69,14 +82,14 @@ class Today extends Component {
                             duration={1}
                             fontFamily={'Open Sans'}
                             title={parseFloat(this.state.quote.changePercent * 100).toFixed(2)}
-                            color={this.state.quote.changePercent > 0 ? GREEN : RED}
+                            color={this.getColor(parseFloat(this.state.quote.changePercent))}
                             label="Percent Change Today" />
                     </div>
                     {
                         this.props.trackedCompanies.length !== 1
                             ?
                             <div className="paddingTop10 flex flex-center-end ">
-                                <Button onClick={() => this.props.removeCompanyFromTrackedCompanies(this.props.ticker)} className={'width-50'}>Remove Company</Button>
+                                <Button style={{borderRadius: 50}} onClick={() => this.props.removeCompanyFromTrackedCompanies(this.props.ticker)} className={'width-50'}>Remove Company</Button>
                             </div>
                             :
                             null

@@ -64,7 +64,7 @@ class YourShares extends Component {
                             <Metric titleFontSize={36} title="Your Shares" labelFontSize={21} label={this.props.count + " Shares"} />
                         </div>
                         <div className='width-40 flex-center flex'>
-                            <Button onClick={this.showAddShares} className="width100 loaf-button">Add Shares</Button>
+                            <Button style={{borderRadius: 50}} onClick={this.showAddShares} className="width100 loaf-button">Add Shares</Button>
                         </div>
                     </div>
                     <div className='flex-grow'></div>

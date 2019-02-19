@@ -2,16 +2,21 @@ import React, { Component } from 'react';
 import { ResponsiveLine } from '@nivo/line'
 import { getChartData } from '../../api/ChartAPI';
 import Loader from 'react-loader-spinner'
-import { GREEN, RED } from './../../Constants';
+import { GREEN, RED, GREY } from './../../Constants';
 
 
 class LineChart extends Component {
     determineGraphColor = (data) => {
-        if (data[0].data[data[0].data.length - 1].changeOverTime > 0) {
-            return GREEN;
+        if (data[0].data[data[0].data.length - 1]) {
+            if (data[0].data[data[0].data.length - 1].changeOverTime > 0) {
+                return GREEN;
+            }
+            else {
+                return RED;
+            }
         }
-        else {
-            return RED;
+        else{
+            return GREY;
         }
     }
     constructor(props) {
@@ -33,7 +38,7 @@ class LineChart extends Component {
         }
     }
     render() {
-        
+
         if (!this.state.data)
             return (
                 <div className="flex flex-row flex-center show-zoom-animation" style={{ height: 200, width: this.props.width }}>
@@ -47,7 +52,7 @@ class LineChart extends Component {
             )
         else {
             return (
-                <div className="flex flex-column flex-center-start show-zoom-animation" style={{ height: (window.innerHeight-84)*0.3, width: this.props.width }}>
+                <div className="flex flex-column flex-center-start show-zoom-animation" style={{ height: (window.innerHeight - 84) * 0.3, width: this.props.width }}>
                     <div className='absolute open-sans grey size20'>{this.props.title}</div>
                     <ResponsiveLine
                         data={this.state.data}
