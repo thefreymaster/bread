@@ -191,7 +191,7 @@ class Companies extends Component {
                 }
                 <Link to="/add">
                     <div className={classnames('padding10 add-new-button', { 'add-button-button-desktop': !this.props.screen.xs && !this.props.screen.sm })}>
-                        <Button onClick={this.openAddCompanySideBar} shape={"round"} size={'large'} style={{borderRadius: 50}} className="width100 radius50 loaf-button">{this.props.screen.xs || this.props.screen.sm ? 'Track' : 'Track New Company'}</Button>
+                        <Button onClick={this.openAddCompanySideBar} shape={"round"} size={'regular'} style={{borderRadius: 50}} className="width100 radius50 loaf-button">{this.props.screen.xs || this.props.screen.sm ? 'Track' : 'Track New Company'}</Button>
                     </div>
                 </Link>
             </div>

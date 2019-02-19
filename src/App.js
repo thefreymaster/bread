@@ -143,7 +143,6 @@ class App extends Component {
                 {this.state.screen.xs || this.state.screen.sm
                   ?
                   <Switch>
-
                     <Route path="/add" render={props => <AddCompany
                       setActiveTicker={this.setActiveTicker}
                       trackedCompanies={this.state.trackedCompanies}
@@ -192,7 +191,7 @@ class App extends Component {
                   </Switch>
                   :
                   <Fragment>
-                    <Sider className={classnames("left-sider", { "left-sider-small": this.state.screen.xs || this.state.screen.sm })} style={{ maxHeight: window.innerHeight - 84 }}>
+                    <Sider className={classnames("left-sider", { "left-sider-small": this.state.screen.xs || this.state.screen.sm, "left-sider-large": this.state.screen.md || this.state.screen.lg || this.state.screen.xl })} style={{ maxHeight: window.innerHeight - 84 }}>
                       {this.state.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false
                         ?
                         null

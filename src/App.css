@@ -19,6 +19,10 @@
     min-width: 100px !important;
     width: 100px !important;
 }
+.left-sider-large{
+    max-width: 250px !important;
+    min-width: 250px !important;
+    width: 250px !important;}
 .radius50{
     border-radius: 50px;
 }
