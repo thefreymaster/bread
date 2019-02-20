@@ -3,6 +3,7 @@ import { ResponsiveLine } from '@nivo/line'
 import { getChartData } from '../../api/ChartAPI';
 import Loader from 'react-loader-spinner'
 import { GREEN, RED, GREY } from './../../Constants';
+import Metric from './../Body/Metric';
 import classnames from 'classnames';
 import './LineChart.css';
 
@@ -16,8 +17,13 @@ class LineChart extends Component {
                 return RED;
             }
         }
-        else{
+        else {
             return GREY;
+        }
+    }
+    getGraphPercentChange = () => {
+        if(this.state.data[0].data[this.state.data[0].data.length - 1].changeOverTime){
+            return this.state.data[0].data[this.state.data[0].data.length - 1].changeOverTime.toFixed(2) * 100 + '%'
         }
     }
     constructor(props) {
@@ -53,8 +59,14 @@ class LineChart extends Component {
             )
         else {
             return (
-                <div className={classnames("flex flex-column flex-center-start show-zoom-animation", {'dashed-border-right': this.props.rightDivider})} style={{ height: (window.innerHeight - 84) * 0.3, width: this.props.width }}>
-                    <div className='absolute open-sans grey size20'>{this.props.title}</div>
+                <div className={classnames("flex flex-column flex-center-start show-zoom-animation", { 'dashed-border-right': this.props.rightDivider })} style={{ height: (window.innerHeight - 84) * 0.3, width: this.props.width }}>
+                    <div className='absolute'>
+                        <Metric fontFamily={'Open Sans'} titleFontSize={18} title={this.props.title} labelFontSize={14} center label={this.getGraphPercentChange()} />
+                    </div>
+                    {/* <div className='absolute open-sans grey size20'>{this.props.title}</div>
+                    <div className='absolute open-sans grey size20 line-graph-change'>{this.state.data[0].data[this.state.data[0].data.length - 1].changeOverTime.toFixed(4)*100}</div> */}
+
+
                     <ResponsiveLine
                         data={this.state.data}
                         margin={{

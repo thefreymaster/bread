@@ -193,8 +193,9 @@ class Companies extends Component {
                                             {!this.state.quickQuotes || (this.props.screen.xs || this.props.screen.sm) ? null 
                                             : 
                                             <div className={'flex flex-badge'}>
-                                                <ChangeBadge company={company} quote={this.state.quickQuotes[company.symbol].quote.latestPrice} />
-                                            </div>}
+                                                <ChangeBadge company={company} quote={this.state.quickQuotes[company.symbol] ? this.state.quickQuotes[company.symbol].quote.latestPrice : null} />
+                                            </div>
+                                            }
 
                                         </div>
 

@@ -1,10 +1,13 @@
 import React from 'react'
 import { Badge } from 'antd';
-import { RED, GREEN } from './../../Constants';
+import { RED, GREEN, GREY } from './../../Constants';
 import CompanyLogo from '../CompanyLogo/CompanyLogo';
 
 const determineColor = (shares, price, quote) => {
-    if((shares*quote)-(shares*price) > 0){
+    if((shares*quote)-(shares*price) === 0){
+        return GREY
+    }
+    else if((shares*quote)-(shares*price) > 0){
         return GREEN;
     }
     else{
@@ -12,11 +15,14 @@ const determineColor = (shares, price, quote) => {
     }
 }
 const determineText = (shares, price, quote) => {
-    if((shares*quote)-(shares*price) > 0){
-        return 'Gain';
+    if((shares*quote)-(shares*price) === 0){
+        return 'No Equity'
+    }
+    else if((shares*quote)-(shares*price) > 0){
+        return 'Equity Gain';
     }
     else{
-        return 'Loss';
+        return 'Equity Loss';
     }
 }
 
