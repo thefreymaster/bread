@@ -31,3 +31,9 @@
 .marginBottom10{
     margin-bottom: 10px;
 }
+.dashed-border-bottom{
+    border-bottom: 2px dashed #ebebeb
+}
+.dashed-border-top{
+    border-top: 2px dashed #ebebeb
+}

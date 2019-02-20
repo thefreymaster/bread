@@ -7,6 +7,8 @@ import { getAllSymbols } from '../../api/SymbolsAPI';
 import { getQuickQuotes } from '../../api/StatsAPI';
 import { Link } from "react-router-dom";
 import Metric from '../Body/Metric';
+import CompanyLogo from './../CompanyLogo/CompanyLogo';
+import ChangeBadge from '../ChangeBadge/ChangeBadge';
 import classnames from 'classnames';
 import { RED, GREEN, GREY } from '../../Constants';
 import LineChart from './../LineChart/LineChart';
@@ -31,7 +33,7 @@ class Companies extends Component {
             else if (this.state.quickQuotes[company.symbol].quote.changePercent < 0) {
                 return RED;
             }
-            else{
+            else {
                 return GREY;
             }
         }
@@ -145,43 +147,57 @@ class Companies extends Component {
                                     <div
                                         className={classnames('padding10 margin10 companies-button loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === that.props.activeTicker, 'box-shadow-bottom': that.props.trackedCompanies.length !== parseInt(index) })}
                                         onClick={() => { this.props.setActiveTicker(company.symbol, company, false, index); this.closeAddCompanySideBar() }}>
-                                        <Metric
-                                            fontFamily={'Open Sans'}
-                                            fontWeight={900}
-                                            titleFontSize={14}
-                                            title={company.symbol}
-                                            center={this.props.screen.xs || this.props.screen.sm ? true : false}
-                                        />
-                                        <Metric
-                                            fontFamily={'Open Sans'}
-                                            fontWeight={600}
-                                            titleFontSize={12}
-                                            color={!this.state.quickQuotes ? null : this.getColor(company)}
-                                            title={!this.state.quickQuotes ? null : this.getPercentAndPrice(company)}
-                                            labelFontSize={11}
-                                            label={company.name}
-                                            center={this.props.screen.xs || this.props.screen.sm ? true : false}
-                                        />
-                                        {
-                                            (this.props.screen.xs || this.props.screen.sm) && company.symbol.toUpperCase() === that.props.activeTicker
-                                                ?
-                                                <div className={'flex flex-column flex-center'}>
-                                                    <LineChart
-                                                        ticker={that.props.activeTicker}
-                                                        timeframe={'ytd'}
-                                                        interval={2}
-                                                        title='YTD'
-                                                        width={'100%'} />
-                                                        <div className={'flex flex-row'}>
-                                                            <Badge count={!this.state.quickQuotes ? null : this.getYTD(company)} style={{ backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset', margin: 5 }} />
-                                                            <Badge count={!this.state.quickQuotes ? null : this.get52WeekHigh(company)} style={{ backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset', margin: 5 }} />
-                                                            <Badge count={!this.state.quickQuotes ? null : this.get52WeekLow(company)} style={{ backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset', margin: 5 }} />
+                                        <div className={classnames({"flex flex-row": !this.props.screen.xs && !this.props.screen.sm})}>
+                                            {/* <div className={'flex flex-center'}>
+                                                <CompanyLogo symbol={company.symbol} />
+                                            </div> */}
+                                            <div className={'flex flex-column'}>
+                                                <Metric
+                                                    fontFamily={'Open Sans'}
+                                                    fontWeight={900}
+                                                    titleFontSize={14}
+                                                    title={company.symbol}
+                                                    center={this.props.screen.xs || this.props.screen.sm ? true : false}
+                                                />
+                                                <Metric
+                                                    fontFamily={'Open Sans'}
+                                                    fontWeight={600}
+                                                    titleFontSize={12}
+                                                    color={!this.state.quickQuotes ? null : this.getColor(company)}
+                                                    title={!this.state.quickQuotes ? null : this.getPercentAndPrice(company)}
+                                                    labelFontSize={11}
+                                                    label={company.name}
+                                                    center={this.props.screen.xs || this.props.screen.sm ? true : false}
+                                                />
+                                                {
+                                                    (this.props.screen.xs || this.props.screen.sm) && company.symbol.toUpperCase() === that.props.activeTicker
+                                                        ?
+                                                        <div className={'flex flex-column flex-center'}>
+                                                            <LineChart
+                                                                ticker={that.props.activeTicker}
+                                                                timeframe={'ytd'}
+                                                                interval={2}
+                                                                title='YTD'
+                                                                width={'100%'} />
+                                                            <div className={'flex flex-row'}>
+                                                                <Badge count={!this.state.quickQuotes ? null : this.getYTD(company)} style={{ backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset', margin: 5 }} />
+                                                                <Badge count={!this.state.quickQuotes ? null : this.get52WeekHigh(company)} style={{ backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset', margin: 5 }} />
+                                                                <Badge count={!this.state.quickQuotes ? null : this.get52WeekLow(company)} style={{ backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset', margin: 5 }} />
+                                                            </div>
+
                                                         </div>
-                                                    
-                                                </div>
-                                                :
-                                                null
-                                        }
+                                                        :
+                                                        null
+                                                }
+                                            </div>
+                                            {!this.state.quickQuotes || (this.props.screen.xs || this.props.screen.sm) ? null 
+                                            : 
+                                            <div className={'flex flex-badge'}>
+                                                <ChangeBadge company={company} quote={this.state.quickQuotes[company.symbol].quote.latestPrice} />
+                                            </div>}
+
+                                        </div>
+
                                     </div>
                                 </Link>
                             )
@@ -191,7 +207,7 @@ class Companies extends Component {
                 }
                 <Link to="/add">
                     <div className={classnames('padding10 add-new-button', { 'add-button-button-desktop': !this.props.screen.xs && !this.props.screen.sm })}>
-                        <Button onClick={this.openAddCompanySideBar} shape={"round"} size={'regular'} style={{borderRadius: 50}} className="width100 radius50 loaf-button">{this.props.screen.xs || this.props.screen.sm ? 'Track' : 'Track New Company'}</Button>
+                        <Button onClick={this.openAddCompanySideBar} shape={"round"} size={'regular'} style={{ borderRadius: 50 }} className="width100 radius50 loaf-button">{this.props.screen.xs || this.props.screen.sm ? 'Track' : 'Track New Company'}</Button>
                     </div>
                 </Link>
             </div>

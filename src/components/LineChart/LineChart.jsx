@@ -3,7 +3,8 @@ import { ResponsiveLine } from '@nivo/line'
 import { getChartData } from '../../api/ChartAPI';
 import Loader from 'react-loader-spinner'
 import { GREEN, RED, GREY } from './../../Constants';
-
+import classnames from 'classnames';
+import './LineChart.css';
 
 class LineChart extends Component {
     determineGraphColor = (data) => {
@@ -52,7 +53,7 @@ class LineChart extends Component {
             )
         else {
             return (
-                <div className="flex flex-column flex-center-start show-zoom-animation" style={{ height: (window.innerHeight - 84) * 0.3, width: this.props.width }}>
+                <div className={classnames("flex flex-column flex-center-start show-zoom-animation", {'dashed-border-right': this.props.rightDivider})} style={{ height: (window.innerHeight - 84) * 0.3, width: this.props.width }}>
                     <div className='absolute open-sans grey size20'>{this.props.title}</div>
                     <ResponsiveLine
                         data={this.state.data}
