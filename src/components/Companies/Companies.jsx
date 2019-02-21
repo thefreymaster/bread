@@ -15,7 +15,7 @@ import LineChart from './../LineChart/LineChart';
 import { Badge } from 'antd';
 import { calculateTotalChange } from './../HelperFunctions/Helper';
 import { openConnection, subscribeToUpdates, listenToUpdates } from './../HelperFunctions/Socket';
-
+import { LoafContext } from './../../LoafContext';
 import io from 'socket.io-client'
 
 // https://ws-api.iextrading.com/1.0/tops
@@ -56,7 +56,7 @@ class Companies extends Component {
     }
     getPercentAndPrice(company) {
         if (this.state.quickQuotes[company.symbol]) {
-            return ((this.state.quickQuotes[company.symbol].quote.latestPrice - this.state.quickQuotes[company.symbol].quote.previousClose)/this.state.quickQuotes[company.symbol].quote.latestPrice * 100).toFixed(2) + '% • $' + (this.state.quickQuotes[company.symbol].quote.latestPrice)
+            return ((this.state.quickQuotes[company.symbol].quote.latestPrice - this.state.quickQuotes[company.symbol].quote.previousClose) / this.state.quickQuotes[company.symbol].quote.latestPrice * 100).toFixed(2) + '% • $' + (this.state.quickQuotes[company.symbol].quote.latestPrice)
         }
     }
     getYTD(company) {
@@ -100,14 +100,17 @@ class Companies extends Component {
         let that = this;
         let _quickQuotes = that.state.quickQuotes;
         let messageJSON = JSON.parse(message)
-        _quickQuotes[messageJSON.symbol].quote.latestPrice = messageJSON.lastSalePrice;
-        that.setState({quickQuotes: _quickQuotes})
+        if (_quickQuotes[messageJSON.symbol]) {
+            _quickQuotes[messageJSON.symbol].quote.latestPrice = messageJSON.lastSalePrice;
+            that.setState({ quickQuotes: _quickQuotes })
+        }
     }
-
+    static contextType = LoafContext;
     constructor(props) {
+
         super(props)
-        this.state = { 
-            open: false, 
+        this.state = {
+            open: false,
             fetchQuickQuotes: true,
             socket: io('https://ws-api.iextrading.com/1.0/tops')
         }
@@ -188,16 +191,25 @@ class Companies extends Component {
             <div className='webkit-scroll' style={{ maxHeight: window.innerHeight - 84, overflowY: 'scroll', minWidth: '100%' }}>
                 {
                     <Fragment>
-                        <div className={classnames('padding10 your-companies')}>
-                            <Metric
-                                fontFamily={'Open Sans'}
-                                fontWeight={900}
-                                titleFontSize={11}
-                                title={'Your Tracked Companies'}
-                                center={false}
-                            />
-                        </div>
-                        <div class="marginBottom26"></div>
+                        {
+                            this.context.screen.xs || this.context.screen.sm
+                                ?
+                                null
+                                :
+                                <Fragment>
+                                    <div className={classnames('padding10 your-companies')}>
+                                        <Metric
+                                            fontFamily={'Open Sans'}
+                                            fontWeight={900}
+                                            titleFontSize={11}
+                                            title={'Your Tracked Companies'}
+                                            center={false}
+                                        />
+                                    </div>
+                                    <div class="marginBottom26"></div>
+                                </Fragment>
+                        }
+
                         {Object.keys(this.props.trackedCompanies).map((index) => {
                             const company = this.props.trackedCompanies[index];
                             const that = this;
@@ -250,18 +262,23 @@ class Companies extends Component {
                                                         null
                                                 }
                                             </div>
-                                            {!this.state.quickQuotes || (this.props.screen.xs || this.props.screen.sm) ? null
+                                            {!this.state.quickQuotes || (this.props.screen.xs || this.props.screen.sm) ?
+                                                null
                                                 :
-                                                <div className={'flex flex-badge flex-column'}>
-                                                    <ChangeBadge
-                                                        backgroundColor={this.determineColor(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)}
-                                                        company={company}
-                                                        count={this.determineText(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)} />
-                                                    {/* <ChangeBadge 
+                                                this.state.quickQuotes[company.symbol]
+                                                    ?
+                                                    <div className={'flex flex-badge flex-column'}>
+                                                        <ChangeBadge
+                                                            backgroundColor={this.determineColor(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                            company={company}
+                                                            count={this.determineText(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)} />
+                                                        {/* <ChangeBadge 
                                                     backgroundColor={this.determineColor(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)} 
                                                     company={company} 
                                                     count={calculateTotalChange(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)} /> */}
-                                                </div>
+                                                    </div>
+                                                    :
+                                                    null
                                             }
 
                                         </div>
@@ -274,8 +291,8 @@ class Companies extends Component {
                     </Fragment>
                 }
                 <Link to="/add">
-                    <div className={classnames('padding10 add-new-button', { 'add-button-button-desktop': !this.props.screen.xs && !this.props.screen.sm })}>
-                        <Button onClick={this.openAddCompanySideBar} style={{ borderRadius: 50 }} className="width100 radius50 loaf-button">{this.props.screen.xs || this.props.screen.sm ? 'Track' : 'Track New Company'}</Button>
+                    <div className={classnames('padding10 add-new-button add-new-button', { 'add-button-button-desktop': !this.props.screen.xs && !this.props.screen.sm, 'add-new-button-mobile': this.props.screen.xs || this.props.screen.sm })}>
+                        <Button onClick={this.openAddCompanySideBar} style={{ borderRadius: 50 }} className="width100 radius50 loaf-button">{'Track New Company'}</Button>
                     </div>
                 </Link>
             </div>
