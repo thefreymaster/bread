@@ -70,16 +70,16 @@ class YourShares extends Component {
                     <div className='flex-grow'></div>
                     <div className="flex flex-row">
                         <div className='width-25'>
-                            <Metric number duration={1} fontFamily={'Open Sans'} titleFontSize={18} prefix="$" title={this.props.price * this.props.count} label="Initial Cost" />
+                            <Metric fontWeight={900} number duration={1} fontFamily={'Open Sans'} titleFontSize={18} prefix="$" title={this.props.price * this.props.count} label="Initial Cost" />
                         </div>
                         <div className='width-25'>
-                            <Metric number color={((this.props.count * this.state.currentPrice)-(this.props.price * this.props.count)) > 0 ? GREEN : RED}  duration={1} fontFamily={'Open Sans'} titleFontSize={18} prefix="$" title={((this.props.count * this.state.currentPrice)-(this.props.price * this.props.count))} label="Total Return" />
+                            <Metric fontWeight={900} number color={((this.props.count * this.state.currentPrice)-(this.props.price * this.props.count)) > 0 ? GREEN : RED}  duration={1} fontFamily={'Open Sans'} titleFontSize={18} prefix="$" title={((this.props.count * this.state.currentPrice)-(this.props.price * this.props.count))} label="Total Return" />
                         </div>
                         <div className='width-25'>
-                            <Metric decimals={2} number duration={1} fontFamily={'Open Sans'} align='flex-start' titleFontSize={18} prefix="$" title={this.props.price} label="Per Share Price" />
+                            <Metric fontWeight={900} decimals={2} number duration={1} fontFamily={'Open Sans'} align='flex-start' titleFontSize={18} prefix="$" title={this.props.price} label="Per Share Price" />
                         </div>
                         <div className='width-25'>
-                            <Metric decimals={2} number duration={1}
+                            <Metric fontWeight={900} decimals={2} number duration={1}
                              color={((this.props.count * this.state.currentPrice)-(this.props.price * this.props.count))/(this.props.price * this.props.count) > 0 ? GREEN : RED} fontFamily={'Open Sans'} titleFontSize={18} title={((this.props.count * this.state.currentPrice)-(this.props.price * this.props.count))/(this.props.price * this.props.count)*100} suffix="%" label="Total Change" />
                         </div>
                     </div>

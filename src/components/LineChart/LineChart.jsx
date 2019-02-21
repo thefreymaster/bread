@@ -6,8 +6,10 @@ import { GREEN, RED, GREY } from './../../Constants';
 import Metric from './../Body/Metric';
 import classnames from 'classnames';
 import './LineChart.css';
+import { LoafContext } from './../../LoafContext';
 
 class LineChart extends Component {
+    static contextType = LoafContext;
     determineGraphColor = (data) => {
         if (data[0].data[data[0].data.length - 1]) {
             if (data[0].data[data[0].data.length - 1].changeOverTime > 0) {
@@ -22,8 +24,8 @@ class LineChart extends Component {
         }
     }
     getGraphPercentChange = () => {
-        if(this.state.data[0].data[this.state.data[0].data.length - 1].changeOverTime){
-            return this.state.data[0].data[this.state.data[0].data.length - 1].changeOverTime.toFixed(2) * 100 + '%'
+        if (this.state.data[0].data[this.state.data[0].data.length - 1].changeOverTime) {
+            return (this.state.data[0].data[this.state.data[0].data.length - 1].changeOverTime * 100).toFixed(2) + '%'
         }
     }
     constructor(props) {
@@ -60,8 +62,8 @@ class LineChart extends Component {
         else {
             return (
                 <div className={classnames("flex flex-column flex-center-start show-zoom-animation", { 'dashed-border-right': this.props.rightDivider })} style={{ height: (window.innerHeight - 84) * 0.3, width: this.props.width }}>
-                    <div className='absolute'>
-                        <Metric fontFamily={'Open Sans'} titleFontSize={18} title={this.props.title} labelFontSize={14} center label={this.getGraphPercentChange()} />
+                    <div className={classnames('', {'absolute': this.context.screen.md || this.context.screen.lg || this.context.screen.xl})}>
+                        <Metric color={this.determineGraphColor(this.state.data)} fontFamily={'Open Sans'} fontWeight={900} titleFontSize={18} label={this.props.title} labelFontSize={14} center title={this.getGraphPercentChange()} />
                     </div>
                     {/* <div className='absolute open-sans grey size20'>{this.props.title}</div>
                     <div className='absolute open-sans grey size20 line-graph-change'>{this.state.data[0].data[this.state.data[0].data.length - 1].changeOverTime.toFixed(4)*100}</div> */}

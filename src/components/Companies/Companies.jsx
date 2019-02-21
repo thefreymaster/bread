@@ -13,6 +13,22 @@ import classnames from 'classnames';
 import { RED, GREEN, GREY } from '../../Constants';
 import LineChart from './../LineChart/LineChart';
 import { Badge } from 'antd';
+import { calculateTotalChange } from './../HelperFunctions/Helper';
+import { openConnection, subscribeToUpdates, listenToUpdates } from './../HelperFunctions/Socket';
+
+import io from 'socket.io-client'
+
+// https://ws-api.iextrading.com/1.0/tops
+// "AAPL,ADBE,AMD,ATVI,CMG,CRM,DBX,FDX,GE,HD,IBM,INTC,JD,LMT,MDB,MMM,MRVL,MSFT,NFLX,NOC,NVDA,RDFN,ROKU,SHOP,SPOT,TEAM,TGT,TTWO,TWLO,WB"
+
+const filter = 'ytdChange,changePercent,week52High,week52Low,latestPrice,previousClose'
+// const socket = io('https://ws-api.iextrading.com/1.0/tops')
+
+// socket.on('message', message => console.log(JSON.parse(message)))
+
+
+
+
 
 class Companies extends Component {
     openAddCompanySideBar = () => {
@@ -40,7 +56,7 @@ class Companies extends Component {
     }
     getPercentAndPrice(company) {
         if (this.state.quickQuotes[company.symbol]) {
-            return (this.state.quickQuotes[company.symbol].quote.changePercent * 100).toFixed(2) + '% • $' + (this.state.quickQuotes[company.symbol].quote.latestPrice)
+            return ((this.state.quickQuotes[company.symbol].quote.latestPrice - this.state.quickQuotes[company.symbol].quote.previousClose)/this.state.quickQuotes[company.symbol].quote.latestPrice * 100).toFixed(2) + '% • $' + (this.state.quickQuotes[company.symbol].quote.latestPrice)
         }
     }
     getYTD(company) {
@@ -58,38 +74,77 @@ class Companies extends Component {
             return '$' + (this.state.quickQuotes[company.symbol].quote.week52Low).toFixed(2) + ' • 52 L'
         }
     }
+    determineText = (shares, price, quote) => {
+        if ((shares * quote) - (shares * price) === 0) {
+            return 'No Equity'
+        }
+        else if ((shares * quote) - (shares * price) > 0) {
+            return 'Equity Gain';
+        }
+        else {
+            return 'Equity Loss';
+        }
+    }
+    determineColor = (shares, price, quote) => {
+        if ((shares * quote) - (shares * price) === 0) {
+            return GREY
+        }
+        else if ((shares * quote) - (shares * price) > 0) {
+            return GREEN;
+        }
+        else {
+            return RED;
+        }
+    }
+    update = (message) => {
+        let that = this;
+        let _quickQuotes = that.state.quickQuotes;
+        let messageJSON = JSON.parse(message)
+        _quickQuotes[messageJSON.symbol].quote.latestPrice = messageJSON.lastSalePrice;
+        that.setState({quickQuotes: _quickQuotes})
+    }
 
     constructor(props) {
         super(props)
-        this.state = { open: false, fetchQuickQuotes: true }
+        this.state = { 
+            open: false, 
+            fetchQuickQuotes: true,
+            socket: io('https://ws-api.iextrading.com/1.0/tops')
+        }
+        this.state.socket.on('message', message => this.update(message))
+
+
     }
     componentDidMount() {
         let that = this;
-        let data = getAllSymbols();
-        data.then(response => {
-            this.setState({
-                symbols: response
-            })
-        })
+
+
         this.setState({
             fetchQuickQuotes: true
         })
-        let symbols = []
+        let symbols = [];
+        let socketSymbols = '';
         for (let symbol in that.props.trackedCompanies) {
             symbols.push(that.props.trackedCompanies[symbol].symbol)
+            socketSymbols = socketSymbols + that.props.trackedCompanies[symbol].symbol + ',';
         }
-        let quote = getQuickQuotes(symbols);
+        let quote = getQuickQuotes(symbols, filter);
+        socketSymbols = socketSymbols.substring(0, socketSymbols.length - 1);
+        that.state.socket.on('connect', () => {
+            that.state.socket.emit('subscribe', socketSymbols)
+        })
+
         quote.then(response => {
-            this.setState({
+            that.setState({
                 quickQuotes: response,
                 fetchQuickQuotes: false
             })
         })
 
+
     }
     componentWillReceiveProps(nextProps) {
         if (this.props.activeTicker !== nextProps.activeTicker && this.props.trackedCompanies.length > 0) {
-            console.log(nextProps);
             this.setState({
                 fetchQuickQuotes: true
             })
@@ -98,7 +153,7 @@ class Companies extends Component {
             for (let symbol in that.props.trackedCompanies) {
                 symbols.push(that.props.trackedCompanies[symbol].symbol)
             }
-            let quote = getQuickQuotes(symbols);
+            let quote = getQuickQuotes(symbols, filter);
             quote.then(response => {
                 this.setState({
                     quickQuotes: response,
@@ -111,12 +166,6 @@ class Companies extends Component {
         let that = this;
         if (this.props.activeTicker !== prevProps.activeTicker) {
             let that = this;
-            let data = getAllSymbols();
-            data.then(response => {
-                this.setState({
-                    symbols: response
-                })
-            })
             this.setState({
                 fetchQuickQuotes: true
             })
@@ -124,7 +173,7 @@ class Companies extends Component {
             for (let symbol in that.props.trackedCompanies) {
                 symbols.push(that.props.trackedCompanies[symbol].symbol)
             }
-            let quote = getQuickQuotes(symbols);
+            let quote = getQuickQuotes(symbols, filter);
             quote.then(response => {
                 this.setState({
                     quickQuotes: response,
@@ -139,15 +188,25 @@ class Companies extends Component {
             <div className='webkit-scroll' style={{ maxHeight: window.innerHeight - 84, overflowY: 'scroll', minWidth: '100%' }}>
                 {
                     <Fragment>
+                        <div className={classnames('padding10 your-companies')}>
+                            <Metric
+                                fontFamily={'Open Sans'}
+                                fontWeight={900}
+                                titleFontSize={11}
+                                title={'Your Tracked Companies'}
+                                center={false}
+                            />
+                        </div>
+                        <div class="marginBottom26"></div>
                         {Object.keys(this.props.trackedCompanies).map((index) => {
                             const company = this.props.trackedCompanies[index];
                             const that = this;
                             return (
-                                <Link to="/quote">
+                                <Link to="/quote" key={company.symbol}>
                                     <div
                                         className={classnames('padding10 margin10 companies-button loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === that.props.activeTicker, 'box-shadow-bottom': that.props.trackedCompanies.length !== parseInt(index) })}
                                         onClick={() => { this.props.setActiveTicker(company.symbol, company, false, index); this.closeAddCompanySideBar() }}>
-                                        <div className={classnames({"flex flex-row": !this.props.screen.xs && !this.props.screen.sm})}>
+                                        <div className={classnames({ "flex flex-row": !this.props.screen.xs && !this.props.screen.sm })}>
                                             {/* <div className={'flex flex-center'}>
                                                 <CompanyLogo symbol={company.symbol} />
                                             </div> */}
@@ -161,7 +220,7 @@ class Companies extends Component {
                                                 />
                                                 <Metric
                                                     fontFamily={'Open Sans'}
-                                                    fontWeight={600}
+                                                    fontWeight={900}
                                                     titleFontSize={12}
                                                     color={!this.state.quickQuotes ? null : this.getColor(company)}
                                                     title={!this.state.quickQuotes ? null : this.getPercentAndPrice(company)}
@@ -174,6 +233,7 @@ class Companies extends Component {
                                                         ?
                                                         <div className={'flex flex-column flex-center'}>
                                                             <LineChart
+                                                                screen={this.props.screen}
                                                                 ticker={that.props.activeTicker}
                                                                 timeframe={'ytd'}
                                                                 interval={2}
@@ -190,11 +250,18 @@ class Companies extends Component {
                                                         null
                                                 }
                                             </div>
-                                            {!this.state.quickQuotes || (this.props.screen.xs || this.props.screen.sm) ? null 
-                                            : 
-                                            <div className={'flex flex-badge'}>
-                                                <ChangeBadge company={company} quote={this.state.quickQuotes[company.symbol] ? this.state.quickQuotes[company.symbol].quote.latestPrice : null} />
-                                            </div>
+                                            {!this.state.quickQuotes || (this.props.screen.xs || this.props.screen.sm) ? null
+                                                :
+                                                <div className={'flex flex-badge flex-column'}>
+                                                    <ChangeBadge
+                                                        backgroundColor={this.determineColor(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                        company={company}
+                                                        count={this.determineText(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)} />
+                                                    {/* <ChangeBadge 
+                                                    backgroundColor={this.determineColor(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)} 
+                                                    company={company} 
+                                                    count={calculateTotalChange(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)} /> */}
+                                                </div>
                                             }
 
                                         </div>
@@ -208,7 +275,7 @@ class Companies extends Component {
                 }
                 <Link to="/add">
                     <div className={classnames('padding10 add-new-button', { 'add-button-button-desktop': !this.props.screen.xs && !this.props.screen.sm })}>
-                        <Button onClick={this.openAddCompanySideBar} shape={"round"} size={'regular'} style={{ borderRadius: 50 }} className="width100 radius50 loaf-button">{this.props.screen.xs || this.props.screen.sm ? 'Track' : 'Track New Company'}</Button>
+                        <Button onClick={this.openAddCompanySideBar} style={{ borderRadius: 50 }} className="width100 radius50 loaf-button">{this.props.screen.xs || this.props.screen.sm ? 'Track' : 'Track New Company'}</Button>
                     </div>
                 </Link>
             </div>

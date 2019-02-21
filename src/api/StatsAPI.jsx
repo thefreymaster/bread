@@ -28,8 +28,8 @@ function getPrice(ticker) {
             console.log(error);
         });
 }
-function getBatchData(ticker, types) {
-    return axios.get('https://api.iextrading.com/1.0/stock/' + ticker + '/batch?types=' + types)
+function getBatchData(ticker, types, filter) {
+    return axios.get('https://api.iextrading.com/1.0/stock/' + ticker + '/batch?types=' + types + '&filter=' + filter)
         .then(function (response) {
             return response.data;
         })
@@ -46,8 +46,8 @@ function getBatchDataGroupedByCompany(ticker, types) {
             console.log(error);
         });
 }
-function getQuickQuotes(tickers) {
-    return axios.get('/api/quick-quote/' + tickers)
+function getQuickQuotes(tickers, filter) {
+    return axios.get('https://api.iextrading.com/1.0/stock/market/batch?symbols=' + tickers + '&types=quote&filter=' + filter)
         .then(function (response) {
             return response.data;
         })

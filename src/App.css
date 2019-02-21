@@ -62,11 +62,12 @@
 }
 
 .flex-badge{
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
+    justify-content: center;
+    align-items: flex-end;
     flex-grow: 1;
     z-index: 0;
+    flex-direction: column;
+
 }
 .flex{
     display: flex
@@ -123,10 +124,21 @@
 }
 .absolute{
     position: absolute;
-    margin-top: -22px;
+    margin-top: -20px;
     background-color: white;
     padding: 5px;
 
+}
+.your-companies{
+    position: absolute;
+    top: -20px;
+    left: 0;
+    min-width: 100%;
+    background-color: white;
+    border-bottom: 2px solid #ebebeb;
+    border-right: 2px solid #ebebeb;
+    border-bottom-right-radius: 12px;
+    z-index: 1;
 }
 .abril{
     font-family: 'Abril Fatface', cursive;
@@ -176,8 +188,11 @@
     border-top: 2px solid #eeeeee;
 }
 .add-button-button-desktop{
-    border-top-right-radius: 5px;
+    border-top-right-radius: 12px;
     border-right: 2px solid #eeeeee;
+}
+.marginBottom26 {
+    margin-bottom: 26px;
 }
 .webkit-scroll{
     -webkit-overflow-scrolling: touch;

@@ -5,6 +5,8 @@ import Loader from 'react-loader-spinner'
 import { GREEN, RED, GREY } from '../../../Constants';
 import { Button } from '../../../../node_modules/antd';
 
+const filter = 'changePercent,latestPrice,symbol,companyName'
+
 class Today extends Component {
     getColor(percept) {
         if (percept) {
@@ -26,7 +28,7 @@ class Today extends Component {
     componentDidUpdate(prevProps) {
         if (this.props.ticker !== prevProps.ticker) {
 
-            let data = getBatchData(this.props.ticker, 'quote,price,stats');
+            let data = getBatchData(this.props.ticker, 'quote,price,stats', filter);
             data.then(response => {
                 this.setState({
                     stats: response.stats,
@@ -38,7 +40,7 @@ class Today extends Component {
     }
     componentWillMount() {
         if (this.props.ticker) {
-            let data = getBatchData(this.props.ticker, 'quote,price,stats');
+            let data = getBatchData(this.props.ticker, 'quote,price,stats', filter);
             data.then(response => {
                 this.setState({
                     stats: response.stats,
@@ -70,6 +72,7 @@ class Today extends Component {
                                 title={parseFloat(this.state.price).toFixed(2)}
                                 label="Latest Price"
                                 number
+                                fontWeight={900}
                                 duration={1}
                                 decimals={2}
                                 fontFamily={'Open Sans'}
@@ -80,6 +83,7 @@ class Today extends Component {
                             suffix={'%'}
                             decimals={2}
                             duration={1}
+                            fontWeight={900}
                             fontFamily={'Open Sans'}
                             title={parseFloat(this.state.quote.changePercent * 100).toFixed(2)}
                             color={this.getColor(parseFloat(this.state.quote.changePercent))}

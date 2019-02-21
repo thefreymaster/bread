@@ -4,6 +4,8 @@ import { List } from 'antd';
 import { getBatchData } from '../../api/StatsAPI';
 import { GREEN, RED, YELLOW } from '../../Constants';
 
+const filter = 'beta,ytdChange,changePercent,week52High,week52Low,week52change,latestPrice,profitMargin,priceToSales,latestVolume'
+
 
 class CompanyStatistics extends Component {
     getBetaColor = (beta) => {
@@ -24,7 +26,7 @@ class CompanyStatistics extends Component {
     componentDidMount() {
         if (this.props.activeTicker) {
             
-            let data = getBatchData(this.props.activeTicker, 'quote,stats');
+            let data = getBatchData(this.props.activeTicker, 'quote,stats', filter);
             data.then(response => {
                 this.setState({
                     stats: response.stats,
@@ -110,7 +112,7 @@ class CompanyStatistics extends Component {
         if (this.props.activeTicker !== prevProps.activeTicker) // Check if it's a new user, you can also use some unique property, like the ID
         {
             
-            let data = getBatchData(this.props.activeTicker, 'quote,stats');
+            let data = getBatchData(this.props.activeTicker, 'quote,stats', filter);
             data.then(response => {
                 this.setState({
                     stats: response.stats,
