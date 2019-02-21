@@ -2,10 +2,21 @@ import React, { Component } from 'react';
 import Metric from '../Body/Metric';
 import { List } from 'antd';
 import { getBatchData } from '../../api/StatsAPI';
-import { GREEN, RED } from '../../Constants';
+import { GREEN, RED, YELLOW } from '../../Constants';
 
 
 class CompanyStatistics extends Component {
+    getBetaColor = (beta) => {
+        if(beta < 1){
+            return GREEN;
+        }
+        else if(beta > 1 && beta < 2){
+            return YELLOW;
+        }
+        else{
+            return RED;
+        }
+    }
     constructor(props) {
         super(props)
         this.state = {}
@@ -70,6 +81,15 @@ class CompanyStatistics extends Component {
                             color: response.stats.priceToSales > 0 ? GREEN : RED,
                             decimals: 2,
                             suffix: '%',
+                            prefix: '',
+                            duration: 1
+                        },
+                        {
+                            title: parseFloat(response.stats.beta).toFixed(2),
+                            label: 'Volatility',
+                            color: this.getBetaColor(response.stats.beta),
+                            decimals: 2,
+                            suffix: '',
                             prefix: '',
                             duration: 1
                         },
@@ -147,6 +167,15 @@ class CompanyStatistics extends Component {
                             color: response.stats.priceToSales > 0 ? GREEN : RED,
                             decimals: 2,
                             suffix: '%',
+                            prefix: '',
+                            duration: 1
+                        },
+                        {
+                            title: parseFloat(response.stats.beta).toFixed(2),
+                            label: 'Volatility',
+                            color: this.getBetaColor(response.stats.beta),
+                            decimals: 2,
+                            suffix: '',
                             prefix: '',
                             duration: 1
                         },

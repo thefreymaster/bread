@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
 import './App.css';
 import 'antd/dist/antd.css';
-import { Layout } from 'antd';
+import { Layout, message } from 'antd';
 import { writeUserData, getFirebaseAuthObject, readUserCompanyData, updateUserCompanyData, updateUserCompanyShareData } from './api/FirebaseAPI';
 
 import classnames from 'classnames';
@@ -70,6 +70,7 @@ class App extends Component {
     else {
       localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
     }
+    message.success(company.name + ' successfully added to account.');
     this.setState({
       trackedCompanies: _trackedCompanies
     })
@@ -87,6 +88,8 @@ class App extends Component {
         else {
           localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
         }
+        message.success(item.name + ' successfully removed to account.');
+
         that.setState({
           trackedCompanies: _trackedCompanies,
           activeTickerIndex: index === 0 ? index : index - 1

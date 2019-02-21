@@ -89,7 +89,7 @@ class Today extends Component {
                         this.props.trackedCompanies.length !== 1
                             ?
                             <div className="paddingTop10 flex flex-center-end ">
-                                <Button style={{borderRadius: 50}} onClick={() => this.props.removeCompanyFromTrackedCompanies(this.props.ticker)} className={'width-50'}>Remove Company</Button>
+                                <Button style={{borderRadius: 50}} onClick={() => this.props.removeCompanyFromTrackedCompanies(this.props.ticker)} className={'width-50'}>Untrack Company</Button>
                             </div>
                             :
                             null
