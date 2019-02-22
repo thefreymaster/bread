@@ -115,7 +115,7 @@ class Companies extends Component {
         let messageJSON = JSON.parse(message)
         // console.log(JSON.parse(message))
         let change;
-        if (messageJSON.symbol && _quickQuotes[messageJSON.symbol]) {
+        if (messageJSON && _quickQuotes[messageJSON.symbol]) {
             setTimeout(() => {
                 _quickQuotes[messageJSON.symbol].quote.latestPrice = messageJSON.lastSalePrice;
                 _quickQuotes[messageJSON.symbol].showUpdate = true;

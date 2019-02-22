@@ -13,6 +13,11 @@
 .ant-layout-footer{
     background-color: white !important;
 }
+.logo{
+    max-width: 32px;
+    border-radius: 5px;
+    margin-right: 15px;
+}
 
 .left-sider-small{
     max-width: 100px !important;

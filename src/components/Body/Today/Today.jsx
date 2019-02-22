@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import Metric from "../Metric";
 import { getBatchData } from './../../../api/StatsAPI';
 import Loader from 'react-loader-spinner'
-import { GREEN, RED, GREY } from '../../../Constants';
+import { GREEN, RED, GREY, LIGHT_GREEN, LIGHT_RED } from '../../../Constants';
+import { getPercentChange } from '../../HelperFunctions/Helper';
 import { Button } from '../../../../node_modules/antd';
+import io from 'socket.io-client'
 
-const filter = 'changePercent,latestPrice,symbol,companyName'
+const filter = 'changePercent,latestPrice,symbol,companyName,previousClose'
 
 class Today extends Component {
     getColor(percept) {
@@ -21,13 +23,53 @@ class Today extends Component {
             }
         }
     }
+    setBackgroundColor = () => {
+        if (this.state.showUpdate && this.state.quote) {
+            let change = getPercentChange(this.state.quote);
+            change = parseFloat(change);
+            
+            if (change > 0) {
+                return LIGHT_GREEN;
+            }
+            else {
+                return LIGHT_RED;
+            }
+        }
+    }
+    update = (message) => {
+        let that = this;
+        let price = that.state.price;
+        let showUpdate = that.state.showUpdate;
+        let messageJSON = JSON.parse(message)
+        let change;
+        if (messageJSON) {
+            setTimeout(() => {
+                price = messageJSON.lastSalePrice;
+                showUpdate = true;
+
+                that.setState({price, showUpdate}, () => {
+                    setTimeout(() => {
+                        showUpdate = false;
+                        that.setState({showUpdate})
+
+                    }, 1000);
+                })
+            }, 500);
+        }
+    }
     constructor(props) {
         super(props)
-        this.state = {}
+        this.state = {
+            socket: io('https://ws-api.iextrading.com/1.0/tops'),
+            showUpdate: false
+        }
+        this.state.socket.on('message', message => this.update(message))
+
     }
     componentDidUpdate(prevProps) {
+        let that = this;
         if (this.props.ticker !== prevProps.ticker) {
-
+            this.state.socket.emit('unsubscribe', prevProps.ticker)
             let data = getBatchData(this.props.ticker, 'quote,price,stats', filter);
             data.then(response => {
                 this.setState({
@@ -39,7 +81,11 @@ class Today extends Component {
         }
     }
     componentWillMount() {
+        let that = this;
         if (this.props.ticker) {
+            that.state.socket.on('connect', () => {
+                that.state.socket.emit('subscribe', this.props.ticker)
+            })
             let data = getBatchData(this.props.ticker, 'quote,price,stats', filter);
             data.then(response => {
                 this.setState({
@@ -65,7 +111,13 @@ class Today extends Component {
         else {
             return (
                 <div className="loaf-component flex flex-column flex-center border-right" style={{ height: (window.innerHeight - 84) * 0.40, width: '50%' }}>
-                    <Metric titleFontSize={72} title={this.state.stats.symbol} labelFontSize={24} label={this.state.stats.companyName} labelCloseToTitle={true} />
+                    <Metric 
+                        titleFontSize={72} 
+                        center
+                        title={this.state.stats.symbol} 
+                        labelFontSize={24} 
+                        label={this.state.stats.companyName} 
+                        labelCloseToTitle={true} />
                     <div className="flex flex-row">
                         <div className='width-100' style={{marginRight: 25}}>
                             <Metric

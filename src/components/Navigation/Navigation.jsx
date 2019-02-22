@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom'
 import { Button } from 'antd';
 import Metric from '../Body/Metric';
 import { signOutUser } from './../../api/FirebaseAPI';
+import LOAF from '../../assets/loaf.svg';
 
 class Navigation extends Component {
+    
     constructor(props) {
         super(props)
         this.state = {}
@@ -13,7 +15,10 @@ class Navigation extends Component {
         return (
             <div className="flex flex-row flex-center-start">
                 <Link to="/quote">
-                    <div>{this.props.title}</div>
+                    <div  className="flex flex-row flex-center-start">
+                        <img src={LOAF} className='logo' />
+                        <div>{this.props.title}</div>
+                    </div>
                 </Link>
                 <div className='flex-grow'></div>
                 {
