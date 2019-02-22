@@ -18,6 +18,7 @@ import Login from './components/Login/Login';
 import Load from './components/Load';
 import Metric from './components/Body/Metric';
 import { LoafContext } from './LoafContext';
+import { showNotification } from './components/HelperFunctions/Notifications';
 
 const firebase = getFirebaseAuthObject();
 
@@ -88,7 +89,7 @@ class App extends Component {
         else {
           localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
         }
-        message.success(item.name + ' successfully removed to account.');
+        message.success(item.name + ' successfully removed from your account.');
 
         that.setState({
           trackedCompanies: _trackedCompanies,
@@ -286,6 +287,10 @@ class App extends Component {
   componentDidMount() {
     if (localStorage.getItem('LOAF_USER')) {
       this.fetchingTrackedCompanies();
+      if(!localStorage.getItem('LOAF_WELCOME_SHOWN')){
+        showNotification('Hi ya!', 'Welcome in, ' + JSON.parse(localStorage.getItem('LOAF_USER')).displayName, 'blue', 'smile');
+        localStorage.setItem('LOAF_WELCOME_SHOWN', true)
+      }
       let userID = JSON.parse(localStorage.getItem('LOAF_USER')).uid;
       let _trackedCompanies = readUserCompanyData(userID);
       _trackedCompanies = _trackedCompanies.then((companies) => {

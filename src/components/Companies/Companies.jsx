@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import '../Companies/AddCompany/AddCompany.css';
-import { Button } from 'antd';
+import { Button, notification, Icon } from 'antd';
 import Loader from 'react-loader-spinner'
 
 import { getAllSymbols } from '../../api/SymbolsAPI';
@@ -21,7 +21,7 @@ import io from 'socket.io-client'
 // https://ws-api.iextrading.com/1.0/tops
 // "AAPL,ADBE,AMD,ATVI,CMG,CRM,DBX,FDX,GE,HD,IBM,INTC,JD,LMT,MDB,MMM,MRVL,MSFT,NFLX,NOC,NVDA,RDFN,ROKU,SHOP,SPOT,TEAM,TGT,TTWO,TWLO,WB"
 
-const filter = 'ytdChange,changePercent,week52High,week52Low,latestPrice,previousClose'
+const filter = 'ytdChange,changePercent,week52High,week52Low,latestPrice,previousClose,extendedPrice,companyName,symbol'
 // const socket = io('https://ws-api.iextrading.com/1.0/tops')
 
 // socket.on('message', message => console.log(JSON.parse(message)))
@@ -54,9 +54,12 @@ class Companies extends Component {
             }
         }
     }
+    getPercentChange(quote) {
+        return ((quote.latestPrice - quote.previousClose) / quote.latestPrice * 100).toFixed(2)
+    }
     getPercentAndPrice(company) {
         if (this.state.quickQuotes[company.symbol]) {
-            return ((this.state.quickQuotes[company.symbol].quote.latestPrice - this.state.quickQuotes[company.symbol].quote.previousClose) / this.state.quickQuotes[company.symbol].quote.latestPrice * 100).toFixed(2) + '% • $' + (this.state.quickQuotes[company.symbol].quote.latestPrice)
+            return this.getPercentChange(this.state.quickQuotes[company.symbol].quote) + '% • $' + (this.state.quickQuotes[company.symbol].quote.latestPrice)
         }
     }
     getYTD(company) {
@@ -100,9 +103,13 @@ class Companies extends Component {
         let that = this;
         let _quickQuotes = that.state.quickQuotes;
         let messageJSON = JSON.parse(message)
-        if (_quickQuotes[messageJSON.symbol]) {
-            _quickQuotes[messageJSON.symbol].quote.latestPrice = messageJSON.lastSalePrice;
-            that.setState({ quickQuotes: _quickQuotes })
+        console.log(JSON.parse(message))
+        let change;
+        if (messageJSON.symbol) {
+            setTimeout(() => {
+                _quickQuotes[messageJSON.symbol].quote.latestPrice = messageJSON.lastSalePrice;
+                that.setState({ quickQuotes: _quickQuotes })
+            }, 500);
         }
     }
     static contextType = LoafContext;
@@ -138,6 +145,32 @@ class Companies extends Component {
         })
 
         quote.then(response => {
+            let change;
+            for (let [key] of Object.entries(response)) {
+                change = that.getPercentChange(response[key].quote);
+                if (change > 5) {
+                    notification.success({
+                        message: response[key].quote.companyName,
+                        description: key + ' is up ' + that.getPercentChange(response[key].quote) + '% today.',
+                        onClick: () => {
+                            this.findIndex(key)
+                        },
+                        duration: 10,
+                        icon: <Icon type="rise" style={{ color: GREEN }} />,
+                    });
+                }
+                if (change < -5) {
+                    notification.warning({
+                        message: response[key].quote.companyName,
+                        description: key + ' is down ' + that.getPercentChange(response[key].quote) + '% today.',
+                        onClick: () => {
+                            this.findIndex(key)
+                        },
+                        duration: 10,
+                        icon: <Icon type="fall" style={{ color: RED }} />,
+                    });
+                }
+            }
             that.setState({
                 quickQuotes: response,
                 fetchQuickQuotes: false
@@ -145,6 +178,14 @@ class Companies extends Component {
         })
 
 
+    }
+    findIndex = (symbol) => {
+        for (let index of Object.keys(this.props.trackedCompanies)) {
+            if (this.props.trackedCompanies[index].symbol === symbol) {
+                this.props.setActiveTicker(symbol, '', false, index);
+                notification.destroy()
+            }
+        }
     }
     componentWillReceiveProps(nextProps) {
         if (this.props.activeTicker !== nextProps.activeTicker && this.props.trackedCompanies.length > 0) {
@@ -183,6 +224,7 @@ class Companies extends Component {
                     fetchQuickQuotes: false
                 })
             })
+
         }
     }
 

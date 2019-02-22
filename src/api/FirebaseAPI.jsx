@@ -1,4 +1,5 @@
 import firebase from 'firebase';
+import { showNotification } from '../components/HelperFunctions/Notifications';
 
 function getFirebaseAuthObject() {
     // Configure Firebase.
@@ -79,7 +80,7 @@ function signOutUser() {
         console.log('Signed Out');
         localStorage.removeItem('LOAF_USER')
         localStorage.removeItem('trackedCompanies')
-        
+        localStorage.removeItem('LOAF_WELCOME_SHOWN')
         window.location.reload();
       }, function(error) {
         console.error('Sign Out Error', error);
