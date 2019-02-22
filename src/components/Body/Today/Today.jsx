@@ -138,7 +138,7 @@ class Today extends Component {
                                 duration={1}
                                 fontWeight={900}
                                 fontFamily={'Open Sans'}
-                                title={parseFloat(this.state.quote.changePercent * 100).toFixed(2)}
+                                title={getPercentChange(this.state.quote)}
                                 color={this.getColor(parseFloat(this.state.quote.changePercent))}
                                 label="Percent Change Today" />
                         </div>
