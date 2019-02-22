@@ -9,7 +9,8 @@ function Metric(props) {
             fontFamily: props.fontFamily ? props.fontFamily : null,
             fontWeight: props.fontWeight ? props.fontWeight : null,
             textAlign: props.center ? 'center' : 'left',
-            transition: 'text-align 300ms ease-in-out'
+            transition: 'text-align 300ms ease-in-out, background-color 200ms ease-in-out',
+            backgroundColor: props.backgroundColor ? props.backgroundColor : null
         },
         label: {
             fontSize: props.labelFontSize,

@@ -67,8 +67,8 @@ class YourShares extends Component {
                             <Button style={{borderRadius: 50}} onClick={this.showAddShares} className="width100 loaf-button">Add Shares</Button>
                         </div>
                     </div>
-                    <div className='flex-grow'></div>
-                    <div className="flex flex-row">
+                    {/* <div className='flex-grow'></div> */}
+                    <div className="flex flex-row shares-divider">
                         <div className='width-25'>
                             <Metric fontWeight={900} number duration={1} fontFamily={'Open Sans'} titleFontSize={18} prefix="$" title={this.props.price * this.props.count} label="Initial Cost" />
                         </div>

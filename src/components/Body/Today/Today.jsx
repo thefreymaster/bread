@@ -16,7 +16,7 @@ class Today extends Component {
             else if (percept < 0) {
                 return RED;
             }
-            else{
+            else {
                 return GREY;
             }
         }
@@ -64,10 +64,10 @@ class Today extends Component {
             )
         else {
             return (
-                <div className="loaf-component flex flex-column width-50 border-right" style={{ height: (window.innerHeight-84)*0.40, width: '50%' }}>
+                <div className="loaf-component flex flex-column flex-center border-right" style={{ height: (window.innerHeight - 84) * 0.40, width: '50%' }}>
                     <Metric titleFontSize={72} title={this.state.stats.symbol} labelFontSize={24} label={this.state.stats.companyName} labelCloseToTitle={true} />
                     <div className="flex flex-row">
-                        <div className='width-60'>
+                        <div className='width-100' style={{marginRight: 25}}>
                             <Metric
                                 title={parseFloat(this.state.price).toFixed(2)}
                                 label="Latest Price"
@@ -78,22 +78,24 @@ class Today extends Component {
                                 fontFamily={'Open Sans'}
                                 prefix={'$'} />
                         </div>
-                        <Metric
-                            number
-                            suffix={'%'}
-                            decimals={2}
-                            duration={1}
-                            fontWeight={900}
-                            fontFamily={'Open Sans'}
-                            title={parseFloat(this.state.quote.changePercent * 100).toFixed(2)}
-                            color={this.getColor(parseFloat(this.state.quote.changePercent))}
-                            label="Percent Change Today" />
+                        <div className='width-100'>
+                            <Metric
+                                number
+                                suffix={'%'}
+                                decimals={2}
+                                duration={1}
+                                fontWeight={900}
+                                fontFamily={'Open Sans'}
+                                title={parseFloat(this.state.quote.changePercent * 100).toFixed(2)}
+                                color={this.getColor(parseFloat(this.state.quote.changePercent))}
+                                label="Percent Change Today" />
+                        </div>
                     </div>
                     {
                         this.props.trackedCompanies.length !== 1
                             ?
                             <div className="paddingTop10 flex flex-center-end ">
-                                <Button style={{borderRadius: 50}} onClick={() => this.props.removeCompanyFromTrackedCompanies(this.props.ticker)} className={'width-50'}>Untrack Company</Button>
+                                <Button style={{ borderRadius: 50 }} onClick={() => this.props.removeCompanyFromTrackedCompanies(this.props.ticker)}>Untrack Company</Button>
                             </div>
                             :
                             null

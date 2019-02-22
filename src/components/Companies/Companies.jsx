@@ -10,9 +10,9 @@ import Metric from '../Body/Metric';
 import CompanyLogo from './../CompanyLogo/CompanyLogo';
 import ChangeBadge from '../ChangeBadge/ChangeBadge';
 import classnames from 'classnames';
-import { RED, GREEN, GREY } from '../../Constants';
+import { RED, GREEN, GREY, LIGHT_RED, LIGHT_GREEN } from '../../Constants';
 import LineChart from './../LineChart/LineChart';
-import { Badge } from 'antd';
+import { Badge, Switch } from 'antd';
 import { calculateTotalChange } from './../HelperFunctions/Helper';
 import { openConnection, subscribeToUpdates, listenToUpdates } from './../HelperFunctions/Socket';
 import { LoafContext } from './../../LoafContext';
@@ -62,6 +62,16 @@ class Companies extends Component {
             return this.getPercentChange(this.state.quickQuotes[company.symbol].quote) + '% • $' + (this.state.quickQuotes[company.symbol].quote.latestPrice)
         }
     }
+    setBackgroundColor(company, showUpdate) {
+        if (this.state.quickQuotes[company.symbol] && showUpdate) {
+            if (this.state.quickQuotes[company.symbol].quote.changePercent > 0) {
+                return LIGHT_GREEN;
+            }
+            else if (this.state.quickQuotes[company.symbol].quote.changePercent < 0) {
+                return LIGHT_RED;
+            }
+        }
+    }
     getYTD(company) {
         if (this.state.quickQuotes[company.symbol]) {
             return (this.state.quickQuotes[company.symbol].quote.ytdChange * 100).toFixed(2) + '% • YTD'
@@ -103,12 +113,19 @@ class Companies extends Component {
         let that = this;
         let _quickQuotes = that.state.quickQuotes;
         let messageJSON = JSON.parse(message)
-        console.log(JSON.parse(message))
+        // console.log(JSON.parse(message))
         let change;
-        if (messageJSON.symbol) {
+        if (messageJSON.symbol && _quickQuotes[messageJSON.symbol]) {
             setTimeout(() => {
                 _quickQuotes[messageJSON.symbol].quote.latestPrice = messageJSON.lastSalePrice;
-                that.setState({ quickQuotes: _quickQuotes })
+                _quickQuotes[messageJSON.symbol].showUpdate = true;
+
+                that.setState({ quickQuotes: _quickQuotes }, () => {
+                    setTimeout(() => {
+                        _quickQuotes[messageJSON.symbol].showUpdate = false;
+                        that.setState({ quickQuotes: _quickQuotes })
+                    }, 1000);
+                })
             }, 500);
         }
     }
@@ -119,9 +136,10 @@ class Companies extends Component {
         this.state = {
             open: false,
             fetchQuickQuotes: true,
-            socket: io('https://ws-api.iextrading.com/1.0/tops')
+            socket: io('https://ws-api.iextrading.com/1.0/tops'),
+            realTimeStreaming: true
         }
-        this.state.socket.on('message', message => this.update(message))
+        this.state.socket.on('message', message => this.state.realTimeStreaming ? this.update(message) : null)
 
 
     }
@@ -248,6 +266,7 @@ class Companies extends Component {
                                             center={false}
                                         />
                                     </div>
+                                    {/* <Switch checkedChildren={<Icon type="check" />} unCheckedChildren={<Icon type="close" />} defaultChecked /> */}
                                     <div class="marginBottom26"></div>
                                 </Fragment>
                         }
@@ -276,6 +295,7 @@ class Companies extends Component {
                                                     fontFamily={'Open Sans'}
                                                     fontWeight={900}
                                                     titleFontSize={12}
+                                                    backgroundColor={!this.state.quickQuotes ? null : this.setBackgroundColor(company, !this.state.quickQuotes[company.symbol] ? false : this.state.quickQuotes[company.symbol].showUpdate)}
                                                     color={!this.state.quickQuotes ? null : this.getColor(company)}
                                                     title={!this.state.quickQuotes ? null : this.getPercentAndPrice(company)}
                                                     labelFontSize={11}
@@ -283,12 +303,12 @@ class Companies extends Component {
                                                     center={this.props.screen.xs || this.props.screen.sm ? true : false}
                                                 />
                                                 {
-                                                    (this.props.screen.xs || this.props.screen.sm) && company.symbol.toUpperCase() === that.props.activeTicker
+                                                    (this.props.screen.xs || this.props.screen.sm)
                                                         ?
                                                         <div className={'flex flex-column flex-center'}>
                                                             <LineChart
                                                                 screen={this.props.screen}
-                                                                ticker={that.props.activeTicker}
+                                                                ticker={company.symbol}
                                                                 timeframe={'ytd'}
                                                                 interval={2}
                                                                 title='YTD'

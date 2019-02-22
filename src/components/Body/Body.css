@@ -37,3 +37,8 @@
 .dashed-border-top{
     border-top: 2px dashed #ebebeb
 }
+.shares-divider{
+    border-top: 2px solid #f3f3f2;
+	margin-top: 10px;
+	padding-top: 10px;
+}
