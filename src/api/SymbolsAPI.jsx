@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { IEXENDPOINT, IEXTOKEN, IEXTOKEN_WITHAND } from './../Constants';
 
 function getAllSymbols() {
-    return axios.get('https://api.iextrading.com/1.0/ref-data/symbols')
+    return axios.get(IEXENDPOINT + '/ref-data/symbols' + IEXTOKEN)
         .then(function (response) {
             return response.data;
         })

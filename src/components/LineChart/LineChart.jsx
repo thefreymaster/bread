@@ -61,14 +61,10 @@ class LineChart extends Component {
             )
         else {
             return (
-                <div className={classnames("flex flex-column flex-center-start show-zoom-animation", { 'dashed-border-right': this.props.rightDivider })} style={{ height: (window.innerHeight - 84) * 0.3, width: this.props.width }}>
+                <div className={classnames("flex flex-column flex-center-start show-zoom-animation", { 'dashed-border-right': this.props.rightDivider })} style={{ height: (window.innerHeight - 84) * 0.27, width: this.props.width }}>
                     <div className={classnames('', {'absolute': this.context.screen.md || this.context.screen.lg || this.context.screen.xl})}>
                         <Metric color={this.determineGraphColor(this.state.data)} fontFamily={'Open Sans'} fontWeight={900} titleFontSize={18} label={this.props.title} labelFontSize={14} center title={this.getGraphPercentChange()} />
                     </div>
-                    {/* <div className='absolute open-sans grey size20'>{this.props.title}</div>
-                    <div className='absolute open-sans grey size20 line-graph-change'>{this.state.data[0].data[this.state.data[0].data.length - 1].changeOverTime.toFixed(4)*100}</div> */}
-
-
                     <ResponsiveLine
                         data={this.state.data}
                         margin={{
@@ -95,7 +91,7 @@ class LineChart extends Component {
                         colors={this.determineGraphColor(this.state.data)}
                         dotSize={0}
                         dotColor="inherit:darker(0.3)"
-                        dotBorderWidth={2}
+                        dotBorderWidth={0}
                         dotBorderColor="#ffffff"
                         enableDotLabel={false}
                         dotLabel="y"

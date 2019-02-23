@@ -7,7 +7,7 @@ import { getPercentChange } from '../../HelperFunctions/Helper';
 import { Button } from '../../../../node_modules/antd';
 import io from 'socket.io-client'
 
-const filter = 'changePercent,latestPrice,symbol,companyName,previousClose'
+const filter = 'changePercent,latestPrice,symbol,companyName,previousClose,close'
 
 class Today extends Component {
     getColor(percept) {
@@ -114,7 +114,7 @@ class Today extends Component {
                     <Metric 
                         titleFontSize={72} 
                         center
-                        title={this.state.stats.symbol} 
+                        title={this.state.quote.symbol} 
                         labelFontSize={24} 
                         label={this.state.stats.companyName} 
                         labelCloseToTitle={true} />

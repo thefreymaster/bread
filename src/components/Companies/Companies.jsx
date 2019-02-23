@@ -318,6 +318,16 @@ class Companies extends Component {
                                                                 <Badge count={!this.state.quickQuotes ? null : this.get52WeekHigh(company)} style={{ backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset', margin: 5 }} />
                                                                 <Badge count={!this.state.quickQuotes ? null : this.get52WeekLow(company)} style={{ backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset', margin: 5 }} />
                                                             </div>
+                                                            {this.state.quickQuotes
+                                                                ?
+                                                                <div className={'flex flex-badge flex-column'}>
+                                                                    <ChangeBadge
+                                                                        backgroundColor={!this.state.quickQuotes ? null : this.determineColor(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                                        company={!this.state.quickQuotes ? null : company}
+                                                                        count={!this.state.quickQuotes ? null : this.determineText(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)} />
+                                                                </div>
+                                                                :
+                                                                null}
 
                                                         </div>
                                                         :

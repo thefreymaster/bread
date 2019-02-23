@@ -4,6 +4,7 @@ import "./Body.css";
 import Today from './Today/Today';
 import YourShares from './YourShares/YourShares';
 import LineChart from '../LineChart/LineChart';
+import Systems from './Systems';
 
 class Loaf extends Component {
     constructor(props){
@@ -35,6 +36,7 @@ class Loaf extends Component {
                         <LineChart screen={this.props.screen} width={'50%'} ticker={this.props.activeTicker} timeframe={'1y'} interval={5} title='1 Year' rightDivider={true} />
                         <LineChart screen={this.props.screen} width={'50%'} ticker={this.props.activeTicker} timeframe={'5y'} interval={20} title='5 Year' />
                     </div>
+                    <Systems />
                 </div>
             )
         }

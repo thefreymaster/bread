@@ -42,3 +42,24 @@
 	margin-top: 10px;
 	padding-top: 10px;
 }
+.systems{
+    position: absolute;
+    bottom: 0;
+    margin-left: 10px;
+    border-top: 2px dashed #ebebeb;
+    padding: 5px;
+    min-width: 100%;
+    background-color: white;
+}
+.ant-badge-status-processing{
+    background-color: #11b672 !important;
+}
+.ant-badge-status-text{
+    font-size: 12px !important;
+}
+.paddingL10{
+    padding-left: 10px;
+}
+.paddingR10{
+    padding-right: 10px;
+}

@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { IEXENDPOINT, IEXTOKEN, IEXTOKEN_WITHAND } from './../Constants';
 
 
 function getStatsData(ticker) {
-    return axios.get('https://api.iextrading.com/1.0/stock/' + ticker + '/stats')
+    return axios.get(IEXENDPOINT + '/stock/' + ticker + '/stats' + IEXTOKEN)
         .then(function (response) {
             return response.data;
         })
@@ -11,7 +12,7 @@ function getStatsData(ticker) {
         });
 }
 function getQuote(ticker) {
-    return axios.get('https://api.iextrading.com/1.0/stock/' + ticker + '/quote')
+    return axios.get(IEXENDPOINT + '/stock/' + ticker + '/quote'  + IEXTOKEN)
         .then(function (response) {
             return response.data;
         })
@@ -20,7 +21,7 @@ function getQuote(ticker) {
         });
 }
 function getPrice(ticker) {
-    return axios.get('https://api.iextrading.com/1.0/stock/' + ticker + '/price')
+    return axios.get(IEXENDPOINT + '/stock/' + ticker + '/price'  + IEXTOKEN)
         .then(function (response) {
             return response.data;
         })
@@ -29,7 +30,7 @@ function getPrice(ticker) {
         });
 }
 function getBatchData(ticker, types, filter) {
-    return axios.get('https://api.iextrading.com/1.0/stock/' + ticker + '/batch?types=' + types + '&filter=' + filter)
+    return axios.get(IEXENDPOINT + '/stock/' + ticker + '/batch?types=' + types + IEXTOKEN_WITHAND)
         .then(function (response) {
             return response.data;
         })
@@ -38,7 +39,7 @@ function getBatchData(ticker, types, filter) {
         });
 }
 function getBatchDataGroupedByCompany(ticker, types) {
-    return axios.get('https://api.iextrading.com/1.0/stock/market/batch?symbols=' + ticker + '&types=' + types)
+    return axios.get(IEXENDPOINT + '/stock/market/batch?symbols=' + ticker + '&types=' + types  + IEXTOKEN_WITHAND)
         .then(function (response) {
             return response.data;
         })
@@ -47,7 +48,7 @@ function getBatchDataGroupedByCompany(ticker, types) {
         });
 }
 function getQuickQuotes(tickers, filter) {
-    return axios.get('https://api.iextrading.com/1.0/stock/market/batch?symbols=' + tickers + '&types=quote&filter=' + filter)
+    return axios.get(IEXENDPOINT + '/stock/market/batch?symbols=' + tickers + '&types=quote&filter=' + filter  + IEXTOKEN_WITHAND)
         .then(function (response) {
             return response.data;
         })

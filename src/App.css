@@ -186,21 +186,25 @@
     padding-right: 10px;
 }
 .add-new-button{
-    bottom: 0;
     left: 0;
     min-width: 100%;
     background-color: white;
     border-top: 2px dashed #eeeeee;
+    z-index: 1;
 }
 .add-button-button-desktop{
     border-top-right-radius: 12px;
     border-right: 2px dashed #eeeeee;
     position: absolute;
+    bottom: 0;
 
+}
+.ant-badge{
+    z-index: 0 !important;
 }
 .add-new-button-mobile{
     position: fixed;
-
+    bottom: 0;
 }
 .marginBottom26 {
     margin-bottom: 26px;
