@@ -10,6 +10,7 @@ import classnames from 'classnames';
 import { RED, GREEN, GREY, LIGHT_RED, LIGHT_GREEN } from '../../Constants';
 import { determineIfMarketsAreOpen } from './../HelperFunctions/Helper';
 import { LoafContext } from './../../LoafContext';
+import Systems from './../Body/Systems';
 import io from 'socket.io-client'
 
 // https://ws-api.iextrading.com/1.0/tops
@@ -241,8 +242,11 @@ class Companies extends Component {
     }
 
     render() {
+        const mobile = this.context.screen.xs || this.context.screen.sm ? true : false
+        const desktop = this.context.screen.md || this.context.screen.lg || this.context.screen.xl ? true : false
+
         return (
-            <div className='webkit-scroll' style={{ maxHeight: window.innerHeight - 64, overflowY: 'scroll', minWidth: '100%' }}>
+            <div className='webkit-scroll' style={{ maxHeight: window.innerHeight - 84, overflowY: 'scroll', minWidth: '100%' }}>
                 {
                     <Fragment>
                         {
@@ -270,6 +274,7 @@ class Companies extends Component {
                             const userHasShares = this.props.trackedCompanies[index].shares.hasShares
                             const count = this.props.trackedCompanies[index].shares.count;
                             const price = this.props.trackedCompanies[index].shares.price;
+                    
                             const that = this;
                             return (
                                 <Link to="/quote" key={company.symbol}>
@@ -337,7 +342,14 @@ class Companies extends Component {
                                 </Link>
                             )
                         })}
-                        <div className="marginBottom54"></div>
+                        {
+                            this.context.screen.xs || this.context.screen.sm
+                                ?
+                                <Systems position='inline' />
+                                : 
+                                null
+                        }
+                        <div className={classnames({"marginBottom48": mobile, "marginBottom64": desktop})}></div>
                     </Fragment>
                 }
                 <Link to="/add">
