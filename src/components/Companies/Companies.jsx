@@ -1,20 +1,14 @@
 import React, { Component, Fragment } from 'react';
 import '../Companies/AddCompany/AddCompany.css';
 import { Button, notification, Icon } from 'antd';
-import Loader from 'react-loader-spinner'
-
-import { getAllSymbols } from '../../api/SymbolsAPI';
+import YourShares from './../Body/YourShares/YourShares';
 import { getQuickQuotes } from '../../api/StatsAPI';
 import { Link } from "react-router-dom";
 import Metric from '../Body/Metric';
-import CompanyLogo from './../CompanyLogo/CompanyLogo';
 import ChangeBadge from '../ChangeBadge/ChangeBadge';
 import classnames from 'classnames';
 import { RED, GREEN, GREY, LIGHT_RED, LIGHT_GREEN } from '../../Constants';
-import LineChart from './../LineChart/LineChart';
-import { Badge, Switch } from 'antd';
-import { calculateTotalChange } from './../HelperFunctions/Helper';
-import { openConnection, subscribeToUpdates, listenToUpdates } from './../HelperFunctions/Socket';
+import { determineIfMarketsAreOpen } from './../HelperFunctions/Helper';
 import { LoafContext } from './../../LoafContext';
 import io from 'socket.io-client'
 
@@ -166,7 +160,7 @@ class Companies extends Component {
             let change;
             for (let [key] of Object.entries(response)) {
                 change = that.getPercentChange(response[key].quote);
-                if (change > 5) {
+                if (change > 5 && determineIfMarketsAreOpen()) {
                     notification.success({
                         message: response[key].quote.companyName,
                         description: key + ' is up ' + that.getPercentChange(response[key].quote) + '% today.',
@@ -177,7 +171,7 @@ class Companies extends Component {
                         icon: <Icon type="rise" style={{ color: GREEN }} />,
                     });
                 }
-                if (change < -5) {
+                if (change < -5 && determineIfMarketsAreOpen()) {
                     notification.warning({
                         message: response[key].quote.companyName,
                         description: key + ' is down ' + that.getPercentChange(response[key].quote) + '% today.',
@@ -248,7 +242,7 @@ class Companies extends Component {
 
     render() {
         return (
-            <div className='webkit-scroll' style={{ maxHeight: window.innerHeight - 84, overflowY: 'scroll', minWidth: '100%' }}>
+            <div className='webkit-scroll' style={{ maxHeight: window.innerHeight - 64, overflowY: 'scroll', minWidth: '100%' }}>
                 {
                     <Fragment>
                         {
@@ -273,90 +267,72 @@ class Companies extends Component {
 
                         {Object.keys(this.props.trackedCompanies).map((index) => {
                             const company = this.props.trackedCompanies[index];
+                            const userHasShares = this.props.trackedCompanies[index].shares.hasShares
+                            const count = this.props.trackedCompanies[index].shares.count;
+                            const price = this.props.trackedCompanies[index].shares.price;
                             const that = this;
                             return (
                                 <Link to="/quote" key={company.symbol}>
                                     <div
                                         className={classnames('padding10 margin10 companies-button loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === that.props.activeTicker, 'box-shadow-bottom': that.props.trackedCompanies.length !== parseInt(index) })}
                                         onClick={() => { this.props.setActiveTicker(company.symbol, company, false, index); this.closeAddCompanySideBar() }}>
-                                        <div className={classnames({ "flex flex-row": !this.props.screen.xs && !this.props.screen.sm })}>
-                                            {/* <div className={'flex flex-center'}>
-                                                <CompanyLogo symbol={company.symbol} />
-                                            </div> */}
-                                            <div className={'flex flex-column'}>
-                                                <Metric
-                                                    fontFamily={'Open Sans'}
-                                                    fontWeight={900}
-                                                    titleFontSize={14}
-                                                    title={company.symbol}
-                                                    label={company.name}
-                                                    center={this.props.screen.xs || this.props.screen.sm ? true : false}
-                                                />
-                                                <Metric
-                                                    fontFamily={'Open Sans'}
-                                                    fontWeight={900}
-                                                    titleFontSize={12}
-                                                    backgroundColor={!this.state.quickQuotes ? null : this.setBackgroundColor(company, !this.state.quickQuotes[company.symbol] ? false : this.state.quickQuotes[company.symbol].showUpdate)}
-                                                    color={!this.state.quickQuotes ? null : this.getColor(company)}
-                                                    title={!this.state.quickQuotes ? null : this.getPercentAndPrice(company)}
-                                                    labelFontSize={11}
-                                                    center={this.props.screen.xs || this.props.screen.sm ? true : false}
-                                                />
-                                                {
-                                                    (this.props.screen.xs || this.props.screen.sm)
-                                                        ?
-                                                        <div className={'flex flex-column flex-center'}>
-                                                            {this.state.quickQuotes
-                                                                ?
-                                                                <div className={'flex flex-badge flex-column'}>
-                                                                    <ChangeBadge
-                                                                        backgroundColor={!this.state.quickQuotes ? null : this.determineColor(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)}
-                                                                        company={!this.state.quickQuotes ? null : company}
-                                                                        count={!this.state.quickQuotes ? null : this.determineText(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)} />
-                                                                </div>
-                                                                :
-                                                                null
-                                                            }
-                                                            <LineChart
-                                                                screen={this.props.screen}
-                                                                ticker={company.symbol}
-                                                                timeframe={'ytd'}
-                                                                interval={2}
-                                                                title='YTD'
-                                                                width={'100%'} />
-                                                            <div className={'flex flex-row'}>
-                                                                <Badge count={!this.state.quickQuotes ? null : this.getYTD(company)} style={{ backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset', margin: 5 }} />
-                                                                <Badge count={!this.state.quickQuotes ? null : this.get52WeekHigh(company)} style={{ backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset', margin: 5 }} />
-                                                                <Badge count={!this.state.quickQuotes ? null : this.get52WeekLow(company)} style={{ backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset', margin: 5 }} />
+                                        <div className={classnames("flex flex-row")}>
+                                            <div className={'flex flex-column width-100'}>
+                                                <div className={classnames("flex flex-row")}>
+                                                    <div className={classnames("flex flex-column")}>
+                                                        <Metric
+                                                            fontFamily={'Open Sans'}
+                                                            fontWeight={900}
+                                                            titleFontSize={14}
+                                                            title={company.symbol}
+                                                            label={company.name}
+                                                            center={false}
+                                                        />
+                                                        <Metric
+                                                            fontFamily={'Open Sans'}
+                                                            fontWeight={900}
+                                                            titleFontSize={12}
+                                                            backgroundColor={!this.state.quickQuotes ? null : this.setBackgroundColor(company, !this.state.quickQuotes[company.symbol] ? false : this.state.quickQuotes[company.symbol].showUpdate)}
+                                                            color={!this.state.quickQuotes ? null : this.getColor(company)}
+                                                            title={!this.state.quickQuotes ? null : this.getPercentAndPrice(company)}
+                                                            labelFontSize={11}
+                                                            center={false}
+                                                        />
+                                                    </div>
+                                                    {!this.state.quickQuotes ?
+                                                        null
+                                                        :
+                                                        this.state.quickQuotes[company.symbol]
+                                                            ?
+                                                            <div className={'flex flex-badge flex-column'}>
+                                                                <ChangeBadge
+                                                                    backgroundColor={this.determineColor(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                                    company={company}
+                                                                    count={this.determineText(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                                />
                                                             </div>
+                                                            :
+                                                            null
+                                                    }
+                                                </div>
 
-
-                                                        </div>
+                                                {
+                                                    this.props.activeTicker === company.symbol && (this.context.screen.xs || this.context.screen.sm)
+                                                        ?
+                                                        <YourShares
+                                                            width={100}
+                                                            index={index}
+                                                            count={count}
+                                                            price={price}
+                                                            trackedCompanies={this.props.trackedCompanies}
+                                                            saveShares={this.props.saveShares}
+                                                            ticker={this.props.activeTicker}
+                                                            userHasShares={userHasShares} />
                                                         :
                                                         null
                                                 }
                                             </div>
-                                            {!this.state.quickQuotes || (this.props.screen.xs || this.props.screen.sm) ?
-                                                null
-                                                :
-                                                this.state.quickQuotes[company.symbol]
-                                                    ?
-                                                    <div className={'flex flex-badge flex-column'}>
-                                                        <ChangeBadge
-                                                            backgroundColor={this.determineColor(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)}
-                                                            company={company}
-                                                            count={this.determineText(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)} />
-                                                        {/* <ChangeBadge 
-                                                    backgroundColor={this.determineColor(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)} 
-                                                    company={company} 
-                                                    count={calculateTotalChange(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)} /> */}
-                                                    </div>
-                                                    :
-                                                    null
-                                            }
-
                                         </div>
-
                                     </div>
                                 </Link>
                             )

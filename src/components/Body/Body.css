@@ -38,7 +38,7 @@
     border-top: 2px dashed #ebebeb
 }
 .shares-divider{
-    border-top: 2px solid #f3f3f2;
+    border-top: 2px dashed #dfdfdf;
 	margin-top: 10px;
 	padding-top: 10px;
 }

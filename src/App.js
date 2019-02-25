@@ -139,7 +139,9 @@ class App extends Component {
       return (
         <LoafContext.Provider
           value={{
-            screen: this.state.screen
+            screen: this.state.screen,
+            trackedCompanies: this.state.trackedCompanies,
+            setActiveTicker: this.setActiveTicker
           }}>
           <BrowserRouter>
             <main>
@@ -147,7 +149,7 @@ class App extends Component {
                 <Header style={{ marginBottom: this.state.screen.xs || this.state.screen.sm ? 0 : 20 }}>
                   <Navigation title={'Loaf'} screen={this.state.screen} />
                 </Header>
-                <Layout style={{ minHeight: window.innerHeight - 84 }}>
+                <Layout style={{ minHeight: window.innerHeight - 64 }}>
                   {this.state.screen.xs || this.state.screen.sm
                     ?
                     <Switch>
@@ -180,7 +182,7 @@ class App extends Component {
                             screen={this.state.screen}
                             firebase={firebase} />
                           :
-                          <div className={'flex flex-center'} style={{ height: window.innerHeight - 84 }}>
+                          <div className={'flex flex-center'} style={{ height: window.innerHeight - 64 }}>
                             <Companies screen={this.state.screen} activeTicker={this.state.activeTicker} trackedCompanies={this.state.trackedCompanies} setActiveTicker={this.setActiveTicker} />
                           </div>}
                       />
@@ -199,17 +201,17 @@ class App extends Component {
                     </Switch>
                     :
                     <Fragment>
-                      <Sider className={classnames("left-sider", { "left-sider-small": this.state.screen.xs || this.state.screen.sm, "left-sider-large": this.state.screen.md || this.state.screen.lg || this.state.screen.xl })} style={{ maxHeight: window.innerHeight - 84 }}>
-                        {this.state.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false
-                          ?
-                          null
-                          :
+                      {this.state.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false
+                        ?
+                        null
+                        :
+                        <Sider className={classnames("left-sider", { "left-sider-small": this.state.screen.xs || this.state.screen.sm, "left-sider-large": this.state.screen.md || this.state.screen.lg || this.state.screen.xl })} style={{ maxHeight: window.innerHeight - 84 }}>
                           <Companies screen={this.state.screen} activeTicker={this.state.activeTicker} trackedCompanies={this.state.trackedCompanies} setActiveTicker={this.setActiveTicker} />
-                        }
-                      </Sider>
+                        </Sider>
+
+                      }
                       <Content>
                         <Switch>
-
                           <Route path="/add" render={props => <AddCompany
                             setActiveTicker={this.setActiveTicker}
                             trackedCompanies={this.state.trackedCompanies}
@@ -262,7 +264,12 @@ class App extends Component {
 
                         </Switch>
                       </Content>
+                      
                       {
+                        this.state.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false
+                        ?
+                        null
+                        :
                         this.state.screen.lg || this.state.screen.xl ?
                           <Sider className="right-sider paddingLeft10 paddingRight10">
                             <CompanyStatistics activeTicker={this.state.activeTicker} />
@@ -287,7 +294,7 @@ class App extends Component {
   componentDidMount() {
     if (localStorage.getItem('LOAF_USER')) {
       this.fetchingTrackedCompanies();
-      if(!localStorage.getItem('LOAF_WELCOME_SHOWN')){
+      if (!localStorage.getItem('LOAF_WELCOME_SHOWN')) {
         showNotification('Hi ya!', 'Welcome in, ' + JSON.parse(localStorage.getItem('LOAF_USER')).displayName, 'blue', 'smile');
         localStorage.setItem('LOAF_WELCOME_SHOWN', true)
       }

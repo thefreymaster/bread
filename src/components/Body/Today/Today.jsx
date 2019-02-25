@@ -5,7 +5,9 @@ import Loader from 'react-loader-spinner'
 import { GREEN, RED, GREY, LIGHT_GREEN, LIGHT_RED } from '../../../Constants';
 import { getPercentChange } from '../../HelperFunctions/Helper';
 import { Button } from '../../../../node_modules/antd';
+import classnames from 'classnames'
 import io from 'socket.io-client'
+import { LoafContext } from './../../../LoafContext';
 
 const filter = 'changePercent,latestPrice,symbol,companyName,previousClose,close'
 
@@ -57,6 +59,7 @@ class Today extends Component {
             }, 500);
         }
     }
+    static contextType = LoafContext;
     constructor(props) {
         super(props)
         this.state = {
@@ -97,6 +100,9 @@ class Today extends Component {
         }
     }
     render() {
+        const mobile = this.context.screen.xs || this.context.screen.sm ? true : false
+        const desktop = this.context.screen.md || this.context.screen.lg || this.context.screen.xl ? true : false
+
         if (!this.state.stats)
             return (
                 <div className="flex flex-row flex-center show-zoom-animation" style={{ height: 200, width: '50%' }}>
@@ -110,7 +116,7 @@ class Today extends Component {
             )
         else {
             return (
-                <div className="loaf-component flex flex-column flex-center border-right" style={{ height: (window.innerHeight - 84) * 0.40, width: '50%' }}>
+                <div className={"loaf-component flex flex-column flex-center border-right"} style={{ height: (window.innerHeight - 84) * 0.40, width: '50%' }}>
                     <Metric 
                         titleFontSize={72} 
                         center
@@ -119,7 +125,7 @@ class Today extends Component {
                         label={this.state.stats.companyName} 
                         labelCloseToTitle={true} />
                     <div className="flex flex-row">
-                        <div className='width-100' style={{marginRight: 25}}>
+                        <div className={classnames({'width-100': mobile, 'width-60': desktop})} style={{marginRight: 25}}>
                             <Metric
                                 title={parseFloat(this.state.price).toFixed(2)}
                                 label="Latest Price"
