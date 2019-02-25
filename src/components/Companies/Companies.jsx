@@ -246,7 +246,7 @@ class Companies extends Component {
         const desktop = this.context.screen.md || this.context.screen.lg || this.context.screen.xl ? true : false
 
         return (
-            <div className='webkit-scroll' style={{ maxHeight: window.innerHeight - 84, overflowY: 'scroll', minWidth: '100%' }}>
+            <div className='webkit-scroll' style={{ maxHeight: desktop ?  window.innerHeight - 84 :  window.innerHeight - 64, overflowY: 'scroll', minWidth: '100%' }}>
                 {
                     <Fragment>
                         {
@@ -349,7 +349,7 @@ class Companies extends Component {
                                 : 
                                 null
                         }
-                        <div className={classnames({"marginBottom48": mobile, "marginBottom64": desktop})}></div>
+                        <div className={classnames({"marginBottom54": mobile, "marginBottom64": desktop})}></div>
                     </Fragment>
                 }
                 <Link to="/add">
