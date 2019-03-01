@@ -219,6 +219,7 @@ class Companies extends Component {
             })
         }
     }
+
     componentDidUpdate(prevProps) {
         let that = this;
         if (this.props.activeTicker !== prevProps.activeTicker) {

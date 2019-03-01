@@ -72,7 +72,7 @@ class Today extends Component {
     componentDidUpdate(prevProps) {
         let that = this;
         if (this.props.ticker !== prevProps.ticker) {
-            this.state.socket.emit('unsubscribe', prevProps.ticker)
+            // this.state.socket.emit('unsubscribe', prevProps.ticker)
             let data = getBatchData(this.props.ticker, 'quote,price,stats', filter);
             data.then(response => {
                 this.setState({
@@ -86,9 +86,9 @@ class Today extends Component {
     componentWillMount() {
         let that = this;
         if (this.props.ticker) {
-            that.state.socket.on('connect', () => {
-                that.state.socket.emit('subscribe', this.props.ticker)
-            })
+            // that.state.socket.on('connect', () => {
+            //     that.state.socket.emit('subscribe', this.props.ticker)
+            // })
             let data = getBatchData(this.props.ticker, 'quote,price,stats', filter);
             data.then(response => {
                 this.setState({
