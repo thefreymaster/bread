@@ -25,7 +25,11 @@ class LineChart extends Component {
     }
     getGraphPercentChange = () => {
         if (this.state.data[0].data[this.state.data[0].data.length - 1].changeOverTime) {
-            return (this.state.data[0].data[this.state.data[0].data.length - 1].changeOverTime * 100).toFixed(2) + '%'
+            let change = (this.state.data[0].data[this.state.data[0].data.length - 1].y-this.state.data[0].data[0].y)/this.state.data[0].data[this.state.data[0].data.length - 1].y;
+            change = change*100;
+            change = change.toFixed(2);
+            change = change + '%'
+            return change;
         }
     }
     constructor(props) {
@@ -62,15 +66,11 @@ class LineChart extends Component {
         else {
             return (
                 <div className={classnames("flex flex-column flex-center-start show-zoom-animation", { 'dashed-border-right': this.props.rightDivider })} style={{ height: (window.innerHeight - 84) * 0.27, width: this.props.width }}>
-                    {
-                        this.props.screen.xs || this.props.screen.sm
-                            ?
-                            null
-                            :
-                            <div className={classnames('', { 'absolute': this.context.screen.md || this.context.screen.lg || this.context.screen.xl })}>
-                                <Metric color={this.determineGraphColor(this.state.data)} fontFamily={'Open Sans'} fontWeight={900} titleFontSize={18} label={this.props.title} labelFontSize={14} center title={this.getGraphPercentChange()} />
-                            </div>
-                    }
+
+                    <div className={classnames('', { 'absolute': this.context.screen.md || this.context.screen.lg || this.context.screen.xl })}>
+                        <Metric color={this.determineGraphColor(this.state.data)} fontFamily={'Open Sans'} fontWeight={900} titleFontSize={18} label={this.props.title} labelFontSize={14} center title={this.getGraphPercentChange()} />
+                    </div>
+
                     <ResponsiveLine
                         data={this.state.data}
                         margin={{

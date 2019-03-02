@@ -17,6 +17,7 @@ import AddCompany from './components/Companies/AddCompany/AddCompany';
 import Login from './components/Login/Login';
 import Load from './components/Load';
 import Metric from './components/Body/Metric';
+import Portfolio from './components/Portfolio/Portfolio';
 import { LoafContext } from './LoafContext';
 import { showNotification } from './components/HelperFunctions/Notifications';
 
@@ -250,6 +251,22 @@ class App extends Component {
                                 activeTickerIndex={this.state.activeTickerIndex}
                               />}
                           />
+                          <Route path="/portfolio" render={props =>
+                            this.state.trackedCompanies.length === 0
+                              ?
+                              <AddCompany
+                                setActiveTicker={this.setActiveTicker}
+                                trackedCompanies={this.state.trackedCompanies}
+                                screen={this.state.screen}
+                                firebase={firebase} />
+                              :
+                              <Portfolio 
+                                screen={this.state.screen} 
+                                activeTicker={this.state.activeTicker} 
+                                trackedCompanies={this.state.trackedCompanies} 
+                                setActiveTicker={this.setActiveTicker} />
+                            }
+                          />
                           <Route path="/" render={props =>
                             this.state.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
                               ?
@@ -264,18 +281,18 @@ class App extends Component {
 
                         </Switch>
                       </Content>
-                      
+
                       {
                         this.state.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false
-                        ?
-                        null
-                        :
-                        this.state.screen.lg || this.state.screen.xl ?
-                          <Sider className="right-sider paddingLeft10 paddingRight10">
-                            <CompanyStatistics activeTicker={this.state.activeTicker} />
-                          </Sider>
-                          :
+                          ?
                           null
+                          :
+                          this.state.screen.lg || this.state.screen.xl ?
+                            <Sider className="right-sider paddingLeft10 paddingRight10">
+                              <CompanyStatistics activeTicker={this.state.activeTicker} />
+                            </Sider>
+                            :
+                            null
                       }
                     </Fragment>
                   }

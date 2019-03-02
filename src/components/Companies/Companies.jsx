@@ -12,6 +12,8 @@ import { determineIfMarketsAreOpen } from './../HelperFunctions/Helper';
 import { LoafContext } from './../../LoafContext';
 import Systems from './../Body/Systems';
 import io from 'socket.io-client'
+import LineChart from './../LineChart/LineChart';
+import PortfolioLink from '../Portfolio/PortfolioLink';
 
 // https://ws-api.iextrading.com/1.0/tops
 // "AAPL,ADBE,AMD,ATVI,CMG,CRM,DBX,FDX,GE,HD,IBM,INTC,JD,LMT,MDB,MMM,MRVL,MSFT,NFLX,NOC,NVDA,RDFN,ROKU,SHOP,SPOT,TEAM,TGT,TTWO,TWLO,WB"
@@ -38,14 +40,14 @@ class Companies extends Component {
     }
     getColor(company) {
         if (this.state.quickQuotes[company.symbol]) {
-            if (this.state.quickQuotes[company.symbol].quote.changePercent > 0) {
+            if (this.state.quickQuotes[company.symbol].quote.changePercent === 0) {
+                return GREY
+            }
+            else if (this.state.quickQuotes[company.symbol].quote.changePercent > 0) {
                 return GREEN;
             }
             else if (this.state.quickQuotes[company.symbol].quote.changePercent < 0) {
                 return RED;
-            }
-            else {
-                return GREY;
             }
         }
     }
@@ -110,17 +112,20 @@ class Companies extends Component {
         let messageJSON = JSON.parse(message)
         // console.log(JSON.parse(message))
         let change;
-        if (messageJSON && _quickQuotes[messageJSON.symbol]) {
+        if (messageJSON) {
             setTimeout(() => {
-                _quickQuotes[messageJSON.symbol].quote.latestPrice = messageJSON.lastSalePrice;
-                _quickQuotes[messageJSON.symbol].showUpdate = true;
+                if(messageJSON.symbol){
+                    _quickQuotes[messageJSON.symbol].quote.latestPrice = messageJSON.lastSalePrice;
+                    _quickQuotes[messageJSON.symbol].showUpdate = true;
+    
+                    that.setState({ quickQuotes: _quickQuotes }, () => {
+                        setTimeout(() => {
+                            _quickQuotes[messageJSON.symbol].showUpdate = false;
+                            that.setState({ quickQuotes: _quickQuotes })
+                        }, 1000);
+                    })
+                }
 
-                that.setState({ quickQuotes: _quickQuotes }, () => {
-                    setTimeout(() => {
-                        _quickQuotes[messageJSON.symbol].showUpdate = false;
-                        that.setState({ quickQuotes: _quickQuotes })
-                    }, 1000);
-                })
             }, 500);
         }
     }
@@ -247,7 +252,7 @@ class Companies extends Component {
         const desktop = this.context.screen.md || this.context.screen.lg || this.context.screen.xl ? true : false
 
         return (
-            <div className='webkit-scroll' style={{ maxHeight: desktop ?  window.innerHeight - 84 :  window.innerHeight - 64, overflowY: 'scroll', minWidth: '100%' }}>
+            <div className='webkit-scroll' style={{ maxHeight: desktop ? window.innerHeight - 84 : window.innerHeight - 64, overflowY: 'scroll', minWidth: '100%' }}>
                 {
                     <Fragment>
                         {
@@ -269,13 +274,19 @@ class Companies extends Component {
                                     <div class="marginBottom26"></div>
                                 </Fragment>
                         }
+                        <PortfolioLink 
+                            screen={this.props.screen} 
+                            activeTicker={this.props.activeTicker} 
+                            trackedCompanies={this.props.trackedCompanies} 
+                            setActiveTicker={this.props.setActiveTicker} 
+                            quickQuotes={this.state.quickQuotes} />
 
                         {Object.keys(this.props.trackedCompanies).map((index) => {
                             const company = this.props.trackedCompanies[index];
                             const userHasShares = this.props.trackedCompanies[index].shares.hasShares
                             const count = this.props.trackedCompanies[index].shares.count;
                             const price = this.props.trackedCompanies[index].shares.price;
-                    
+
                             const that = this;
                             return (
                                 <Link to="/quote" key={company.symbol}>
@@ -325,15 +336,25 @@ class Companies extends Component {
                                                 {
                                                     this.props.activeTicker === company.symbol && (this.context.screen.xs || this.context.screen.sm)
                                                         ?
-                                                        <YourShares
-                                                            width={100}
-                                                            index={index}
-                                                            count={count}
-                                                            price={price}
-                                                            trackedCompanies={this.props.trackedCompanies}
-                                                            saveShares={this.props.saveShares}
-                                                            ticker={this.props.activeTicker}
-                                                            userHasShares={userHasShares} />
+                                                        <Fragment>
+                                                            <div className="shares-divider"></div>
+                                                            <LineChart
+                                                                ticker={that.props.activeTicker}
+                                                                timeframe={'6m'}
+                                                                interval={2}
+                                                                title='Change 6 Month'
+                                                                screen={this.context.screen}
+                                                                width={'100%'} />
+                                                            <YourShares
+                                                                width={100}
+                                                                index={index}
+                                                                count={count}
+                                                                price={price}
+                                                                trackedCompanies={this.props.trackedCompanies}
+                                                                saveShares={this.props.saveShares}
+                                                                ticker={this.props.activeTicker}
+                                                                userHasShares={userHasShares} />
+                                                        </Fragment>
                                                         :
                                                         null
                                                 }
@@ -347,10 +368,10 @@ class Companies extends Component {
                             this.context.screen.xs || this.context.screen.sm
                                 ?
                                 <Systems position='inline' />
-                                : 
+                                :
                                 null
                         }
-                        <div className={classnames({"marginBottom54": mobile, "marginBottom64": desktop})}></div>
+                        <div className={classnames({ "marginBottom54": mobile, "marginBottom64": desktop })}></div>
                     </Fragment>
                 }
                 <Link to="/add">

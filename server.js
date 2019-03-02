@@ -49,6 +49,14 @@ app.get('/api/quick-quote/:symbols', function (req, res) {
         res.send(body);
     });
 })
+app.post('/api/portfolio/total', (req, res) => {
+    console.log(req.body.companies)
+    let total = 0;
+    for(let company of JSON.parse(req.body.companies)){
+        total = total + 
+    }
+    res.send(req.body.companies)
+})
 
 app.get('/quote', function (request, response) {
     response.sendFile(path.resolve(__dirname, 'build/index.html'));

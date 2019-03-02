@@ -51,7 +51,7 @@
     transition: box-shadow 350ms ease-in-out;
 }
 .box-shadow-bottom{
-    box-shadow: 0 0px 1px 0 #0000006e;
+    box-shadow: 0 0px 1px 0 #0000003b;
     border-radius: 3px;
 }
 .margin-auto{
