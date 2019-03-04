@@ -15,6 +15,8 @@ import { getSymbolNews } from '../../api/NewsAPI';
 import News from './News';
 import PieGraph from './../PieGraph/PieGraph';
 import { findIndex } from './../HelperFunctions/Helper';
+import BarGraph from '../BarGraph/BarGraph';
+import Loader from './../Load';
 
 
 class Portfolio extends Component {
@@ -96,7 +98,7 @@ class Portfolio extends Component {
                                 fontFamily={'Open Sans'}
                                 prefix={'$'} />
                             <Metric
-                                title={!this.state.previousTotal ? 0 : this.state.currentTotal-this.state.previousTotal}
+                                title={!this.state.previousTotal ? 0 : this.state.currentTotal - this.state.previousTotal}
                                 label="Change"
                                 number
                                 width={'33%'}
@@ -126,23 +128,38 @@ class Portfolio extends Component {
                     </div>
                     <div className={"loaf-component flex flex-column flex-start-center"} style={{ height: (window.innerHeight - 84) * 0.40, width: '50%' }}>
                         {/* <Link to="/quote" onClick={() => this.props.setActiveTicker(this.state.gainer.symbol, this.state.gainer, false, findIndex(this.state.gainer.symbol, this.props.trackedCompanies))}> */}
-                            <Gainer gainer={this.state.gainer} />
+                        <Gainer gainer={this.state.gainer} />
                         {/* </Link> */}
                         <div className="shares-divider width-100"></div>
                         {/* <Link to="/quote"> */}
-                            <Loser loser={this.state.loser} />
+                        <Loser loser={this.state.loser} />
                         {/* </Link> */}
                     </div>
                 </div>
                 <div className='flex flex-row'>
                     <div className="flex flex-column dashed-border-top width-60 dashed-border-right">
                         {
-                            !this.state.quotes ? null : <PieGraph change={this.state.percentChange} currentTotal={this.state.currentTotal} data={this.props.trackedCompanies} quotes={this.state.quotes} />
+                            !this.state.quotes ? <div className="flex flex-row flex-center show-zoom-animation" style={{ height: (window.innerHeight - 84) * 0.54, width: this.props.width }}>
+                                <Loader
+                                    type="Bars"
+                                    color="#000000a6"
+                                    height="20"
+                                    width="20"
+                                />
+                            </div> : <PieGraph width={'100%'} change={this.state.percentChange} currentTotal={this.state.currentTotal} data={this.props.trackedCompanies} quotes={this.state.quotes} />
                         }
                     </div>
                     <div className="flex flex-column dashed-border-top width-40">
-                        <News news={this.state.gainerNews} />
-                        <News news={this.state.loserNews} />
+                        {
+                            !this.state.quotes ? <div className="flex flex-row flex-center show-zoom-animation" style={{ height: (window.innerHeight - 84) * 0.54, width: this.props.width }}>
+                                <Loader
+                                    type="Bars"
+                                    color="#000000a6"
+                                    height="20"
+                                    width="20"
+                                />
+                            </div> : <BarGraph width={'100%'} total={this.state.total} change={this.state.percentChange} currentTotal={this.state.currentTotal} data={this.props.trackedCompanies} quotes={this.state.quotes} />
+                        }
                     </div>
                 </div>
 

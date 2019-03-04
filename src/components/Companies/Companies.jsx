@@ -137,7 +137,7 @@ class Companies extends Component {
             open: false,
             fetchQuickQuotes: true,
             socket: io('https://ws-api.iextrading.com/1.0/tops'),
-            realTimeStreaming: false,
+            realTimeStreaming: true,
             determineIfMarketsAreOpen: determineIfMarketsAreOpen,
             minute: getMinutesOfDay(),
             hour: getHourOfDay(),
@@ -178,7 +178,7 @@ class Companies extends Component {
                         onClick: () => {
                             this.findIndex(key)
                         },
-                        duration: 10,
+                        duration: 5,
                         icon: <Icon type="rise" style={{ color: GREEN }} />,
                     });
                 }
@@ -191,7 +191,7 @@ class Companies extends Component {
                         onClick: () => {
                             this.findIndex(key)
                         },
-                        duration: 10,
+                        duration: 5,
                         icon: <Icon type="fall" style={{ color: RED }} />,
                     });
                 }

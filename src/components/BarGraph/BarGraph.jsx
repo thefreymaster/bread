@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ResponsivePie } from '@nivo/pie'
+import { ResponsiveBar } from '@nivo/bar'
 import { getChartData } from '../../api/ChartAPI';
 import Loader from 'react-loader-spinner'
 import { GREEN, RED, GREY } from './../../Constants';
@@ -12,10 +12,14 @@ class BarGraph extends Component {
         let that = this;
         let data = [];
         data.push({
-            breakdown: 'breakdown',
-            ['Initial Cost']: that.props.total,
-            ['GainOrLoss']: that.props.total-that.props.currentTotal
+            breakdown: 'Intial',
+            ['change']: 54,
         })
+        data.push({
+            breakdown: 'Change',
+            ['change']: 124
+        })
+
         that.setState({
             data: data
         })
@@ -29,7 +33,7 @@ class BarGraph extends Component {
 
         if (!this.props.data)
             return (
-                <div className="flex flex-row flex-center show-zoom-animation" style={{ height: 200, width: this.props.width }}>
+                <div className="flex flex-row flex-center show-zoom-animation" style={{ height:  (window.innerHeight - 84) * 0.54, width: this.props.width }}>
                     <Loader
                         type="Bars"
                         color="#000000a6"
@@ -42,75 +46,38 @@ class BarGraph extends Component {
             return (
                 <div className={classnames("flex flex-column flex-center show-zoom-animation", { 'dashed-border-right': this.props.rightDivider })} style={{ height: (window.innerHeight - 84) * 0.54, width: this.props.width }}>
                     <ResponsiveBar
-                        data={/* see data tab */}
+                        data={[
+                            {
+                              "country": "Breakdown",
+                              "Initial": (this.props.total).toFixed(2),
+                              "Change": (this.props.currentTotal-this.props.total).toFixed(2),
+                            }
+                          ]}
                         keys={[
-                            "Breakdown"
+                            "Initial",
+                            "Change"
                         ]}
-                        indexBy="breakdown"
+                        indexBy="country"
                         margin={{
-                            "top": 50,
+                            "top": 20,
                             "right": 130,
-                            "bottom": 50,
+                            "bottom": 70,
                             "left": 60
                         }}
                         padding={0.3}
-                        colors="nivo"
-                        colorBy="id"
-                        defs={[
-                            {
-                                "id": "dots",
-                                "type": "patternDots",
-                                "background": "inherit",
-                                "color": "#38bcb2",
-                                "size": 4,
-                                "padding": 1,
-                                "stagger": true
-                            },
-                            {
-                                "id": "lines",
-                                "type": "patternLines",
-                                "background": "inherit",
-                                "color": "#eed312",
-                                "rotation": -45,
-                                "lineWidth": 6,
-                                "spacing": 10
-                            }
-                        ]}
-                        fill={[
-                            {
-                                "match": {
-                                    "id": "fries"
-                                },
-                                "id": "dots"
-                            },
-                            {
-                                "match": {
-                                    "id": "sandwich"
-                                },
-                                "id": "lines"
-                            }
-                        ]}
+                        colors={this.props.currentTotal-this.props.total > 0 ? 'greens' : 'reds'}
                         borderColor="inherit:darker(1.6)"
-                        axisTop=null
-                        axisRight=null
-                        axisBottom={{
-                            "tickSize": 5,
-                            "tickPadding": 5,
-                            "tickRotation": 0,
-                            "legend": "country",
-                            "legendPosition": "middle",
-                            "legendOffset": 32
-                        }}
                         axisLeft={{
                             "tickSize": 5,
                             "tickPadding": 5,
                             "tickRotation": 0,
-                            "legend": "food",
+                            "legend": "$ Amount",
                             "legendPosition": "middle",
-                            "legendOffset": -40
+                            "legendOffset": -50
                         }}
                         labelSkipWidth={12}
                         labelSkipHeight={12}
+                        label={(data) => {return '$' + data.value}}
                         labelTextColor="inherit:darker(1.6)"
                         animate={true}
                         motionStiffness={90}
