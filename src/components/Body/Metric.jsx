@@ -1,5 +1,6 @@
 import React from 'react';
 import CountUp from 'react-countup';
+import { Icon } from 'antd'
 
 function Metric(props) {
     const inline = {
@@ -20,6 +21,7 @@ function Metric(props) {
         parent: {
             alignItems: props.align,
             paddingLeft: props.paddingleft ? 10 : 0,
+            width: props.width
         }
     }
     return (

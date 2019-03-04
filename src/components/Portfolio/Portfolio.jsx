@@ -6,6 +6,16 @@ import classnames from 'classnames';
 import Systems from './../Body/Systems';
 import Today from './../Body/Today/Today'
 import { getPortfolioTotal } from '../../api/PortfolioAPI';
+import { LoafContext } from './../../LoafContext';
+import { GREEN, RED, GREY } from '../../Constants';
+import { Icon, Badge } from 'antd';
+import Loser from './Loser';
+import Gainer from './Gainer';
+import { getSymbolNews } from '../../api/NewsAPI';
+import News from './News';
+import PieGraph from './../PieGraph/PieGraph';
+import { findIndex } from './../HelperFunctions/Helper';
+
 
 class Portfolio extends Component {
     calculatePortfolioTotal = () => {
@@ -14,38 +24,132 @@ class Portfolio extends Component {
     componentDidMount() {
         let data = getPortfolioTotal(this.props.trackedCompanies);
         data.then(response => {
-            console.log(response)
+            this.setState({
+                total: response.data.total,
+                currentTotal: response.data.currentTotal,
+                previousTotal: response.data.previousTotal,
+                percentChange: response.data.percentChange,
+                gainer: response.data.gainer,
+                loser: response.data.loser,
+                quotes: response.data.quotes
+            }, () => {
+                this.props.setActiveTicker('portfolio', '', false, -1);
+                if (this.state.gainer.symbol) {
+                    let news = getSymbolNews(this.state.gainer.symbol);
+                    news.then(response => {
+                        this.setState({
+                            gainerNews: response
+                        })
+                    })
+                }
+                if (this.state.loser.symbol) {
+                    let news = getSymbolNews(this.state.loser.symbol);
+                    news.then(response => {
+                        this.setState({
+                            loserNews: response
+                        })
+                    })
+                }
+            })
         })
+
     }
-    constructor(props){
+    static contextType = LoafContext;
+    constructor(props) {
         super(props)
+        this.state = {
+            total: '',
+            currentTotal: '',
+            percentChange: '',
+            gainer: {},
+            loser: {},
+        }
     }
     render() {
-        if(this.props.activeTickerIndex === undefined || this.props.trackedCompanies.length === 0)
-            return null;
-        else{
-            const index = this.props.activeTickerIndex;
-            const userHasShares = this.props.trackedCompanies[index].shares.hasShares
-            const count = this.props.trackedCompanies[index].shares.count;
-            const price = this.props.trackedCompanies[index].shares.price;
-            return (
-                <div className="flex flex-column" style={{marginRight: 15}}>
-                    <div className={classnames("flex", {"flex-column": this.props.screen.xs, "flex-row": !this.props.screen.xs || !this.props.screen.sm})}>
-                        <Today screen={this.props.screen} trackedCompanies={this.props.trackedCompanies} removeCompanyFromTrackedCompanies={this.props.removeCompanyFromTrackedCompanies} ticker={this.props.activeTicker} />
-                        {/* <YourShares width={50} index={index} count={count} price={price} trackedCompanies={this.props.trackedCompanies} saveShares={this.props.saveShares} ticker={this.props.activeTicker} userHasShares={userHasShares} /> */}
+        return (
+            <div className="flex flex-column" style={{ marginRight: 15 }}>
+                <div className='flex flex-row'>
+                    <div className={"loaf-component flex flex-column flex-center border-right"} style={{ height: (window.innerHeight - 84) * 0.40, width: '50%' }}>
+                        <Metric
+                            title={this.state.currentTotal}
+                            label="Portfolio Current Value"
+                            number
+                            center
+                            fontWeight={900}
+                            duration={1}
+                            decimals={2}
+                            color={this.state.currentTotal == 0 ? GREY : this.state.currentTotal > this.state.previousTotal ? GREEN : RED}
+                            titleFontSize={56}
+                            fontFamily={'Open Sans'}
+                            prefix={'$'} />
+                        <div className="flex flex-row width-100">
+                            <Metric
+                                title={this.state.total}
+                                label="Initial Cost"
+                                number
+                                center
+                                width={'33%'}
+                                titleFontSize={18}
+                                fontWeight={900}
+                                duration={1}
+                                decimals={0}
+                                fontFamily={'Open Sans'}
+                                prefix={'$'} />
+                            <Metric
+                                title={!this.state.previousTotal ? 0 : this.state.currentTotal-this.state.previousTotal}
+                                label="Change"
+                                number
+                                width={'33%'}
+                                center
+                                color={this.state.currentTotal == 0 ? GREY : this.state.currentTotal - this.state.previousTotal ? RED : GREEN}
+                                titleFontSize={18}
+                                fontWeight={900}
+                                duration={1}
+                                decimals={0}
+                                fontFamily={'Open Sans'}
+                                prefix={'$'} />
+                            <Metric
+                                title={this.state.percentChange}
+                                label="Change Today"
+                                titleFontSize={18}
+                                fontWeight={900}
+                                duration={1}
+                                color={this.state.percentChange > 0 ? GREEN : RED}
+                                center
+                                number
+                                width={'33%'}
+                                decimals={2}
+                                suffix={'%'}
+                                fontFamily={'Open Sans'} />
+                        </div>
+
                     </div>
-                    <div className="flex flex-row dashed-border-bottom dashed-border-top">
-                        {/* <LineChart screen={this.props.screen} width={'50%'} ticker={this.props.activeTicker} timeframe={'1d'} interval={10} title='1 Day' rightDivider={true} />
-                        <LineChart screen={this.props.screen} width={'50%'} ticker={this.props.activeTicker} timeframe={'6m'} interval={2} title='6 Month' /> */}
+                    <div className={"loaf-component flex flex-column flex-start-center"} style={{ height: (window.innerHeight - 84) * 0.40, width: '50%' }}>
+                        {/* <Link to="/quote" onClick={() => this.props.setActiveTicker(this.state.gainer.symbol, this.state.gainer, false, findIndex(this.state.gainer.symbol, this.props.trackedCompanies))}> */}
+                            <Gainer gainer={this.state.gainer} />
+                        {/* </Link> */}
+                        <div className="shares-divider width-100"></div>
+                        {/* <Link to="/quote"> */}
+                            <Loser loser={this.state.loser} />
+                        {/* </Link> */}
                     </div>
-                    <div className="flex flex-row">
-                        {/* <LineChart screen={this.props.screen} width={'50%'} ticker={this.props.activeTicker} timeframe={'1y'} interval={5} title='1 Year' rightDivider={true} />
-                        <LineChart screen={this.props.screen} width={'50%'} ticker={this.props.activeTicker} timeframe={'5y'} interval={20} title='5 Year' /> */}
-                    </div>
-                    <Systems />
                 </div>
-            )
-        }
+                <div className='flex flex-row'>
+                    <div className="flex flex-column dashed-border-top width-60 dashed-border-right">
+                        {
+                            !this.state.quotes ? null : <PieGraph change={this.state.percentChange} currentTotal={this.state.currentTotal} data={this.props.trackedCompanies} quotes={this.state.quotes} />
+                        }
+                    </div>
+                    <div className="flex flex-column dashed-border-top width-40">
+                        <News news={this.state.gainerNews} />
+                        <News news={this.state.loserNews} />
+                    </div>
+                </div>
+
+                <Systems />
+
+            </div>
+        )
     }
 }
 

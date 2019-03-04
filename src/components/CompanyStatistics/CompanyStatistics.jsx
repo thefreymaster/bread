@@ -25,7 +25,7 @@ class CompanyStatistics extends Component {
         this.state = {}
     }
     componentDidMount() {
-        if (this.props.activeTicker) {
+        if (this.props.activeTicker && this.props.activeTicker !== 'portfolio') {
 
             let data = getBatchData(this.props.activeTicker, 'quote,stats', filter);
             data.then(response => {
@@ -110,7 +110,7 @@ class CompanyStatistics extends Component {
         }
     }
     componentDidUpdate(prevProps) {
-        if (this.props.activeTicker !== prevProps.activeTicker) // Check if it's a new user, you can also use some unique property, like the ID
+        if (this.props.activeTicker !== prevProps.activeTicker && this.props.activeTicker !== 'portfolio') // Check if it's a new user, you can also use some unique property, like the ID
         {
 
             let data = getBatchData(this.props.activeTicker, 'quote,stats');

@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Redirect, Switch, withRouter } from "react-router-dom";
+
 import './App.css';
 import 'antd/dist/antd.css';
 import { Layout, message } from 'antd';
@@ -20,6 +21,7 @@ import Metric from './components/Body/Metric';
 import Portfolio from './components/Portfolio/Portfolio';
 import { LoafContext } from './LoafContext';
 import { showNotification } from './components/HelperFunctions/Notifications';
+import RightSider from './components/RightSider/RightSider'
 
 const firebase = getFirebaseAuthObject();
 
@@ -244,6 +246,7 @@ class App extends Component {
                               :
                               <Body
                                 saveShares={this.saveShares}
+                                setActiveTicker={this.setActiveTicker}
                                 screen={this.state.screen}
                                 removeCompanyFromTrackedCompanies={this.removeCompanyFromTrackedCompanies}
                                 trackedCompanies={this.state.trackedCompanies}
@@ -281,7 +284,6 @@ class App extends Component {
 
                         </Switch>
                       </Content>
-
                       {
                         this.state.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false
                           ?
@@ -289,7 +291,7 @@ class App extends Component {
                           :
                           this.state.screen.lg || this.state.screen.xl ?
                             <Sider className="right-sider paddingLeft10 paddingRight10">
-                              <CompanyStatistics activeTicker={this.state.activeTicker} />
+                              <RightSider activeTicker={this.state.activeTicker} />
                             </Sider>
                             :
                             null
@@ -327,7 +329,7 @@ class App extends Component {
           this.setState({
             trackedCompanies: companies,
             fetchingTrackedCompanies: false,
-          }, this.setActiveTicker(companies[0].symbol, companies[0], false))
+          })
         }
         this.fetchingTrackedCompaniesComplete();
       });

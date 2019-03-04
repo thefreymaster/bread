@@ -91,6 +91,10 @@
     align-items: center;
     justify-content: center;
 }
+.flex-start-center{
+    align-items: flex-start;
+    justify-content: center;
+}
 .flex-center-start{
     align-items: center;
     justify-content: flex-start;

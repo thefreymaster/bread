@@ -4,6 +4,9 @@ function calculateTotalChange(count, purchasePrice, currentPrice) {
 function getPercentChange(quote) {
     return ((quote.latestPrice - quote.previousClose) / quote.latestPrice * 100).toFixed(2)
 }
+function getPercentChangeGeneric(latestValue, previousValue) {
+    return ((latestValue - previousValue) / latestValue * 100).toFixed(2)
+}
 function getDayOfWeek(){
     return new Date().getDay()
 }
@@ -35,5 +38,12 @@ function determineIfMarketsAreOpen(day, hour, minute){
         return false;
     }
 }
+function findIndex(symbol, trackedCompanies) {
+    for (let index of Object.keys(trackedCompanies)) {
+        if (trackedCompanies[index].symbol === symbol) {
+            return index;
+        }
+    }
+}
 
-export { calculateTotalChange, getPercentChange, getDayOfWeek, getHourOfDay, getMinutesOfDay, determineIfMarketsAreOpen }
+export { calculateTotalChange, getPercentChange, getPercentChangeGeneric, getDayOfWeek, getHourOfDay, getMinutesOfDay, determineIfMarketsAreOpen, findIndex }

@@ -8,13 +8,13 @@ import Metric from '../Body/Metric';
 import ChangeBadge from '../ChangeBadge/ChangeBadge';
 import classnames from 'classnames';
 import { RED, GREEN, GREY, LIGHT_RED, LIGHT_GREEN } from '../../Constants';
-import { determineIfMarketsAreOpen } from './../HelperFunctions/Helper';
+import { determineIfMarketsAreOpen, getMinutesOfDay, getHourOfDay, getDayOfWeek } from './../HelperFunctions/Helper';
 import { LoafContext } from './../../LoafContext';
 import Systems from './../Body/Systems';
 import io from 'socket.io-client'
 import LineChart from './../LineChart/LineChart';
 import PortfolioLink from '../Portfolio/PortfolioLink';
-
+import {withRouter} from 'react-router-dom';
 // https://ws-api.iextrading.com/1.0/tops
 // "AAPL,ADBE,AMD,ATVI,CMG,CRM,DBX,FDX,GE,HD,IBM,INTC,JD,LMT,MDB,MMM,MRVL,MSFT,NFLX,NOC,NVDA,RDFN,ROKU,SHOP,SPOT,TEAM,TGT,TTWO,TWLO,WB"
 
@@ -114,10 +114,10 @@ class Companies extends Component {
         let change;
         if (messageJSON) {
             setTimeout(() => {
-                if(messageJSON.symbol){
+                if (messageJSON.symbol) {
                     _quickQuotes[messageJSON.symbol].quote.latestPrice = messageJSON.lastSalePrice;
                     _quickQuotes[messageJSON.symbol].showUpdate = true;
-    
+
                     that.setState({ quickQuotes: _quickQuotes }, () => {
                         setTimeout(() => {
                             _quickQuotes[messageJSON.symbol].showUpdate = false;
@@ -137,7 +137,11 @@ class Companies extends Component {
             open: false,
             fetchQuickQuotes: true,
             socket: io('https://ws-api.iextrading.com/1.0/tops'),
-            realTimeStreaming: true
+            realTimeStreaming: false,
+            determineIfMarketsAreOpen: determineIfMarketsAreOpen,
+            minute: getMinutesOfDay(),
+            hour: getHourOfDay(),
+            day: getDayOfWeek(),
         }
         this.state.socket.on('message', message => this.state.realTimeStreaming ? this.update(message) : null)
 
@@ -145,8 +149,8 @@ class Companies extends Component {
     }
     componentDidMount() {
         let that = this;
-
-
+        const pathname = this.props.location;
+        console.log(pathname)
         this.setState({
             fetchQuickQuotes: true
         })
@@ -161,12 +165,13 @@ class Companies extends Component {
         that.state.socket.on('connect', () => {
             that.state.socket.emit('subscribe', socketSymbols)
         })
-
+        let market = this.state.determineIfMarketsAreOpen(this.state.day, this.state.hour, this.state.minute);
         quote.then(response => {
             let change;
             for (let [key] of Object.entries(response)) {
                 change = that.getPercentChange(response[key].quote);
-                if (change > 5 && determineIfMarketsAreOpen()) {
+
+                if (parseFloat(change) > 5 && market) {
                     notification.success({
                         message: response[key].quote.companyName,
                         description: key + ' is up ' + that.getPercentChange(response[key].quote) + '% today.',
@@ -177,7 +182,9 @@ class Companies extends Component {
                         icon: <Icon type="rise" style={{ color: GREEN }} />,
                     });
                 }
-                if (change < -5 && determineIfMarketsAreOpen()) {
+                if (parseFloat(change) < -5 && market) {
+
+
                     notification.warning({
                         message: response[key].quote.companyName,
                         description: key + ' is down ' + that.getPercentChange(response[key].quote) + '% today.',
@@ -274,11 +281,11 @@ class Companies extends Component {
                                     <div class="marginBottom26"></div>
                                 </Fragment>
                         }
-                        <PortfolioLink 
-                            screen={this.props.screen} 
-                            activeTicker={this.props.activeTicker} 
-                            trackedCompanies={this.props.trackedCompanies} 
-                            setActiveTicker={this.props.setActiveTicker} 
+                        <PortfolioLink
+                            screen={this.props.screen}
+                            activeTicker={this.props.activeTicker}
+                            trackedCompanies={this.props.trackedCompanies}
+                            setActiveTicker={this.props.setActiveTicker}
                             quickQuotes={this.state.quickQuotes} />
 
                         {Object.keys(this.props.trackedCompanies).map((index) => {
@@ -384,4 +391,4 @@ class Companies extends Component {
     }
 }
 
-export default Companies;
+export default withRouter(Companies);
