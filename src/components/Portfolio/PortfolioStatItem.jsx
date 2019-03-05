@@ -4,8 +4,8 @@ import ChangeBadge from '../ChangeBadge/ChangeBadge';
 import None from './None';
 
 const PortfolioStatItem = (props) => {
-    if (Object.keys(props.stat).length === 0) {
-        return <None title='None' label='No Winners Today' />
+    if (!props.stat) {
+        return null
     }
     else {
         return (
