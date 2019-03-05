@@ -37,6 +37,7 @@ const {
 
 class App extends Component {
   setActiveTicker = (value, company, addCompanyToTrackedList, index) => {
+    debugger;
     if (index === undefined && addCompanyToTrackedList === false) {
       index = 0;
     }

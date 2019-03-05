@@ -8,7 +8,13 @@ import Systems from './Systems';
 
 class Loaf extends Component {
     componentWillMount(){
-        this.props.setActiveTicker(this.props.trackedCompanies[0].symbol, this.props.trackedCompanies[0], false)
+        if(this.props.activeTickerIndex !== undefined)
+        {
+            this.props.setActiveTicker(this.props.trackedCompanies[this.props.activeTickerIndex].symbol, this.props.trackedCompanies[this.props.activeTickerIndex], false)
+        }
+        else{
+            this.props.setActiveTicker(this.props.trackedCompanies[0].symbol, this.props.trackedCompanies[0], false)
+        }
     }
     constructor(props){
         super(props);

@@ -280,10 +280,9 @@ class Companies extends Component {
 
                             const that = this;
                             return (
-                                <Link to="/quote" key={company.symbol}>
+                                <Link to="/quote" key={company.symbol} onClick={() => { this.props.setActiveTicker(company.symbol, company, false, index) }}>
                                     <div
-                                        className={classnames('padding10 margin10 companies-button loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === that.props.activeTicker, 'box-shadow-bottom': that.props.trackedCompanies.length !== parseInt(index) })}
-                                        onClick={() => { this.props.setActiveTicker(company.symbol, company, false, index); this.closeAddCompanySideBar() }}>
+                                        className={classnames('padding10 margin10 companies-button loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === that.props.activeTicker, 'box-shadow-bottom': that.props.trackedCompanies.length !== parseInt(index) })}>
                                         <div className={classnames("flex flex-row")}>
                                             <div className={'flex flex-column width-100'}>
                                                 <div className={classnames("flex flex-row")}>
