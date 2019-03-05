@@ -138,6 +138,9 @@ app.get('/login', function (request, response) {
 app.get('/rise', function (request, response) {
     response.sendFile(path.resolve(__dirname, 'build/index.html'));
 });
+app.get('/portfolio', function (request, response) {
+    response.sendFile(path.resolve(__dirname, 'build/index.html'));
+});
 app.get('*', function (req, res) {
-    res.render('404 Error!  Page not found.');
+    response.sendFile(path.resolve(__dirname, 'build/index.html'));
 });
