@@ -5,7 +5,7 @@ import ChangeBadge from '../ChangeBadge/ChangeBadge';
 import classnames from 'classnames';
 import Systems from './../Body/Systems';
 import Today from './../Body/Today/Today'
-import { getPortfolioTotal } from '../../api/PortfolioAPI';
+import { getPortfolioTotal, getBest, getWorst } from '../../api/PortfolioAPI';
 import { LoafContext } from './../../LoafContext';
 import { GREEN, RED, GREY } from '../../Constants';
 import { Icon, Badge } from 'antd';
@@ -54,7 +54,6 @@ class Portfolio extends Component {
                 }
             })
         })
-
     }
     static contextType = LoafContext;
     constructor(props) {

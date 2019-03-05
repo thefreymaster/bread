@@ -126,6 +126,63 @@ app.post('/api/portfolio/total', (req, res) => {
     })
 })
 
+app.post('/api/portfolio/best', (req, res) => {
+    let companies = req.body.companies;
+    let quotes = req.body.quotes;
+    let previousCompanySymbol = '';
+    let best = {}
+    for (let company of companies) {
+        // currentTotal = currentTotal + (quotes[company.symbol].quote.latestPrice * company.shares.count);
+        if (previousCompanySymbol === '') {
+            if ((company.shares.count * quotes[company.symbol].quote.latestPrice) - (company.shares.count * company.shares.price) > 0) {
+                best = company;
+                best['change'] = (company.shares.count * quotes[company.symbol].quote.latestPrice) - (company.shares.count * company.shares.price)
+                best['price'] = quotes[company.symbol].quote.latestPrice;
+                previousCompanySymbol = company.symbol;
+            }
+        }
+        else {
+            if ((company.shares.count * quotes[company.symbol].quote.latestPrice) - (company.shares.count * company.shares.price) > (best.shares.count * quotes[best.symbol].quote.latestPrice) - (best.shares.count * best.shares.price)) {
+                best = company;
+                best['change'] = (company.shares.count * quotes[company.symbol].quote.latestPrice) - (company.shares.count * company.shares.price)
+                best['price'] = quotes[company.symbol].quote.latestPrice;
+                previousCompanySymbol = company.symbol;
+            }
+        }
+    }
+    res.send({
+        best: best
+    });
+})
+app.post('/api/portfolio/worst', (req, res) => {
+    let companies = req.body.companies;
+    let quotes = req.body.quotes;
+    let previousCompanySymbol = '';
+    let worst = {}
+    for (let company of companies) {
+        // currentTotal = currentTotal + (quotes[company.symbol].quote.latestPrice * company.shares.count);
+        if (previousCompanySymbol === '') {
+            if ((company.shares.count * quotes[company.symbol].quote.latestPrice) - (company.shares.count * company.shares.price) < 0) {
+                worst = company;
+                worst['change'] = (company.shares.count * quotes[company.symbol].quote.latestPrice) - (company.shares.count * company.shares.price)
+                worst['price'] = quotes[company.symbol].quote.latestPrice;
+                previousCompanySymbol = company.symbol;
+            }
+        }
+        else {
+            if ((company.shares.count * quotes[company.symbol].quote.latestPrice) - (company.shares.count * company.shares.price) < (worst.shares.count * quotes[worst.symbol].quote.latestPrice) - (worst.shares.count * worst.shares.price)) {
+                worst = company;
+                worst['change'] = (company.shares.count * quotes[company.symbol].quote.latestPrice) - (company.shares.count * company.shares.price)
+                worst['price'] = quotes[company.symbol].quote.latestPrice;
+                previousCompanySymbol = company.symbol;
+            }
+        }
+    }
+    res.send({
+        worst: worst
+    });
+})
+
 app.get('/quote', function (request, response) {
     response.sendFile(path.resolve(__dirname, 'build/index.html'));
 });
