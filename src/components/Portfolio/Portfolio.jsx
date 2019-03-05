@@ -24,7 +24,7 @@ class Portfolio extends Component {
 
     }
     componentDidMount() {
-        let data = getPortfolioTotal(this.props.trackedCompanies);
+        let data = getPortfolioTotal(this.props.trackedCompanies, this.context.quotes);
         data.then(response => {
             this.setState({
                 total: response.data.total,

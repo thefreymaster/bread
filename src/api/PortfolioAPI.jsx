@@ -1,9 +1,10 @@
 import axios from 'axios';
 
 
-function getPortfolioTotal(companies) {
+function getPortfolioTotal(companies, quotes) {
     return axios.post('/api/portfolio/total', {
-        companies: companies
+        companies: companies, 
+        quotes: quotes
     }).then(function (response) {
             return response
         })

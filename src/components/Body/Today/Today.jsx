@@ -73,11 +73,11 @@ class Today extends Component {
         let that = this;
         if (this.props.ticker !== prevProps.ticker) {
             // this.state.socket.emit('unsubscribe', prevProps.ticker)
-            let data = getBatchData(this.props.ticker, 'quote,price,stats', filter);
+            let data = getBatchData(this.props.ticker, 'quote,stats', filter);
             data.then(response => {
                 this.setState({
                     stats: response.stats,
-                    price: response.price,
+                    price: response.quote.latestPrice,
                     quote: response.quote,
                 })
             })
@@ -89,11 +89,11 @@ class Today extends Component {
             // that.state.socket.on('connect', () => {
             //     that.state.socket.emit('subscribe', this.props.ticker)
             // })
-            let data = getBatchData(this.props.ticker, 'quote,price,stats', filter);
+            let data = getBatchData(this.props.ticker, 'quote,stats', filter);
             data.then(response => {
                 this.setState({
                     stats: response.stats,
-                    price: response.price,
+                    price: response.quote.latestPrice,
                     quote: response.quote,
                 })
             })

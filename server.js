@@ -57,6 +57,7 @@ app.get('/api/quick-quote/:symbols', function (req, res) {
 app.post('/api/portfolio/total', (req, res) => {
     // console.log(req.body.companies)
     let companies = req.body.companies;
+    let quotes = req.body.quotes;
     let total = 0;
     let symbols = []
     for (let company of companies) {
@@ -64,84 +65,65 @@ app.post('/api/portfolio/total', (req, res) => {
         symbols.push(company.symbol)
     }
 
-    // console.log(symbols)
-    const filter = 'ytdChange,changePercent,week52High,week52Low,latestPrice,previousClose,extendedPrice,companyName,symbol'
     let currentTotal = 0;
     let previousTotal = 0;
-    var options = {
-        method: 'GET',
-        url: IEXENDPOINT + '/stock/market/batch?symbols=' + symbols + '&types=quote&filter=' + filter + IEXTOKEN_WITHAND
-    };
-    // console.log(options)
-    request(options, function (error, response, body) {
-        if (error) throw new Error(error);
+    let gainer = {};
+    let loser = {};
+    let previousCompanySymbol = '';
 
-        quotes = JSON.parse(response.body);
-        let gainer = {};
-        let loser = {};
-        let previousCompanySymbol = '';
+    // console.log(companies);
+    for (let company of companies) {
+        currentTotal = currentTotal + (quotes[company.symbol].quote.latestPrice * company.shares.count);
+        previousTotal = previousTotal + (quotes[company.symbol].quote.previousClose * company.shares.count);
 
-        // console.log(companies);
-        for (let company of companies) {
-            currentTotal = currentTotal + (quotes[company.symbol].quote.latestPrice * company.shares.count);
-            previousTotal = previousTotal + (quotes[company.symbol].quote.previousClose * company.shares.count);
-
-            if (previousCompanySymbol === '') {
-                if (quotes[company.symbol].quote.changePercent > 0) {
-                    gainer = company;
-                    gainer['changePercent'] = quotes[company.symbol].quote.changePercent * 100;
-                    gainer['price'] = quotes[company.symbol].quote.latestPrice;
-                    previousCompanySymbol = company.symbol;
-                }
-            }
-            else {
-                if (quotes[company.symbol].quote && quotes[company.symbol].quote.changePercent > quotes[gainer.symbol].quote.changePercent) {
-                    gainer = company;
-                    gainer['changePercent'] = quotes[company.symbol].quote.changePercent * 100;
-                    gainer['price'] = quotes[company.symbol].quote.latestPrice;
-                    previousCompanySymbol = company.symbol;
-                }
+        if (previousCompanySymbol === '') {
+            if (quotes[company.symbol].quote.changePercent > 0) {
+                gainer = company;
+                gainer['changePercent'] = quotes[company.symbol].quote.changePercent * 100;
+                gainer['price'] = quotes[company.symbol].quote.latestPrice;
+                previousCompanySymbol = company.symbol;
             }
         }
-        previousCompanySymbol = '';
-        for (let company of companies) {
-            // currentTotal = currentTotal + (quotes[company.symbol].quote.latestPrice * company.shares.count);
-            if (previousCompanySymbol === '') {
-                if (quotes[company.symbol].quote.changePercent < 0) {
-                    loser = company;
-                    loser['changePercent'] = quotes[company.symbol].quote.changePercent * 100;
-                    loser['price'] = quotes[company.symbol].quote.latestPrice;
-                    previousCompanySymbol = company.symbol;
-                }
-            }
-            else {
-                if (quotes[company.symbol].quote && quotes[company.symbol].quote.changePercent < quotes[loser.symbol].quote.changePercent) {
-                    loser = company;
-                    loser['changePercent'] = quotes[company.symbol].quote.changePercent * 100;
-                    loser['price'] = quotes[company.symbol].quote.latestPrice;
-                    previousCompanySymbol = company.symbol;
-                }
+        else {
+            if (quotes[company.symbol].quote && quotes[company.symbol].quote.changePercent > quotes[gainer.symbol].quote.changePercent) {
+                gainer = company;
+                gainer['changePercent'] = quotes[company.symbol].quote.changePercent * 100;
+                gainer['price'] = quotes[company.symbol].quote.latestPrice;
+                previousCompanySymbol = company.symbol;
             }
         }
-
-
-
-
-
-
-        let percentChange = ((currentTotal - previousTotal) / currentTotal * 100).toFixed(2)
-        res.send({
-            status: 200,
-            total: total,
-            currentTotal: currentTotal,
-            previousTotal: previousTotal,
-            percentChange: percentChange,
-            gainer: gainer,
-            loser: loser,
-            quotes: quotes
-        })
-
-    });
+    }
+    previousCompanySymbol = '';
+    for (let company of companies) {
+        // currentTotal = currentTotal + (quotes[company.symbol].quote.latestPrice * company.shares.count);
+        if (previousCompanySymbol === '') {
+            if (quotes[company.symbol].quote.changePercent < 0) {
+                loser = company;
+                loser['changePercent'] = quotes[company.symbol].quote.changePercent * 100;
+                loser['price'] = quotes[company.symbol].quote.latestPrice;
+                previousCompanySymbol = company.symbol;
+            }
+        }
+        else {
+            if (quotes[company.symbol].quote && quotes[company.symbol].quote.changePercent < quotes[loser.symbol].quote.changePercent) {
+                loser = company;
+                loser['changePercent'] = quotes[company.symbol].quote.changePercent * 100;
+                loser['price'] = quotes[company.symbol].quote.latestPrice;
+                previousCompanySymbol = company.symbol;
+            }
+        }
+    }
+    let percentChange = ((currentTotal - previousTotal) / currentTotal * 100).toFixed(2)
+    res.send({
+        status: 200,
+        total: total,
+        currentTotal: currentTotal,
+        previousTotal: previousTotal,
+        percentChange: percentChange,
+        gainer: gainer,
+        loser: loser,
+        quotes: quotes
+    })
 })
 
 app.get('/quote', function (request, response) {

@@ -148,61 +148,58 @@ class Companies extends Component {
 
     }
     componentDidMount() {
-        let that = this;
-        const pathname = this.props.location;
-        console.log(pathname)
-        this.setState({
-            fetchQuickQuotes: true
-        })
-        let symbols = [];
-        let socketSymbols = '';
-        for (let symbol in that.props.trackedCompanies) {
-            symbols.push(that.props.trackedCompanies[symbol].symbol)
-            socketSymbols = socketSymbols + that.props.trackedCompanies[symbol].symbol + ',';
-        }
-        let quote = getQuickQuotes(symbols, filter);
-        socketSymbols = socketSymbols.substring(0, socketSymbols.length - 1);
-        that.state.socket.on('connect', () => {
-            that.state.socket.emit('subscribe', socketSymbols)
-        })
-        let market = this.state.determineIfMarketsAreOpen(this.state.day, this.state.hour, this.state.minute);
-        quote.then(response => {
-            let change;
-            for (let [key] of Object.entries(response)) {
-                change = that.getPercentChange(response[key].quote);
+        
+        // let that = this;
+        // this.setState({
+        //     fetchQuickQuotes: true
+        // })
+        // let symbols = [];
+        // let socketSymbols = '';
+        // for (let symbol in that.props.trackedCompanies) {
+        //     symbols.push(that.props.trackedCompanies[symbol].symbol)
+        //     socketSymbols = socketSymbols + that.props.trackedCompanies[symbol].symbol + ',';
+        // }
+        // let quote = getQuickQuotes(symbols, filter);
+        // socketSymbols = socketSymbols.substring(0, socketSymbols.length - 1);
+        // that.state.socket.on('connect', () => {
+        //     that.state.socket.emit('subscribe', socketSymbols)
+        // })
+        // let market = this.state.determineIfMarketsAreOpen(this.state.day, this.state.hour, this.state.minute);
+        // quote.then(response => {
+        //     let change;
+        //     for (let [key] of Object.entries(response)) {
+        //         change = that.getPercentChange(response[key].quote);
 
-                if (parseFloat(change) > 5 && market) {
-                    notification.success({
-                        message: response[key].quote.companyName,
-                        description: key + ' is up ' + that.getPercentChange(response[key].quote) + '% today.',
-                        onClick: () => {
-                            this.findIndex(key)
-                        },
-                        duration: 5,
-                        icon: <Icon type="rise" style={{ color: GREEN }} />,
-                    });
-                }
-                if (parseFloat(change) < -5 && market) {
-
-
-                    notification.warning({
-                        message: response[key].quote.companyName,
-                        description: key + ' is down ' + that.getPercentChange(response[key].quote) + '% today.',
-                        onClick: () => {
-                            this.findIndex(key)
-                        },
-                        duration: 5,
-                        icon: <Icon type="fall" style={{ color: RED }} />,
-                    });
-                }
-            }
-            that.setState({
-                quickQuotes: response,
-                fetchQuickQuotes: false
-            })
-        })
+        //         if (parseFloat(change) > 5 && market) {
+        //             notification.success({
+        //                 message: response[key].quote.companyName,
+        //                 description: key + ' is up ' + that.getPercentChange(response[key].quote) + '% today.',
+        //                 onClick: () => {
+        //                     this.findIndex(key)
+        //                 },
+        //                 duration: 5,
+        //                 icon: <Icon type="rise" style={{ color: GREEN }} />,
+        //             });
+        //         }
+        //         if (parseFloat(change) < -5 && market) {
 
 
+        //             notification.warning({
+        //                 message: response[key].quote.companyName,
+        //                 description: key + ' is down ' + that.getPercentChange(response[key].quote) + '% today.',
+        //                 onClick: () => {
+        //                     this.findIndex(key)
+        //                 },
+        //                 duration: 5,
+        //                 icon: <Icon type="fall" style={{ color: RED }} />,
+        //             });
+        //         }
+        //     }
+        //     that.setState({
+        //         quickQuotes: response,
+        //         fetchQuickQuotes: false
+        //     })
+        // })
     }
     findIndex = (symbol) => {
         for (let index of Object.keys(this.props.trackedCompanies)) {
@@ -214,43 +211,31 @@ class Companies extends Component {
     }
     componentWillReceiveProps(nextProps) {
         if (this.props.activeTicker !== nextProps.activeTicker && this.props.trackedCompanies.length > 0) {
-            this.setState({
-                fetchQuickQuotes: true
-            })
-            let symbols = []
-            let that = this;
-            for (let symbol in that.props.trackedCompanies) {
-                symbols.push(that.props.trackedCompanies[symbol].symbol)
-            }
-            let quote = getQuickQuotes(symbols, filter);
-            quote.then(response => {
-                this.setState({
-                    quickQuotes: response,
-                    fetchQuickQuotes: false
-                })
-            })
+            // this.setState({
+            //     fetchQuickQuotes: true
+            // })
+            // let symbols = []
+            // let that = this;
+            // for (let symbol in that.props.trackedCompanies) {
+            //     symbols.push(that.props.trackedCompanies[symbol].symbol)
+            // }
+            // let quote = getQuickQuotes(symbols, filter);
+            // quote.then(response => {
+            //     this.setState({
+            //         quickQuotes: response,
+            //         fetchQuickQuotes: false
+            //     })
+            // })
         }
     }
 
     componentDidUpdate(prevProps) {
         let that = this;
-        if (this.props.activeTicker !== prevProps.activeTicker) {
-            let that = this;
-            this.setState({
-                fetchQuickQuotes: true
-            })
-            let symbols = []
-            for (let symbol in that.props.trackedCompanies) {
-                symbols.push(that.props.trackedCompanies[symbol].symbol)
-            }
-            let quote = getQuickQuotes(symbols, filter);
-            quote.then(response => {
-                this.setState({
-                    quickQuotes: response,
-                    fetchQuickQuotes: false
-                })
-            })
 
+        if (this.props.activeTicker !== prevProps.activeTicker) {
+            that.setState({
+                quickQuotes: this.context.quotes
+            })
         }
     }
 
@@ -277,7 +262,6 @@ class Companies extends Component {
                                             center={false}
                                         />
                                     </div>
-                                    {/* <Switch checkedChildren={<Icon type="check" />} unCheckedChildren={<Icon type="close" />} defaultChecked /> */}
                                     <div class="marginBottom26"></div>
                                 </Fragment>
                         }
@@ -286,8 +270,8 @@ class Companies extends Component {
                             activeTicker={this.props.activeTicker}
                             trackedCompanies={this.props.trackedCompanies}
                             setActiveTicker={this.props.setActiveTicker}
-                            quickQuotes={this.state.quickQuotes} />
-
+                            quickQuotes={this.state.quickQuotes} 
+                        />
                         {Object.keys(this.props.trackedCompanies).map((index) => {
                             const company = this.props.trackedCompanies[index];
                             const userHasShares = this.props.trackedCompanies[index].shares.hasShares

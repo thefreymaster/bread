@@ -14,9 +14,9 @@ class AddCompany extends Component {
             if (symbol.symbol.toUpperCase().includes(e.target.value.toUpperCase())) {
                 searchedCompanies.push(symbol)
             }
-            else if (symbol.name.toUpperCase().includes(e.target.value.toUpperCase())) {
-                searchedCompanies.push(symbol)
-            }
+            // else if (symbol.name.toUpperCase().includes(e.target.value.toUpperCase())) {
+            //     searchedCompanies.push(symbol)
+            // }
         }
         this.setState({
             searchedCompanies: searchedCompanies
@@ -65,7 +65,7 @@ class AddCompany extends Component {
                     titleFontSize={36}
                     title={'Find a Company'}
                     labelFontSize={12}
-                    label={'Search by the company name, or the company symbol'}
+                    label={'Search by a valid company symbol'}
                     center={true}
                 />
                 <div className={classnames("padding10 flex margin-auto", {'width-40': this.props.screen.md || this.props.screen.lg || this.props.screen.xl, 'width-100': this.props.screen.xs || this.props.screen.sm})}>

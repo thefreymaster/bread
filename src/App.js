@@ -3,8 +3,11 @@ import { BrowserRouter, Route, Redirect, Switch, withRouter } from "react-router
 
 import './App.css';
 import 'antd/dist/antd.css';
-import { Layout, message } from 'antd';
+import { Layout, message, notification, Icon } from 'antd';
 import { writeUserData, getFirebaseAuthObject, readUserCompanyData, updateUserCompanyData, updateUserCompanyShareData } from './api/FirebaseAPI';
+import { getQuickQuotes } from './api/StatsAPI';
+
+import { determineIfMarketsAreOpen, getDayOfWeek, getMinutesOfDay, getHourOfDay, getPercentChange } from './components/HelperFunctions/Helper';
 
 import classnames from 'classnames';
 
@@ -22,8 +25,11 @@ import Portfolio from './components/Portfolio/Portfolio';
 import { LoafContext } from './LoafContext';
 import { showNotification } from './components/HelperFunctions/Notifications';
 import RightSider from './components/RightSider/RightSider'
+import { RED, GREEN } from './Constants';
 
 const firebase = getFirebaseAuthObject();
+const filter = 'ytdChange,changePercent,week52High,week52Low,latestPrice,previousClose,extendedPrice,companyName,symbol'
+
 
 const {
   Header, Footer, Sider, Content,
@@ -131,7 +137,11 @@ class App extends Component {
       },
       fetchingTrackedCompanies: false,
       activeTicker: '',
-      trackedCompanies: []
+      trackedCompanies: [],
+      minute: getMinutesOfDay(),
+      hour: getHourOfDay(),
+      day: getDayOfWeek(),
+      determineIfMarketsAreOpen: determineIfMarketsAreOpen
     }
   }
 
@@ -144,7 +154,8 @@ class App extends Component {
           value={{
             screen: this.state.screen,
             trackedCompanies: this.state.trackedCompanies,
-            setActiveTicker: this.setActiveTicker
+            setActiveTicker: this.setActiveTicker,
+            quotes: this.state.quotes
           }}>
           <BrowserRouter>
             <main>
@@ -209,7 +220,11 @@ class App extends Component {
                         null
                         :
                         <Sider className={classnames("left-sider", { "left-sider-small": this.state.screen.xs || this.state.screen.sm, "left-sider-large": this.state.screen.md || this.state.screen.lg || this.state.screen.xl })} style={{ maxHeight: window.innerHeight - 84 }}>
-                          <Companies screen={this.state.screen} activeTicker={this.state.activeTicker} trackedCompanies={this.state.trackedCompanies} setActiveTicker={this.setActiveTicker} />
+                          <Companies 
+                            screen={this.state.screen} 
+                            activeTicker={this.state.activeTicker} 
+                            trackedCompanies={this.state.trackedCompanies} 
+                            setActiveTicker={this.setActiveTicker} />
                         </Sider>
 
                       }
@@ -328,10 +343,10 @@ class App extends Component {
           })
           this.setState({
             trackedCompanies: companies,
-            fetchingTrackedCompanies: false,
+          }, () =>  {
+            this.getQuotesData();
           })
         }
-        this.fetchingTrackedCompaniesComplete();
       });
     }
     else if (localStorage.getItem("trackedCompanies")) {
@@ -345,8 +360,10 @@ class App extends Component {
 
       this.setState({
         trackedCompanies: _trackedCompanies,
-        fetchingTrackedCompanies: false,
-      }, this.setActiveTicker(_trackedCompanies[0].symbol, _trackedCompanies[0], false))
+      }, () => {
+        this.setActiveTicker(_trackedCompanies[0].symbol, _trackedCompanies[0], false)
+        this.getQuotesData();
+      })
     }
     this.checkDeviceSize();
     window.addEventListener('resize', () => {
@@ -355,6 +372,52 @@ class App extends Component {
     setTimeout(() => {
       window.location.reload()
     }, 3600000);
+    
+
+  }
+  getQuotesData = () => {
+    let that = this;
+    let symbols = [];
+    for (let symbol in that.state.trackedCompanies) {
+        symbols.push(that.state.trackedCompanies[symbol].symbol)
+    }
+    let quote = getQuickQuotes(symbols, filter);
+    let market = that.state.determineIfMarketsAreOpen(this.state.day, this.state.hour, this.state.minute);
+    quote.then(response => {
+        let change;
+        for (let [key] of Object.entries(response)) {
+            change = getPercentChange(response[key].quote);
+
+            if (parseFloat(change) > 5 && market) {
+                notification.success({
+                    message: response[key].quote.companyName,
+                    description: key + ' is up ' + getPercentChange(response[key].quote) + '% today.',
+                    onClick: () => {
+                        this.findIndex(key)
+                    },
+                    duration: 5,
+                    icon: <Icon type="rise" style={{ color: GREEN }} />,
+                });
+            }
+            if (parseFloat(change) < -5 && market) {
+
+
+                notification.warning({
+                    message: response[key].quote.companyName,
+                    description: key + ' is down ' + getPercentChange(response[key].quote) + '% today.',
+                    onClick: () => {
+                        this.findIndex(key)
+                    },
+                    duration: 5,
+                    icon: <Icon type="fall" style={{ color: RED }} />,
+                });
+            }
+        }
+        that.setState({
+            quotes: response
+        })
+        that.fetchingTrackedCompaniesComplete();
+    })
   }
   checkDeviceSize() {
     if (window.innerWidth < 600) {
