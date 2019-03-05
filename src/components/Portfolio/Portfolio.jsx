@@ -82,7 +82,6 @@ class Portfolio extends Component {
                             decimals={2}
                             color={this.state.currentTotal == 0 ? GREY : this.state.currentTotal > this.state.previousTotal ? GREEN : RED}
                             titleFontSize={56}
-                            fontFamily={'Open Sans'}
                             prefix={'$'} />
                         <div className="flex flex-row width-100">
                             <Metric

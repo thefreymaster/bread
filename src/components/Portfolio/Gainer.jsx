@@ -20,7 +20,6 @@ const Gainer = (props) => {
                         decimals={2}
                         color={GREEN}
                         titleFontSize={32}
-                        fontFamily={'Open Sans'}
                         prefix={'$'} />
                     <Metric
                         fontFamily={'Open Sans'}

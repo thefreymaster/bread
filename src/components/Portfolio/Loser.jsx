@@ -20,7 +20,6 @@ const Loser = (props) => {
                         decimals={2}
                         color={RED}
                         titleFontSize={32}
-                        fontFamily={'Open Sans'}
                         prefix={'$'} />
                     <Metric
                         fontFamily={'Open Sans'}
