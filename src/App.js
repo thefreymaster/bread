@@ -37,7 +37,6 @@ const {
 
 class App extends Component {
   setActiveTicker = (value, company, addCompanyToTrackedList, index) => {
-    debugger;
     if (index === undefined && addCompanyToTrackedList === false) {
       index = 0;
     }
@@ -81,7 +80,7 @@ class App extends Component {
     else {
       localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
     }
-    message.success(company.name + ' successfully added to account.');
+    message.success(company.symbol + ' successfully added to account.');
     this.setState({
       trackedCompanies: _trackedCompanies
     })
@@ -99,7 +98,7 @@ class App extends Component {
         else {
           localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
         }
-        message.success(item.name + ' successfully removed from your account.');
+        message.success(item.symbol + ' successfully removed from your account.');
 
         that.setState({
           trackedCompanies: _trackedCompanies,
@@ -162,7 +161,7 @@ class App extends Component {
             <main>
               <Layout>
                 <Header style={{ marginBottom: this.state.screen.xs || this.state.screen.sm ? 0 : 20 }}>
-                  <Navigation title={'Loaf'} screen={this.state.screen} />
+                  <Navigation title={'Bread'} screen={this.state.screen} />
                 </Header>
                 <Layout style={{ minHeight: window.innerHeight - 64 }}>
                   {this.state.screen.xs || this.state.screen.sm

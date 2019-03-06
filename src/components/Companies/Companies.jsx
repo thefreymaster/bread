@@ -147,60 +147,6 @@ class Companies extends Component {
 
 
     }
-    componentDidMount() {
-        
-        // let that = this;
-        // this.setState({
-        //     fetchQuickQuotes: true
-        // })
-        // let symbols = [];
-        // let socketSymbols = '';
-        // for (let symbol in that.props.trackedCompanies) {
-        //     symbols.push(that.props.trackedCompanies[symbol].symbol)
-        //     socketSymbols = socketSymbols + that.props.trackedCompanies[symbol].symbol + ',';
-        // }
-        // let quote = getQuickQuotes(symbols, filter);
-        // socketSymbols = socketSymbols.substring(0, socketSymbols.length - 1);
-        // that.state.socket.on('connect', () => {
-        //     that.state.socket.emit('subscribe', socketSymbols)
-        // })
-        // let market = this.state.determineIfMarketsAreOpen(this.state.day, this.state.hour, this.state.minute);
-        // quote.then(response => {
-        //     let change;
-        //     for (let [key] of Object.entries(response)) {
-        //         change = that.getPercentChange(response[key].quote);
-
-        //         if (parseFloat(change) > 5 && market) {
-        //             notification.success({
-        //                 message: response[key].quote.companyName,
-        //                 description: key + ' is up ' + that.getPercentChange(response[key].quote) + '% today.',
-        //                 onClick: () => {
-        //                     this.findIndex(key)
-        //                 },
-        //                 duration: 5,
-        //                 icon: <Icon type="rise" style={{ color: GREEN }} />,
-        //             });
-        //         }
-        //         if (parseFloat(change) < -5 && market) {
-
-
-        //             notification.warning({
-        //                 message: response[key].quote.companyName,
-        //                 description: key + ' is down ' + that.getPercentChange(response[key].quote) + '% today.',
-        //                 onClick: () => {
-        //                     this.findIndex(key)
-        //                 },
-        //                 duration: 5,
-        //                 icon: <Icon type="fall" style={{ color: RED }} />,
-        //             });
-        //         }
-        //     }
-        //     that.setState({
-        //         quickQuotes: response,
-        //         fetchQuickQuotes: false
-        //     })
-        // })
-    }
     findIndex = (symbol) => {
         for (let index of Object.keys(this.props.trackedCompanies)) {
             if (this.props.trackedCompanies[index].symbol === symbol) {
@@ -209,29 +155,23 @@ class Companies extends Component {
             }
         }
     }
+    componentWillMount(){
+        if(!this.state.quickQuotes){
+            this.setState({
+                quickQuotes: this.context.quotes
+            })
+        }
+    }
     componentWillReceiveProps(nextProps) {
         if (this.props.activeTicker !== nextProps.activeTicker && this.props.trackedCompanies.length > 0) {
-            // this.setState({
-            //     fetchQuickQuotes: true
-            // })
-            // let symbols = []
-            // let that = this;
-            // for (let symbol in that.props.trackedCompanies) {
-            //     symbols.push(that.props.trackedCompanies[symbol].symbol)
-            // }
-            // let quote = getQuickQuotes(symbols, filter);
-            // quote.then(response => {
-            //     this.setState({
-            //         quickQuotes: response,
-            //         fetchQuickQuotes: false
-            //     })
-            // })
+            this.setState({
+                quickQuotes: this.context.quotes
+            })
         }
     }
 
     componentDidUpdate(prevProps) {
         let that = this;
-
         if (this.props.activeTicker !== prevProps.activeTicker) {
             that.setState({
                 quickQuotes: this.context.quotes
@@ -292,30 +232,30 @@ class Companies extends Component {
                                                             fontWeight={900}
                                                             titleFontSize={14}
                                                             title={company.symbol}
-                                                            label={company.name}
+                                                            label={!that.state.quickQuotes[company.symbol] ? null : that.state.quickQuotes[company.symbol].quote.companyName}
                                                             center={false}
                                                         />
                                                         <Metric
                                                             fontFamily={'Open Sans'}
                                                             fontWeight={900}
-                                                            titleFontSize={12}
-                                                            backgroundColor={!this.state.quickQuotes ? null : this.setBackgroundColor(company, !this.state.quickQuotes[company.symbol] ? false : this.state.quickQuotes[company.symbol].showUpdate)}
-                                                            color={!this.state.quickQuotes ? null : this.getColor(company)}
-                                                            title={!this.state.quickQuotes ? null : this.getPercentAndPrice(company)}
+                                                            titleFontSize={11}
+                                                            backgroundColor={!that.state.quickQuotes ? null : that.setBackgroundColor(company, !that.state.quickQuotes[company.symbol] ? false : that.state.quickQuotes[company.symbol].showUpdate)}
+                                                            color={!that.state.quickQuotes ? null : that.getColor(company)}
+                                                            title={!that.state.quickQuotes ? null : that.getPercentAndPrice(company)}
                                                             labelFontSize={11}
                                                             center={false}
                                                         />
                                                     </div>
-                                                    {!this.state.quickQuotes ?
+                                                    {!that.state.quickQuotes ?
                                                         null
                                                         :
-                                                        this.state.quickQuotes[company.symbol]
+                                                        that.state.quickQuotes[company.symbol]
                                                             ?
                                                             <div className={'flex flex-badge flex-column'}>
                                                                 <ChangeBadge
-                                                                    backgroundColor={this.determineColor(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                                    backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote.latestPrice)}
                                                                     company={company}
-                                                                    count={this.determineText(company.shares.count, company.shares.price, this.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                                    count={that.determineText(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote.latestPrice)}
                                                                 />
                                                             </div>
                                                             :
@@ -324,7 +264,7 @@ class Companies extends Component {
                                                 </div>
 
                                                 {
-                                                    this.props.activeTicker === company.symbol && (this.context.screen.xs || this.context.screen.sm)
+                                                    that.props.activeTicker === company.symbol && (that.context.screen.xs || that.context.screen.sm)
                                                         ?
                                                         <Fragment>
                                                             <div className="shares-divider"></div>
@@ -333,16 +273,16 @@ class Companies extends Component {
                                                                 timeframe={'6m'}
                                                                 interval={2}
                                                                 title='Change 6 Month'
-                                                                screen={this.context.screen}
+                                                                screen={that.context.screen}
                                                                 width={'100%'} />
                                                             <YourShares
                                                                 width={100}
                                                                 index={index}
                                                                 count={count}
                                                                 price={price}
-                                                                trackedCompanies={this.props.trackedCompanies}
-                                                                saveShares={this.props.saveShares}
-                                                                ticker={this.props.activeTicker}
+                                                                trackedCompanies={that.props.trackedCompanies}
+                                                                saveShares={that.props.saveShares}
+                                                                ticker={that.props.activeTicker}
                                                                 userHasShares={userHasShares} />
                                                         </Fragment>
                                                         :
