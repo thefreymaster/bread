@@ -25,7 +25,9 @@ class PortfolioStatistics extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            complete: false
+            complete: false,
+            best: {},
+            worst: {}
         }
     }
     render() {
