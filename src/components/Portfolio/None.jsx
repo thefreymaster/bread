@@ -4,7 +4,7 @@ import ChangeBadge from '../ChangeBadge/ChangeBadge';
 import { GREY } from './../../Constants';
 
 const None = (props) => (
-    <div className='flex flex-row width-100'>
+    <div className='flex flex-row width-100 flex-center'>
         <div className='flex flex-column'>
             <Metric
                 title={props.title}
@@ -13,17 +13,24 @@ const None = (props) => (
                 duration={1}
                 decimals={2}
                 color={GREY}
-                titleFontSize={32}
+                center={props.center}
+                titleFontSize={props.titleFontSize}
                 fontFamily={'Open Sans'}
                 prefix={'$'} />
         </div>
-        <div className='flex flex-badge'>
-            <ChangeBadge
-                count={'None'}
-                backgroundColor={GREY}
-                fontSize={14}
-                company={props.loser} />
-        </div>
+        {
+            props.badge
+                ?
+                <div className='flex flex-badge'>
+                    <ChangeBadge
+                        count={'None'}
+                        backgroundColor={GREY}
+                        fontSize={14}
+                        company={props.loser} />
+                </div>
+                :
+                null
+        }
     </div>
 )
 

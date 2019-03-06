@@ -3,10 +3,10 @@ import { getBest, getWorst } from '../../api/PortfolioAPI';
 import { LoafContext } from './../../LoafContext';
 import { GREEN, RED, GREY } from '../../Constants';
 import PortfolioStatItem from './PortfolioStatItem';
-
+import None from './None';
 
 class PortfolioStatistics extends Component {
-    componentWillMount(){
+    componentWillMount() {
         let best = getBest(this.context.trackedCompanies, this.context.quotes)
         best.then(response => {
             this.setState({
@@ -22,23 +22,44 @@ class PortfolioStatistics extends Component {
         ))
     }
     static contextType = LoafContext;
-    constructor(props){
+    constructor(props) {
         super(props)
         this.state = {
             complete: false
         }
     }
     render() {
-        if(!this.state.complete)
+        if (!this.state.complete)
             return null
-        else{
-            return(
-                <div className="flex flex-column width-100">
-                    <PortfolioStatItem color={GREEN} label='Best Return' stat={this.state.best} />
-                    <div className="shares-divider width-100"></div>
-                    <PortfolioStatItem color={RED} label='Worst Return' stat={this.state.worst} />
-                </div>
-            )
+        else {
+            if (Object.keys(this.state.best).length !== 0 || Object.keys(this.state.worst).length !== 0) {
+                return (
+                    <div className="flex flex-column width-100 flex-center">
+                        {
+                            Object.keys(this.state.best).length === 0
+                                ?
+                                <None center titleFontSize={18} title='None' label='No Best Investments' />
+                                :
+                                <PortfolioStatItem color={GREEN} label='Best Return' stat={this.state.best} />
+                        }
+                        <div className="shares-divider width-100 flex-center"></div>
+                        {
+                            Object.keys(this.state.worst).length === 0
+                                ?
+                                <None center titleFontSize={18} title='None' label='No Worst Investments' />
+                                :
+                                <PortfolioStatItem color={RED} label='Worst Return' stat={this.state.worst} />
+                        } 
+                    </div>
+                )
+            }
+            else {
+                return (
+                    <div className="flex flex-column width-100">
+                        <None titleFontSize={18} title='No Investments' label='Add shares to see Best and Worst investments here' />
+                    </div>
+                )
+            }
         }
 
     }

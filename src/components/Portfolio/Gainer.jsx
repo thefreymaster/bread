@@ -6,7 +6,7 @@ import { GREEN } from './../../Constants';
 
 const Gainer = (props) => {
     if (Object.keys(props.gainer).length === 0) {
-        return <None title='None' label='No Winners Today' />
+        return <None titleFontSize={32} title='None' label='No Winners Today' badge />
     }
     else {
         return (

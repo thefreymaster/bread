@@ -14,7 +14,7 @@ import Systems from './../Body/Systems';
 import io from 'socket.io-client'
 import LineChart from './../LineChart/LineChart';
 import PortfolioLink from '../Portfolio/PortfolioLink';
-import {withRouter} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 // https://ws-api.iextrading.com/1.0/tops
 // "AAPL,ADBE,AMD,ATVI,CMG,CRM,DBX,FDX,GE,HD,IBM,INTC,JD,LMT,MDB,MMM,MRVL,MSFT,NFLX,NOC,NVDA,RDFN,ROKU,SHOP,SPOT,TEAM,TGT,TTWO,TWLO,WB"
 
@@ -155,8 +155,8 @@ class Companies extends Component {
             }
         }
     }
-    componentWillMount(){
-        if(!this.state.quickQuotes){
+    componentWillMount() {
+        if (!this.state.quickQuotes) {
             this.setState({
                 quickQuotes: this.context.quotes
             })
@@ -205,13 +205,18 @@ class Companies extends Component {
                                     <div class="marginBottom26"></div>
                                 </Fragment>
                         }
-                        <PortfolioLink
-                            screen={this.props.screen}
-                            activeTicker={this.props.activeTicker}
-                            trackedCompanies={this.props.trackedCompanies}
-                            setActiveTicker={this.props.setActiveTicker}
-                            quickQuotes={this.state.quickQuotes} 
-                        />
+                        {
+                            this.context.quotes && (!this.context.screen.xs && !this.context.screen.sm)
+                                ?
+                                <PortfolioLink
+                                    screen={this.props.screen}
+                                    activeTicker={this.props.activeTicker}
+                                    trackedCompanies={this.props.trackedCompanies}
+                                    setActiveTicker={this.props.setActiveTicker}
+                                    quickQuotes={this.state.quickQuotes}
+                                />
+                                : null
+                        }
                         {Object.keys(this.props.trackedCompanies).map((index) => {
                             const company = this.props.trackedCompanies[index];
                             const userHasShares = this.props.trackedCompanies[index].shares.hasShares
@@ -232,7 +237,7 @@ class Companies extends Component {
                                                             fontWeight={900}
                                                             titleFontSize={14}
                                                             title={company.symbol}
-                                                            label={!that.state.quickQuotes[company.symbol] ? null : that.state.quickQuotes[company.symbol].quote.companyName}
+                                                            label={!that.state.quickQuotes ? null : that.state.quickQuotes[company.symbol] !== undefined ? that.state.quickQuotes[company.symbol].quote.companyName : null}
                                                             center={false}
                                                         />
                                                         <Metric

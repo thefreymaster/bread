@@ -8,16 +8,19 @@ import classnames from 'classnames';
 import { LoafContext } from './../../LoafContext';
 
 class PieGraph extends Component {
-    componentWillMount(){
+    componentWillMount() {
         let that = this;
         let data = [];
-        for(let company of this.props.data){
-            console.log(company)
-            data.push({
-                id: company.symbol,
-                label: company.name,
-                value: (((company.shares.count * that.props.quotes[company.symbol].quote.latestPrice)/that.props.currentTotal)*100).toFixed(2)
-            })
+        let value;
+        for (let company of this.props.data) {
+            value = (((company.shares.count * that.props.quotes[company.symbol].quote.latestPrice) / that.props.currentTotal) * 100).toFixed(2)
+            if (value > 0) {
+                data.push({
+                    id: company.symbol,
+                    label: company.symbol,
+                    value: value
+                })
+            }
         }
         that.setState({
             data: data
@@ -41,6 +44,21 @@ class PieGraph extends Component {
                     />
                 </div>
             )
+        else if (this.state.data.length === 0) {
+            return (
+                <div className="flex flex-row flex-center show-zoom-animation" style={{ height: (window.innerHeight - 84) * 0.54, width: this.props.width }}>
+                    <Metric
+                        title={'No Investments'}
+                        label="Add shares on a companys page to see data here"
+                        center
+                        titleFontSize={18}
+                        fontWeight={900}
+                        duration={1}
+                        decimals={0}
+                        fontFamily={'Open Sans'} />
+                </div>
+            )
+        }
         else {
             return (
                 <div className={classnames("flex flex-column flex-center show-zoom-animation", { 'dashed-border-right': this.props.rightDivider })} style={{ height: (window.innerHeight - 84) * 0.54, width: this.props.width }}>
@@ -69,7 +87,7 @@ class PieGraph extends Component {
                         radialLabelsLinkColor="inherit"
                         slicesLabelsSkipAngle={10}
                         slicesLabelsTextColor="#333333"
-                        sliceLabel={(data) => {return data.value + '%'}}
+                        sliceLabel={(data) => { return data.value + '%' }}
                         animate={true}
                         motionStiffness={90}
                         motionDamping={15}
@@ -143,7 +161,7 @@ class PieGraph extends Component {
                                 "id": "lines"
                             }
                         ]}
-                       
+
                     />
                 </div>
             )

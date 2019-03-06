@@ -5,7 +5,7 @@ import './App.css';
 import 'antd/dist/antd.css';
 import { Layout, message, notification, Icon } from 'antd';
 import { writeUserData, getFirebaseAuthObject, readUserCompanyData, updateUserCompanyData, updateUserCompanyShareData } from './api/FirebaseAPI';
-import { getQuickQuotes } from './api/StatsAPI';
+import { getQuickQuotes, getQuote } from './api/StatsAPI';
 
 import { determineIfMarketsAreOpen, getDayOfWeek, getMinutesOfDay, getHourOfDay, getPercentChange } from './components/HelperFunctions/Helper';
 
@@ -70,15 +70,46 @@ class App extends Component {
 
   }
   addCompanyToTrackedCompanies = (company) => {
+    let that = this;
     let _trackedCompanies = this.state.trackedCompanies;
+    let quote = {};
+    let quotes = {}
     company['shares'] = { price: '', count: '', hasShares: false };
     _trackedCompanies.push(company);
     if (localStorage.getItem('LOAF_USER')) {
       let userID = JSON.parse(localStorage.getItem('LOAF_USER')).uid;
-      updateUserCompanyData(userID, _trackedCompanies)
+      updateUserCompanyData(userID, _trackedCompanies);
+      quote = getQuote(company.symbol);
+      quote.then((response) => {
+        quotes = that.state.quotes;
+        if(!quotes){
+          quotes = {[response.symbol]: {quote: response}}
+        }
+        else{
+          quotes = Object.assign(quotes, {[response.symbol]: {quote: response}})
+        }
+        that.setState({
+          quotes: quotes
+        })
+      })
     }
     else {
       localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
+      quote = getQuote(company.symbol);
+      quote.then((response) => {
+        quotes = that.state.quotes;
+        if(!quotes){
+          quotes = {[response.symbol]: {quote: response}}
+        }
+        else{
+          quotes = Object.assign(quotes, {[response.symbol]: {quote: response}})
+        }
+        debugger;
+
+        that.setState({
+          quotes: quotes
+        })
+      })
     }
     message.success(company.symbol + ' successfully added to account.');
     this.setState({

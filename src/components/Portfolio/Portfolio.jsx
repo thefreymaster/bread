@@ -135,7 +135,7 @@ class Portfolio extends Component {
                     </div>
                 </div>
                 <div className='flex flex-row'>
-                    <div className="flex flex-column dashed-border-top width-60 dashed-border-right">
+                    <div className="flex flex-column flex-center dashed-border-top width-60 dashed-border-right">
                         {
                             !this.state.quotes ? <div className="flex flex-row flex-center show-zoom-animation" style={{ height: (window.innerHeight - 84) * 0.54, width: this.props.width }}>
                                 <Loader
@@ -156,7 +156,9 @@ class Portfolio extends Component {
                                     height="20"
                                     width="20"
                                 />
-                            </div> : <BarGraph width={'100%'} total={this.state.total} change={this.state.percentChange} currentTotal={this.state.currentTotal} data={this.props.trackedCompanies} quotes={this.state.quotes} />
+                            </div> 
+                            : 
+                            <BarGraph width={'100%'} total={this.state.total} change={this.state.percentChange} currentTotal={this.state.currentTotal} data={this.props.trackedCompanies} quotes={this.state.quotes} />
                         }
                     </div>
                 </div>

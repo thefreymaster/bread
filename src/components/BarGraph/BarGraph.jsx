@@ -11,15 +11,15 @@ class BarGraph extends Component {
     componentWillMount() {
         let that = this;
         let data = [];
-        data.push({
-            breakdown: 'Intial',
-            ['change']: 54,
-        })
-        data.push({
-            breakdown: 'Change',
-            ['change']: 124
-        })
-
+        if (this.props.total !== 0) {
+            data.push(
+                {
+                    "country": "Breakdown",
+                    "Initial": (this.props.total).toFixed(2),
+                    "Change": (this.props.currentTotal - this.props.total).toFixed(2),
+                }
+            )
+        }
         that.setState({
             data: data
         })
@@ -33,7 +33,7 @@ class BarGraph extends Component {
 
         if (!this.props.data)
             return (
-                <div className="flex flex-row flex-center show-zoom-animation" style={{ height:  (window.innerHeight - 84) * 0.54, width: this.props.width }}>
+                <div className="flex flex-row flex-center show-zoom-animation" style={{ height: (window.innerHeight - 84) * 0.54, width: this.props.width }}>
                     <Loader
                         type="Bars"
                         color="#000000a6"
@@ -42,17 +42,27 @@ class BarGraph extends Component {
                     />
                 </div>
             )
+        else if (this.state.data.length === 0) {
+            return (
+                <div className="flex flex-row flex-center show-zoom-animation" style={{ height: (window.innerHeight - 84) * 0.54, width: this.props.width }}>
+                    <Metric
+                        title={'No Investments'}
+                        label="Add shares on a companys page to see data here"
+                        center
+                        titleFontSize={18}
+                        fontWeight={900}
+                        duration={1}
+                        decimals={0}
+                        fontFamily={'Open Sans'} />
+                </div>
+            )
+
+        }
         else {
             return (
                 <div className={classnames("flex flex-column flex-center show-zoom-animation", { 'dashed-border-right': this.props.rightDivider })} style={{ height: (window.innerHeight - 84) * 0.54, width: this.props.width }}>
                     <ResponsiveBar
-                        data={[
-                            {
-                              "country": "Breakdown",
-                              "Initial": (this.props.total).toFixed(2),
-                              "Change": (this.props.currentTotal-this.props.total).toFixed(2),
-                            }
-                          ]}
+                        data={this.state.data}
                         keys={[
                             "Initial",
                             "Change"
@@ -65,7 +75,7 @@ class BarGraph extends Component {
                             "left": 60
                         }}
                         padding={0.3}
-                        colors={this.props.currentTotal-this.props.total > 0 ? 'greens' : 'reds'}
+                        colors={this.props.currentTotal - this.props.total > 0 ? 'greens' : 'reds'}
                         borderColor="inherit:darker(1.6)"
                         axisLeft={{
                             "tickSize": 5,
@@ -77,7 +87,7 @@ class BarGraph extends Component {
                         }}
                         labelSkipWidth={12}
                         labelSkipHeight={12}
-                        label={(data) => {return '$' + data.value}}
+                        label={(data) => { return '$' + data.value }}
                         labelTextColor="inherit:darker(1.6)"
                         animate={true}
                         motionStiffness={90}
