@@ -28,7 +28,7 @@ class GetStarted extends Component {
                 <Metric
                     fontWeight={500}
                     titleFontSize={72}
-                    title={'Loaf'}
+                    title={'Bread'}
                     labelFontSize={18}
                     label={'Track stocks, find trends, rise above the grain'}
                     center={true}
