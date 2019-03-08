@@ -19,13 +19,6 @@ import { withRouter } from 'react-router-dom';
 // "AAPL,ADBE,AMD,ATVI,CMG,CRM,DBX,FDX,GE,HD,IBM,INTC,JD,LMT,MDB,MMM,MRVL,MSFT,NFLX,NOC,NVDA,RDFN,ROKU,SHOP,SPOT,TEAM,TGT,TTWO,TWLO,WB"
 
 const filter = 'ytdChange,changePercent,week52High,week52Low,latestPrice,previousClose,extendedPrice,companyName,symbol'
-// const socket = io('https://ws-api.iextrading.com/1.0/tops')
-
-// socket.on('message', message => console.log(JSON.parse(message)))
-
-
-
-
 
 class Companies extends Component {
     openAddCompanySideBar = () => {
@@ -156,11 +149,20 @@ class Companies extends Component {
         }
     }
     componentWillMount() {
+        let that = this;
         if (!this.state.quickQuotes) {
             this.setState({
                 quickQuotes: this.context.quotes
             })
         }
+        let socketSymbols = '';
+        for (let symbol in that.props.trackedCompanies) {
+            socketSymbols = socketSymbols + that.props.trackedCompanies[symbol].symbol + ',';
+        }
+        socketSymbols = socketSymbols.substring(0, socketSymbols.length - 1);
+        that.state.socket.on('connect', () => {
+            that.state.socket.emit('subscribe', socketSymbols)
+        })
     }
     componentWillReceiveProps(nextProps) {
         if (this.props.activeTicker !== nextProps.activeTicker && this.props.trackedCompanies.length > 0) {
