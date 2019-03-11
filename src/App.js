@@ -1,9 +1,13 @@
 import React, { Component, Fragment } from 'react';
-import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Redirect, Switch, withRouter } from "react-router-dom";
+
 import './App.css';
 import 'antd/dist/antd.css';
-import { Layout } from 'antd';
+import { Layout, message, notification, Icon } from 'antd';
 import { writeUserData, getFirebaseAuthObject, readUserCompanyData, updateUserCompanyData, updateUserCompanyShareData } from './api/FirebaseAPI';
+import { getQuickQuotes, getQuote } from './api/StatsAPI';
+
+import { determineIfMarketsAreOpen, getDayOfWeek, getMinutesOfDay, getHourOfDay, getPercentChange } from './components/HelperFunctions/Helper';
 
 import classnames from 'classnames';
 
@@ -17,9 +21,15 @@ import AddCompany from './components/Companies/AddCompany/AddCompany';
 import Login from './components/Login/Login';
 import Load from './components/Load';
 import Metric from './components/Body/Metric';
+import Portfolio from './components/Portfolio/Portfolio';
+import { LoafContext } from './LoafContext';
+import { showNotification } from './components/HelperFunctions/Notifications';
+import RightSider from './components/RightSider/RightSider'
+import { RED, GREEN } from './Constants';
 
 const firebase = getFirebaseAuthObject();
-console.log(firebase);
+const filter = 'ytdChange,changePercent,week52High,week52Low,latestPrice,previousClose,extendedPrice,companyName,symbol'
+
 
 const {
   Header, Footer, Sider, Content,
@@ -60,16 +70,48 @@ class App extends Component {
 
   }
   addCompanyToTrackedCompanies = (company) => {
+    let that = this;
     let _trackedCompanies = this.state.trackedCompanies;
+    let quote = {};
+    let quotes = {}
     company['shares'] = { price: '', count: '', hasShares: false };
     _trackedCompanies.push(company);
     if (localStorage.getItem('LOAF_USER')) {
       let userID = JSON.parse(localStorage.getItem('LOAF_USER')).uid;
-      updateUserCompanyData(userID, _trackedCompanies)
+      updateUserCompanyData(userID, _trackedCompanies);
+      quote = getQuote(company.symbol);
+      quote.then((response) => {
+        quotes = that.state.quotes;
+        if(!quotes){
+          quotes = {[response.symbol]: {quote: response}}
+        }
+        else{
+          quotes = Object.assign(quotes, {[response.symbol]: {quote: response}})
+        }
+        that.setState({
+          quotes: quotes
+        })
+      })
     }
     else {
       localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
+      quote = getQuote(company.symbol);
+      quote.then((response) => {
+        quotes = that.state.quotes;
+        if(!quotes){
+          quotes = {[response.symbol]: {quote: response}}
+        }
+        else{
+          quotes = Object.assign(quotes, {[response.symbol]: {quote: response}})
+        }
+        debugger;
+
+        that.setState({
+          quotes: quotes
+        })
+      })
     }
+    message.success(company.symbol + ' successfully added to account.');
     this.setState({
       trackedCompanies: _trackedCompanies
     })
@@ -87,6 +129,8 @@ class App extends Component {
         else {
           localStorage.setItem("trackedCompanies", JSON.stringify(_trackedCompanies));
         }
+        message.success(item.symbol + ' successfully removed from your account.');
+
         that.setState({
           trackedCompanies: _trackedCompanies,
           activeTickerIndex: index === 0 ? index : index - 1
@@ -124,7 +168,11 @@ class App extends Component {
       },
       fetchingTrackedCompanies: false,
       activeTicker: '',
-      trackedCompanies: []
+      trackedCompanies: [],
+      minute: getMinutesOfDay(),
+      hour: getHourOfDay(),
+      day: getDayOfWeek(),
+      determineIfMarketsAreOpen: determineIfMarketsAreOpen
     }
   }
 
@@ -133,107 +181,174 @@ class App extends Component {
       return <Load />;
     else {
       return (
-        <BrowserRouter>
-          <main>
-            <Layout>
-              <Header style={{ marginBottom: 20 }}>
-                <Navigation title={'Loaf'} />
-              </Header>
-              <Layout style={{ minHeight: window.innerHeight - 84 }}>
-                {this.state.screen.xs || this.state.screen.sm
-                  ?
-                  <div className={'flex flex-center'} style={{height: window.innerHeight-84}}>
-                    <Metric
-                      fontWeight={500}
-                      titleFontSize={24}
-                      title={'Loaf for mobile'}
-                      labelFontSize={12}
-                      label={"Looks like you're on a mobile device, the mobile experience isn't quite ready yet.  Please check back soon."}
-                      center={true}
-                    />
-                  </div>
-                  :
-                  <Fragment>
-                    <Sider className={classnames("left-sider", { "left-sider-small": this.state.screen.xs || this.state.screen.sm })} style={{ maxHeight: window.innerHeight - 84 }}>
+        <LoafContext.Provider
+          value={{
+            screen: this.state.screen,
+            trackedCompanies: this.state.trackedCompanies,
+            setActiveTicker: this.setActiveTicker,
+            quotes: this.state.quotes
+          }}>
+          <BrowserRouter>
+            <main>
+              <Layout>
+                <Header style={{ marginBottom: this.state.screen.xs || this.state.screen.sm ? 0 : 20 }}>
+                  <Navigation title={'Bread'} screen={this.state.screen} />
+                </Header>
+                <Layout style={{ minHeight: window.innerHeight - 64 }}>
+                  {this.state.screen.xs || this.state.screen.sm
+                    ?
+                    <Switch>
+                      <Route path="/add" render={props => <AddCompany
+                        setActiveTicker={this.setActiveTicker}
+                        trackedCompanies={this.state.trackedCompanies}
+                        screen={this.state.screen}
+                        firebase={firebase} />
+                      } />
+                      <Route path="/login" render={props =>
+                        localStorage.getItem('LOAF_USER')
+                          ?
+                          <Redirect
+                            to={'/quote'}
+                          />
+                          :
+                          <Login
+                            setActiveTicker={this.setActiveTicker}
+                            trackedCompanies={this.state.trackedCompanies}
+                            screen={this.state.screen} />
+                      } />
+                      <Route path="/rise" render={props => <GetStarted />
+                      } />
+                      <Route path="/quote" render={props =>
+                        this.state.trackedCompanies.length === 0
+                          ?
+                          <AddCompany
+                            setActiveTicker={this.setActiveTicker}
+                            trackedCompanies={this.state.trackedCompanies}
+                            screen={this.state.screen}
+                            firebase={firebase} />
+                          :
+                          <div className={'flex flex-center'} style={{ height: window.innerHeight - 64 }}>
+                            <Companies screen={this.state.screen} activeTicker={this.state.activeTicker} trackedCompanies={this.state.trackedCompanies} setActiveTicker={this.setActiveTicker} />
+                          </div>}
+                      />
+                      <Route path="/" render={props =>
+                        this.state.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
+                          ?
+                          <Redirect
+                            to={'/rise'}
+                          />
+                          :
+                          <Redirect
+                            to={'/quote'}
+                          />}
+                      />
+
+                    </Switch>
+                    :
+                    <Fragment>
                       {this.state.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false
                         ?
                         null
                         :
-                        <Companies screen={this.state.screen} activeTicker={this.state.activeTicker} trackedCompanies={this.state.trackedCompanies} setActiveTicker={this.setActiveTicker} />
-                      }
-                    </Sider>
-                    <Content>
-                      <Switch>
-
-                        <Route path="/add" render={props => <AddCompany
-                          setActiveTicker={this.setActiveTicker}
-                          trackedCompanies={this.state.trackedCompanies}
-                          screen={this.state.screen}
-                          firebase={firebase} />
-                        } />
-                        <Route path="/login" render={props =>
-                          localStorage.getItem('LOAF_USER')
-                            ?
-                            <Redirect
-                              to={'/quote'}
-                            />
-                            :
-                            <Login
-                              setActiveTicker={this.setActiveTicker}
-                              trackedCompanies={this.state.trackedCompanies}
-                              screen={this.state.screen} />
-                        } />
-                        <Route path="/rise" render={props => <GetStarted />
-                        } />
-                        <Route path="/quote" render={props =>
-                          this.state.trackedCompanies.length === 0
-                            ?
-                            <AddCompany
-                              setActiveTicker={this.setActiveTicker}
-                              trackedCompanies={this.state.trackedCompanies}
-                              screen={this.state.screen}
-                              firebase={firebase} />
-                            :
-                            <Body
-                              saveShares={this.saveShares}
-                              screen={this.state.screen}
-                              removeCompanyFromTrackedCompanies={this.removeCompanyFromTrackedCompanies}
-                              trackedCompanies={this.state.trackedCompanies}
-                              activeTicker={this.state.activeTicker}
-                              activeTickerIndex={this.state.activeTickerIndex}
-                            />}
-                        />
-                        <Route path="/" render={props =>
-                          this.state.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
-                            ?
-                            <Redirect
-                              to={'/rise'}
-                            />
-                            :
-                            <Redirect
-                              to={'/quote'}
-                            />}
-                        />
-
-                      </Switch>
-
-                      {/* <Router /> */}
-                    </Content>
-                    {
-                      this.state.screen.lg || this.state.screen.xl ?
-                        <Sider className="right-sider paddingLeft10 paddingRight10">
-                          <CompanyStatistics activeTicker={this.state.activeTicker} />
+                        <Sider className={classnames("left-sider", { "left-sider-small": this.state.screen.xs || this.state.screen.sm, "left-sider-large": this.state.screen.md || this.state.screen.lg || this.state.screen.xl })} style={{ maxHeight: window.innerHeight - 84 }}>
+                          <Companies 
+                            screen={this.state.screen} 
+                            activeTicker={this.state.activeTicker} 
+                            trackedCompanies={this.state.trackedCompanies} 
+                            setActiveTicker={this.setActiveTicker} />
                         </Sider>
-                        :
-                        null
-                    }
-                  </Fragment>
-                }
-              </Layout>
-            </Layout>
-          </main>
-        </BrowserRouter>
 
+                      }
+                      <Content>
+                        <Switch>
+                          <Route path="/add" render={props => <AddCompany
+                            setActiveTicker={this.setActiveTicker}
+                            trackedCompanies={this.state.trackedCompanies}
+                            screen={this.state.screen}
+                            firebase={firebase} />
+                          } />
+                          <Route path="/login" render={props =>
+                            localStorage.getItem('LOAF_USER')
+                              ?
+                              <Redirect
+                                to={'/quote'}
+                              />
+                              :
+                              <Login
+                                setActiveTicker={this.setActiveTicker}
+                                trackedCompanies={this.state.trackedCompanies}
+                                screen={this.state.screen} />
+                          } />
+                          <Route path="/rise" render={props => <GetStarted />
+                          } />
+                          <Route path="/quote" render={props =>
+                            this.state.trackedCompanies.length === 0
+                              ?
+                              <AddCompany
+                                setActiveTicker={this.setActiveTicker}
+                                trackedCompanies={this.state.trackedCompanies}
+                                screen={this.state.screen}
+                                firebase={firebase} />
+                              :
+                              <Body
+                                saveShares={this.saveShares}
+                                setActiveTicker={this.setActiveTicker}
+                                screen={this.state.screen}
+                                removeCompanyFromTrackedCompanies={this.removeCompanyFromTrackedCompanies}
+                                trackedCompanies={this.state.trackedCompanies}
+                                activeTicker={this.state.activeTicker}
+                                activeTickerIndex={this.state.activeTickerIndex}
+                              />}
+                          />
+                          <Route path="/portfolio" render={props =>
+                            this.state.trackedCompanies.length === 0
+                              ?
+                              <AddCompany
+                                setActiveTicker={this.setActiveTicker}
+                                trackedCompanies={this.state.trackedCompanies}
+                                screen={this.state.screen}
+                                firebase={firebase} />
+                              :
+                              <Portfolio 
+                                screen={this.state.screen} 
+                                activeTicker={this.state.activeTicker} 
+                                trackedCompanies={this.state.trackedCompanies} 
+                                setActiveTicker={this.setActiveTicker} />
+                            }
+                          />
+                          <Route path="/" render={props =>
+                            this.state.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
+                              ?
+                              <Redirect
+                                to={'/rise'}
+                              />
+                              :
+                              <Redirect
+                                to={'/quote'}
+                              />}
+                          />
+
+                        </Switch>
+                      </Content>
+                      {
+                        this.state.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false
+                          ?
+                          null
+                          :
+                          this.state.screen.lg || this.state.screen.xl ?
+                            <Sider className="right-sider paddingLeft10 paddingRight10">
+                              <RightSider activeTicker={this.state.activeTicker} />
+                            </Sider>
+                            :
+                            null
+                      }
+                    </Fragment>
+                  }
+                </Layout>
+              </Layout>
+            </main>
+          </BrowserRouter>
+        </LoafContext.Provider>
       );
     }
 
@@ -244,6 +359,10 @@ class App extends Component {
   componentDidMount() {
     if (localStorage.getItem('LOAF_USER')) {
       this.fetchingTrackedCompanies();
+      if (!localStorage.getItem('LOAF_WELCOME_SHOWN')) {
+        showNotification('Hi ya!', 'Welcome in, ' + JSON.parse(localStorage.getItem('LOAF_USER')).displayName, 'blue', 'smile');
+        localStorage.setItem('LOAF_WELCOME_SHOWN', true)
+      }
       let userID = JSON.parse(localStorage.getItem('LOAF_USER')).uid;
       let _trackedCompanies = readUserCompanyData(userID);
       _trackedCompanies = _trackedCompanies.then((companies) => {
@@ -255,10 +374,10 @@ class App extends Component {
           })
           this.setState({
             trackedCompanies: companies,
-            fetchingTrackedCompanies: false,
-          }, this.setActiveTicker(companies[0].symbol, companies[0], false))
+          }, () =>  {
+            this.getQuotesData();
+          })
         }
-        this.fetchingTrackedCompaniesComplete();
       });
     }
     else if (localStorage.getItem("trackedCompanies")) {
@@ -272,8 +391,10 @@ class App extends Component {
 
       this.setState({
         trackedCompanies: _trackedCompanies,
-        fetchingTrackedCompanies: false,
-      }, this.setActiveTicker(_trackedCompanies[0].symbol, _trackedCompanies[0], false))
+      }, () => {
+        this.setActiveTicker(_trackedCompanies[0].symbol, _trackedCompanies[0], false)
+        this.getQuotesData();
+      })
     }
     this.checkDeviceSize();
     window.addEventListener('resize', () => {
@@ -282,6 +403,52 @@ class App extends Component {
     setTimeout(() => {
       window.location.reload()
     }, 3600000);
+    
+
+  }
+  getQuotesData = () => {
+    let that = this;
+    let symbols = [];
+    for (let symbol in that.state.trackedCompanies) {
+        symbols.push(that.state.trackedCompanies[symbol].symbol)
+    }
+    let quote = getQuickQuotes(symbols, filter);
+    let market = that.state.determineIfMarketsAreOpen(this.state.day, this.state.hour, this.state.minute);
+    quote.then(response => {
+        let change;
+        for (let [key] of Object.entries(response)) {
+            change = getPercentChange(response[key].quote);
+
+            if (parseFloat(change) > 5 && market) {
+                notification.success({
+                    message: response[key].quote.companyName,
+                    description: key + ' is up ' + getPercentChange(response[key].quote) + '% today.',
+                    onClick: () => {
+                        this.findIndex(key)
+                    },
+                    duration: 5,
+                    icon: <Icon type="rise" style={{ color: GREEN }} />,
+                });
+            }
+            if (parseFloat(change) < -5 && market) {
+
+
+                notification.warning({
+                    message: response[key].quote.companyName,
+                    description: key + ' is down ' + getPercentChange(response[key].quote) + '% today.',
+                    onClick: () => {
+                        this.findIndex(key)
+                    },
+                    duration: 5,
+                    icon: <Icon type="fall" style={{ color: RED }} />,
+                });
+            }
+        }
+        that.setState({
+            quotes: response
+        })
+        that.fetchingTrackedCompaniesComplete();
+    })
   }
   checkDeviceSize() {
     if (window.innerWidth < 600) {
@@ -339,7 +506,6 @@ class App extends Component {
         }
       })
     }
-    console.log(this.state)
   }
 }
 

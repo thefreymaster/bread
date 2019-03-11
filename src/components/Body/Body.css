@@ -13,11 +13,11 @@
     margin-top: -12px;
 }
 .price-metric{
-    font-size: 48px;
+    font-size: 40px;
     font-family: 'Abril Fatface', cursive;
 }
 .percent-metric{
-    font-size: 48px;
+    font-size: 32px;
     font-family: 'Abril Fatface', cursive;
 }
 .loaf-label{
@@ -26,8 +26,39 @@
     color: #b3b3b3;
 }
 .border-right{
-    box-shadow: inset -2px 0px 0px 0 #72727224;
+    border-right: 2px dashed #72727224;
 }
 .marginBottom10{
     margin-bottom: 10px;
+}
+.dashed-border-bottom{
+    border-bottom: 2px dashed #ebebeb
+}
+.dashed-border-top{
+    border-top: 2px dashed #ebebeb
+}
+.shares-divider{
+    border-top: 2px dashed #dfdfdf;
+	margin-top: 10px;
+	padding-top: 10px;
+}
+.systems{
+    bottom: 0;
+    margin-left: 10px;
+    border-top: 2px dashed #ebebeb;
+    padding: 5px;
+    background-color: white;
+    margin-right: 10px;
+}
+.ant-badge-status-processing{
+    background-color: #11b672 !important;
+}
+.ant-badge-status-text{
+    font-size: 12px !important;
+}
+.paddingL10{
+    padding-left: 10px;
+}
+.paddingR10{
+    padding-right: 10px;
 }

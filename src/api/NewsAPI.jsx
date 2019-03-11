@@ -1,8 +1,10 @@
+
+
 import axios from 'axios';
 import { IEXENDPOINT, IEXTOKEN, IEXTOKEN_WITHAND } from './../Constants';
 
-function getAllSymbols() {
-    return axios.get(IEXENDPOINT + '/ref-data/iex/symbols' + IEXTOKEN)
+function getSymbolNews(symbol) {
+    return axios.get(IEXENDPOINT + '/stock/' + symbol + '/news' + IEXTOKEN)
         .then(function (response) {
             return response.data;
         })
@@ -11,4 +13,4 @@ function getAllSymbols() {
         });
 }
 
-export { getAllSymbols }
+export { getSymbolNews }

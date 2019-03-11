@@ -25,15 +25,15 @@ class AddShares extends Component {
                         <Input id={'count'} onChange={this.handleOnChange} addonBefore="Shares" allowClear placeholder="23" />
                     </div>
                     <div>
-                        <Input id={'price'} onChange={(e) => this.handleOnChange(e)} addonBefore="Price Per Share" allowClear placeholder="145.43" />
+                        <Input id={'price'} onChange={(e) => this.handleOnChange(e)} addonBefore="Per Share" allowClear placeholder="145.43" />
                     </div>
                 </div>
                 <div className={'flex flex-row'}>
                     <div className='paddingRight10 width-50'>
-                        <Button disabled={this.state.price.length === 0 || this.state.count.length === 0} onClick={() => this.props.saveShares(this.state.price, this.state.count, this.props.ticker)} className="width100 loaf-button">Save</Button>
+                        <Button style={{borderRadius: 50}} disabled={this.state.price.length === 0 || this.state.count.length === 0} onClick={() => this.props.saveShares(this.state.price, this.state.count, this.props.ticker)} className="width100 loaf-button">Save</Button>
                     </div>
                     <div className='paddingLeft10 width-50'>
-                        <Button onClick={() => this.props.hideAddShares()} className="width100 loaf-button">Cancel</Button>
+                        <Button style={{borderRadius: 50}} onClick={() => this.props.hideAddShares()} className="width100 loaf-button">Cancel</Button>
                     </div>
                 </div>
             </div>

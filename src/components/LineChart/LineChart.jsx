@@ -2,16 +2,34 @@ import React, { Component } from 'react';
 import { ResponsiveLine } from '@nivo/line'
 import { getChartData } from '../../api/ChartAPI';
 import Loader from 'react-loader-spinner'
-import { GREEN, RED } from './../../Constants';
-
+import { GREEN, RED, GREY } from './../../Constants';
+import Metric from './../Body/Metric';
+import classnames from 'classnames';
+import './LineChart.css';
+import { LoafContext } from './../../LoafContext';
 
 class LineChart extends Component {
+    static contextType = LoafContext;
     determineGraphColor = (data) => {
-        if (data[0].data[data[0].data.length - 1].changeOverTime > 0) {
-            return GREEN;
+        if (data[0].data[data[0].data.length - 1]) {
+            if (data[0].data[data[0].data.length - 1].changeOverTime > 0) {
+                return GREEN;
+            }
+            else {
+                return RED;
+            }
         }
         else {
-            return RED;
+            return GREY;
+        }
+    }
+    getGraphPercentChange = () => {
+        if (this.state.data[0].data[this.state.data[0].data.length - 1].changeOverTime) {
+            let change = (this.state.data[0].data[this.state.data[0].data.length - 1].y-this.state.data[0].data[0].y)/this.state.data[0].data[this.state.data[0].data.length - 1].y;
+            change = change*100;
+            change = change.toFixed(2);
+            change = change + '%'
+            return change;
         }
     }
     constructor(props) {
@@ -33,10 +51,10 @@ class LineChart extends Component {
         }
     }
     render() {
-        
+
         if (!this.state.data)
             return (
-                <div className="flex flex-row flex-center show-zoom-animation" style={{ height: 200, width: '50%' }}>
+                <div className="flex flex-row flex-center show-zoom-animation" style={{ height: 200, width: this.props.width }}>
                     <Loader
                         type="Bars"
                         color="#000000a6"
@@ -47,8 +65,12 @@ class LineChart extends Component {
             )
         else {
             return (
-                <div className="flex flex-column flex-center-start show-zoom-animation" style={{ height: (window.innerHeight-84)*0.3, width: '50%' }}>
-                    <div className='absolute open-sans grey size20'>{this.props.title}</div>
+                <div className={classnames("flex flex-column flex-center-start show-zoom-animation", { 'dashed-border-right': this.props.rightDivider })} style={{ height: (window.innerHeight - 84) * 0.27, width: this.props.width }}>
+
+                    <div className={classnames('', { 'absolute': this.context.screen.md || this.context.screen.lg || this.context.screen.xl })}>
+                        <Metric color={this.determineGraphColor(this.state.data)} fontFamily={'Open Sans'} fontWeight={900} titleFontSize={18} label={this.props.title} labelFontSize={14} center title={this.getGraphPercentChange()} />
+                    </div>
+
                     <ResponsiveLine
                         data={this.state.data}
                         margin={{
@@ -75,7 +97,7 @@ class LineChart extends Component {
                         colors={this.determineGraphColor(this.state.data)}
                         dotSize={0}
                         dotColor="inherit:darker(0.3)"
-                        dotBorderWidth={2}
+                        dotBorderWidth={0}
                         dotBorderColor="#ffffff"
                         enableDotLabel={false}
                         dotLabel="y"

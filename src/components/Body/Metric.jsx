@@ -1,5 +1,6 @@
 import React from 'react';
 import CountUp from 'react-countup';
+import { Icon } from 'antd'
 
 function Metric(props) {
     const inline = {
@@ -9,7 +10,8 @@ function Metric(props) {
             fontFamily: props.fontFamily ? props.fontFamily : null,
             fontWeight: props.fontWeight ? props.fontWeight : null,
             textAlign: props.center ? 'center' : 'left',
-            transition: 'text-align 300ms ease-in-out'
+            transition: 'text-align 300ms ease-in-out, background-color 200ms ease-in-out',
+            backgroundColor: props.backgroundColor ? props.backgroundColor : null
         },
         label: {
             fontSize: props.labelFontSize,
@@ -19,6 +21,7 @@ function Metric(props) {
         parent: {
             alignItems: props.align,
             paddingLeft: props.paddingleft ? 10 : 0,
+            width: props.width
         }
     }
     return (

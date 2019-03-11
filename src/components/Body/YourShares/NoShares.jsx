@@ -8,7 +8,7 @@ function NoShares(props){
             <div style={{paddingBottom: 20}}>
                 <Metric align='center' titleFontSize={48} title="No Shares" label="Add shares you own here" />
             </div>
-            <Button onClick={() => props.showAddShares()} className="width100 loaf-button">Add Shares</Button>
+            <Button style={{borderRadius: 50}} onClick={() => props.showAddShares()} className="width100 loaf-button">Add Shares</Button>
         </div>
     )
 }

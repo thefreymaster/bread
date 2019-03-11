@@ -1,4 +1,5 @@
 import firebase from 'firebase';
+import { showNotification } from '../components/HelperFunctions/Notifications';
 
 function getFirebaseAuthObject() {
     // Configure Firebase.
@@ -21,13 +22,17 @@ function signinWithGoogle(trackedCompanies) {
         // The signed-in user info.
         var user = result.user;
         localStorage.setItem('LOAF_USER', JSON.stringify(user));
-        if(!readUserCompanyData())
-        {
-            writeUserData(user.uid, user.displayName, user.email, user.photoURL, trackedCompanies)
-        }
-        else{
-            window.location.reload();
-        }
+        let userCompanyData = readUserCompanyData(user.uid);
+        userCompanyData.then((data) => {
+            if(data === null)
+            {
+                writeUserData(user.uid, user.displayName, user.email, user.photoURL, trackedCompanies)
+            }
+            else{
+                window.location.reload();
+            }
+        })
+
     }).catch(function (error) {
         // Handle Errors here.
         var errorCode = error.code;
@@ -79,7 +84,7 @@ function signOutUser() {
         console.log('Signed Out');
         localStorage.removeItem('LOAF_USER')
         localStorage.removeItem('trackedCompanies')
-        
+        localStorage.removeItem('LOAF_WELCOME_SHOWN')
         window.location.reload();
       }, function(error) {
         console.error('Sign Out Error', error);

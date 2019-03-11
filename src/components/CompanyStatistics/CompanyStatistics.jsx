@@ -1,19 +1,33 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import Metric from '../Body/Metric';
 import { List } from 'antd';
 import { getBatchData } from '../../api/StatsAPI';
-import { GREEN, RED } from '../../Constants';
+import { GREEN, RED, YELLOW, GREY } from '../../Constants';
+import PoweredBy from './PoweredBy';
+
+const filter = 'beta,ytdChange,changePercent,week52High,week52Low,week52change,latestPrice,profitMargin,priceToSales,latestVolume,dividendYield'
 
 
 class CompanyStatistics extends Component {
+    getBetaColor = (beta) => {
+        if (beta < 1) {
+            return GREEN;
+        }
+        else if (beta > 1 && beta < 2) {
+            return YELLOW;
+        }
+        else {
+            return RED;
+        }
+    }
     constructor(props) {
         super(props)
         this.state = {}
     }
     componentDidMount() {
-        if (this.props.activeTicker) {
-            
-            let data = getBatchData(this.props.activeTicker, 'quote,stats');
+        if (this.props.activeTicker && this.props.activeTicker !== 'portfolio') {
+
+            let data = getBatchData(this.props.activeTicker, 'quote,stats', filter);
             data.then(response => {
                 this.setState({
                     stats: response.stats,
@@ -56,40 +70,49 @@ class CompanyStatistics extends Component {
                             duration: 1
                         },
                         {
-                            title: parseFloat(response.stats.profitMargin).toFixed(2),
-                            color: response.stats.profitMargin > 0 ? GREEN : RED,
-                            label: 'Profit Margin',
+                            title: parseFloat(response.stats.dividendYield).toFixed(2),
+                            color: response.stats.dividendYield > 0 ? GREEN : RED,
+                            label: 'Dividend Yield',
                             decimals: 2,
                             suffix: '%',
                             prefix: '',
                             duration: 1
                         },
                         {
-                            title: parseFloat(response.stats.priceToSales).toFixed(2),
-                            label: 'Price To Sales',
-                            color: response.stats.priceToSales > 0 ? GREEN : RED,
-                            decimals: 2,
-                            suffix: '%',
-                            prefix: '',
-                            duration: 1
-                        },
-                        {
-                            title: parseFloat(response.quote.latestVolume),
-                            label: 'Latest Volume',
+                            title: parseFloat(response.stats.employees).toFixed(2),
+                            label: 'Employees',
+                            color: GREY,
                             decimals: 0,
                             suffix: '',
                             prefix: '',
                             duration: 1
                         },
+                        {
+                            title: (parseFloat(response.stats.marketcap) / 1000000000).toFixed(2),
+                            label: 'Market Cap',
+                            color: GREY,
+                            decimals: 0,
+                            suffix: 'B',
+                            prefix: '$',
+                            duration: 1
+                        },
+                        // {
+                        //     title: parseFloat(response.quote.latestVolume),
+                        //     label: 'Latest Volume',
+                        //     decimals: 0,
+                        //     suffix: '',
+                        //     prefix: '',
+                        //     duration: 1
+                        // },
                     ]
                 })
             })
         }
     }
     componentDidUpdate(prevProps) {
-        if (this.props.activeTicker !== prevProps.activeTicker) // Check if it's a new user, you can also use some unique property, like the ID
+        if (this.props.activeTicker !== prevProps.activeTicker && this.props.activeTicker !== 'portfolio') // Check if it's a new user, you can also use some unique property, like the ID
         {
-            
+
             let data = getBatchData(this.props.activeTicker, 'quote,stats');
             data.then(response => {
                 this.setState({
@@ -133,31 +156,40 @@ class CompanyStatistics extends Component {
                             duration: 1
                         },
                         {
-                            title: parseFloat(response.stats.profitMargin).toFixed(2),
-                            color: response.stats.profitMargin > 0 ? GREEN : RED,
-                            label: 'Profit Margin',
+                            title: parseFloat(response.stats.dividendYield).toFixed(2),
+                            color: response.stats.dividendYield > 0 ? GREEN : RED,
+                            label: 'Dividend Yield',
                             decimals: 2,
                             suffix: '%',
                             prefix: '',
                             duration: 1
                         },
                         {
-                            title: parseFloat(response.stats.priceToSales).toFixed(2),
-                            label: 'Price To Sales',
-                            color: response.stats.priceToSales > 0 ? GREEN : RED,
-                            decimals: 2,
-                            suffix: '%',
-                            prefix: '',
-                            duration: 1
-                        },
-                        {
-                            title: parseFloat(response.quote.latestVolume),
-                            label: 'Latest Volume',
+                            title: parseFloat(response.stats.employees).toFixed(2),
+                            label: 'Employees',
+                            color: GREY,
                             decimals: 0,
                             suffix: '',
                             prefix: '',
                             duration: 1
                         },
+                        {
+                            title: (parseFloat(response.stats.marketcap) / 1000000000).toFixed(2),
+                            label: 'Market Cap',
+                            color: GREY,
+                            decimals: 0,
+                            suffix: 'B',
+                            prefix: '$',
+                            duration: 1
+                        },
+                        // {
+                        //     title: parseFloat(response.quote.latestVolume),
+                        //     label: 'Latest Volume',
+                        //     decimals: 0,
+                        //     suffix: '',
+                        //     prefix: '',
+                        //     duration: 1
+                        // },
                     ]
                 })
             })
@@ -168,6 +200,7 @@ class CompanyStatistics extends Component {
             return null
         else {
             return (
+                <Fragment>
                     <List
                         itemLayout="horizontal"
                         dataSource={this.state.data}
@@ -190,6 +223,8 @@ class CompanyStatistics extends Component {
                             </List.Item>
                         )}
                     />
+                    <PoweredBy />
+                </Fragment>
             )
         }
     }

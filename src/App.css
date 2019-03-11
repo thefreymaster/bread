@@ -13,11 +13,23 @@
 .ant-layout-footer{
     background-color: white !important;
 }
+.logo{
+    max-width: 32px;
+    border-radius: 5px;
+    margin-right: 15px;
+}
 
 .left-sider-small{
     max-width: 100px !important;
     min-width: 100px !important;
     width: 100px !important;
+}
+.left-sider-large{
+    max-width: 275px !important;
+    min-width: 275px !important;
+    width: 275px !important;}
+.radius50{
+    border-radius: 50px;
 }
 
 .right-sider{
@@ -30,7 +42,7 @@
     box-shadow: 0px 0px 4px 0 #00000024 !important;
     background-color: #fafafa;
     transition: box-shadow 350ms ease-in-out;
-    border-left: 4px solid #c3c3c3;
+    border-left: 4px solid #000000a6;
 }
 
 .loaf-button-hover-action:hover{
@@ -39,7 +51,8 @@
     transition: box-shadow 350ms ease-in-out;
 }
 .box-shadow-bottom{
-    box-shadow: 0px 2px 8px 0 #00000024;
+    box-shadow: 0 0px 1px 0 #0000003b;
+    border-radius: 3px;
 }
 .margin-auto{
     margin: auto;
@@ -52,6 +65,15 @@
 }
 .hide{
     display: none;
+}
+
+.flex-badge{
+    justify-content: center;
+    align-items: flex-end;
+    flex-grow: 1;
+    z-index: 0;
+    flex-direction: column;
+
 }
 .flex{
     display: flex
@@ -69,6 +91,10 @@
     align-items: center;
     justify-content: center;
 }
+.flex-start-center{
+    align-items: flex-start;
+    justify-content: center;
+}
 .flex-center-start{
     align-items: center;
     justify-content: flex-start;
@@ -79,6 +105,10 @@
 }
 .height-100{
     min-height: 100%;
+}
+.width-25{
+    max-width: 25%;
+    min-width: 25%;
 }
 .width-33{
     max-width: 33%;
@@ -96,6 +126,10 @@
     max-width: 60%;
     min-width: 60%;
 }
+.width-100{
+    min-width: 100%;
+    max-width: 100%;
+}
 .ant-list-item{
     padding: 20px 0 !important;
 }
@@ -104,6 +138,25 @@
 }
 .absolute{
     position: absolute;
+    margin-top: -20px;
+    background-color: white;
+    padding: 5px;
+
+}
+.your-companies{
+    position: absolute;
+    top: -20px;
+    left: 0;
+    min-width: 100%;
+    background-color: white;
+    border-bottom: 2px dashed #ebebeb;
+    border-right: 2px dashed #ebebeb;
+    border-bottom-right-radius: 12px;
+    z-index: 1;
+}
+.border-bottom-dashed{
+    border-bottom: 2px dashed #dedede;
+    padding-bottom: 10px;
 }
 .abril{
     font-family: 'Abril Fatface', cursive;
@@ -126,8 +179,14 @@
     from {opacity :0; transform: scale(1.1);}
     to {opacity :1;transform: scale(1.0);}
   }
+.marginBottom48{
+    margin-bottom: 48px;
+}
 .marginBottom54{
     margin-bottom: 54px;
+}
+.marginBottom64{
+    margin-bottom: 64px;
 }
   .padding10{
       padding: 10px;
@@ -145,8 +204,30 @@
     padding-right: 10px;
 }
 .add-new-button{
-    position: absolute;
-    bottom: 0;
     left: 0;
     min-width: 100%;
+    background-color: white;
+    border-top: 2px dashed #eeeeee;
+    z-index: 1;
+}
+.add-button-button-desktop{
+    border-top-right-radius: 12px;
+    border-right: 2px dashed #eeeeee;
+    position: absolute;
+    bottom: 0;
+
+}
+.ant-badge{
+    z-index: 0 !important;
+}
+.add-new-button-mobile{
+    position: fixed;
+    bottom: 0;
+}
+.marginBottom26 {
+    margin-bottom: 26px;
+}
+.webkit-scroll{
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
 }

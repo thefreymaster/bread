@@ -1,0 +1,9 @@
+.company-logo{
+    max-width: 50px;
+    max-height: 50px;
+    margin-right: 10px;
+    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    filter: grayscale(100%);
+    opacity: .75;
+    border-radius: 100px;
+}
