@@ -44,12 +44,13 @@ class Today extends Component {
         let showUpdate = that.state.showUpdate;
         let messageJSON = JSON.parse(message)
         let change;
+        let previousPrice;
         if (messageJSON) {
             setTimeout(() => {
                 price = messageJSON.lastSalePrice;
                 showUpdate = true;
-
-                that.setState({price, showUpdate}, () => {
+                previousPrice = this.state.price
+                that.setState({price, showUpdate, previousPrice}, () => {
                     setTimeout(() => {
                         showUpdate = false;
                         that.setState({showUpdate})
@@ -64,7 +65,8 @@ class Today extends Component {
         super(props)
         this.state = {
             socket: io('https://ws-api.iextrading.com/1.0/tops'),
-            showUpdate: false
+            showUpdate: false,
+            previousPrice: 0
         }
         this.state.socket.on('message', message => this.update(message))
 
@@ -72,13 +74,14 @@ class Today extends Component {
     componentDidUpdate(prevProps) {
         let that = this;
         if (this.props.ticker !== prevProps.ticker) {
-            // this.state.socket.emit('unsubscribe', prevProps.ticker)
+            this.state.socket.emit('unsubscribe', prevProps.ticker)
             let data = getBatchData(this.props.ticker, 'quote,stats', filter);
             data.then(response => {
                 this.setState({
                     stats: response.stats,
                     price: response.quote.latestPrice,
                     quote: response.quote,
+                    previousPrice: this.state.price
                 })
             })
         }
@@ -86,9 +89,9 @@ class Today extends Component {
     componentWillMount() {
         let that = this;
         if (this.props.ticker) {
-            // that.state.socket.on('connect', () => {
-            //     that.state.socket.emit('subscribe', this.props.ticker)
-            // })
+            that.state.socket.on('connect', () => {
+                that.state.socket.emit('subscribe', this.props.ticker)
+            })
             let data = getBatchData(this.props.ticker, 'quote,stats', filter);
             data.then(response => {
                 this.setState({
@@ -130,6 +133,7 @@ class Today extends Component {
                                 title={parseFloat(this.state.price).toFixed(2)}
                                 label="Latest Price"
                                 number
+                                start={this.state.previousPrice}
                                 fontWeight={900}
                                 duration={1}
                                 decimals={2}
@@ -144,6 +148,7 @@ class Today extends Component {
                                 duration={1}
                                 fontWeight={900}
                                 fontFamily={'Open Sans'}
+                                start={getPercentChange(this.state.quote)}
                                 title={getPercentChange(this.state.quote)}
                                 color={this.getColor(parseFloat(this.state.quote.changePercent))}
                                 label="Percent Change Today" />

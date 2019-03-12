@@ -37,7 +37,7 @@ function Metric(props) {
                         className="price-metric" 
                         decimals={props.decimals} 
                         decimal="." 
-                        start={0} 
+                        start={props.start ? props.start : 0} 
                         duration={props.duration}
                         end={props.title} />
                     :
