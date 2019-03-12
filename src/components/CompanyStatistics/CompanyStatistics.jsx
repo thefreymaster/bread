@@ -220,6 +220,7 @@ class CompanyStatistics extends Component {
                                     title={item.title}
                                     labelFontSize={11}
                                     label={item.label} />
+                                    <div className='shares-divider'></div>
                             </List.Item>
                         )}
                     />

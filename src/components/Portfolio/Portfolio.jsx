@@ -17,7 +17,7 @@ import PieGraph from './../PieGraph/PieGraph';
 import { findIndex } from './../HelperFunctions/Helper';
 import BarGraph from '../BarGraph/BarGraph';
 import Loader from './../Load';
-
+import PortfolioToday from './PortofolioToday';
 
 class Portfolio extends Component {
     calculatePortfolioTotal = () => {
@@ -70,68 +70,20 @@ class Portfolio extends Component {
         return (
             <div className="flex flex-column" style={{ marginRight: 15 }}>
                 <div className='flex flex-row'>
-                    <div className={"loaf-component flex flex-column flex-center border-right"} style={{ height: (window.innerHeight - 84) * 0.40, width: '50%' }}>
-                        <Metric
-                            title={this.state.currentTotal}
-                            label="Portfolio Current Value"
-                            number
-                            center
-                            fontWeight={900}
-                            duration={1}
-                            decimals={2}
-                            color={this.state.currentTotal == 0 ? GREY : this.state.currentTotal > this.state.previousTotal ? GREEN : RED}
-                            titleFontSize={56}
-                            prefix={'$'} />
-                        <div className="flex flex-row width-100">
-                            <Metric
-                                title={this.state.total}
-                                label="Initial Cost"
-                                number
-                                center
-                                width={'33%'}
-                                titleFontSize={18}
-                                fontWeight={900}
-                                duration={1}
-                                decimals={0}
-                                fontFamily={'Open Sans'}
-                                prefix={'$'} />
-                            <Metric
-                                title={!this.state.previousTotal ? 0 : this.state.currentTotal - this.state.previousTotal}
-                                label="Change"
-                                number
-                                width={'33%'}
-                                center
-                                color={this.state.currentTotal == 0 ? GREY : this.state.currentTotal - this.state.previousTotal ? RED : GREEN}
-                                titleFontSize={18}
-                                fontWeight={900}
-                                duration={1}
-                                decimals={0}
-                                fontFamily={'Open Sans'}
-                                prefix={'$'} />
-                            <Metric
-                                title={this.state.percentChange}
-                                label="Change Today"
-                                titleFontSize={18}
-                                fontWeight={900}
-                                duration={1}
-                                color={this.state.percentChange > 0 ? GREEN : RED}
-                                center
-                                number
-                                width={'33%'}
-                                decimals={2}
-                                suffix={'%'}
-                                fontFamily={'Open Sans'} />
-                        </div>
-
-                    </div>
+                    <PortfolioToday 
+                        currentTotal={this.state.currentTotal} 
+                        previousTotal={this.state.previousTotal}
+                        percentChange={this.state.percentChange}
+                        total={this.state.total}
+                         />
                     <div className={"loaf-component flex flex-column flex-start-center"} style={{ height: (window.innerHeight - 84) * 0.40, width: '50%' }}>
-                        {/* <Link to="/quote" onClick={() => this.props.setActiveTicker(this.state.gainer.symbol, this.state.gainer, false, findIndex(this.state.gainer.symbol, this.props.trackedCompanies))}> */}
-                        <Gainer gainer={this.state.gainer} />
-                        {/* </Link> */}
+                        <Link className='width-100' to="/quote" onClick={() => this.props.setActiveTicker(this.state.gainer.symbol, this.state.gainer, false, findIndex(this.state.gainer.symbol, this.props.trackedCompanies))}>
+                            <Gainer gainer={this.state.gainer} />
+                        </Link>
                         <div className="shares-divider width-100"></div>
-                        {/* <Link to="/quote"> */}
-                        <Loser loser={this.state.loser} />
-                        {/* </Link> */}
+                        <Link className='width-100' to="/quote" onClick={() => this.props.setActiveTicker(this.state.loser.symbol, this.state.loser, false, findIndex(this.state.loser.symbol, this.props.trackedCompanies))}>
+                            <Loser loser={this.state.loser} />
+                        </Link>
                     </div>
                 </div>
                 <div className='flex flex-row'>
@@ -144,7 +96,7 @@ class Portfolio extends Component {
                                     height="20"
                                     width="20"
                                 />
-                            </div> : <PieGraph width={'100%'} change={this.state.percentChange} currentTotal={this.state.currentTotal} data={this.props.trackedCompanies} quotes={this.state.quotes} />
+                            </div> : <PieGraph width={'100%'} change={this.state.percentChange} currentTotal={this.state.currentTotal} data={this.props.trackedCompanies} quotes={this.context.quotes} />
                         }
                     </div>
                     <div className="flex flex-column dashed-border-top width-40">
@@ -156,9 +108,9 @@ class Portfolio extends Component {
                                     height="20"
                                     width="20"
                                 />
-                            </div> 
-                            : 
-                            <BarGraph width={'100%'} total={this.state.total} change={this.state.percentChange} currentTotal={this.state.currentTotal} data={this.props.trackedCompanies} quotes={this.state.quotes} />
+                            </div>
+                                :
+                                <BarGraph width={'100%'} total={this.state.total} change={this.state.percentChange} currentTotal={this.state.currentTotal} data={this.props.trackedCompanies} quotes={this.context.quotes} />
                         }
                     </div>
                 </div>

@@ -25,10 +25,16 @@ class LineChart extends Component {
     }
     getGraphPercentChange = () => {
         if (this.state.data[0].data[this.state.data[0].data.length - 1].changeOverTime) {
-            let change = (this.state.data[0].data[this.state.data[0].data.length - 1].y-this.state.data[0].data[0].y)/this.state.data[0].data[this.state.data[0].data.length - 1].y;
-            change = change*100;
-            change = change.toFixed(2);
-            change = change + '%'
+            let is = this.state.data[0].data[this.state.data[0].data.length - 1].y;
+            let of = this.state.data[0].data[0].y;
+            let change
+            if(is && of)
+            {
+                change = (is-of)/of;
+                change = change*100;
+                change = change.toFixed(2);
+                change = change + '%'
+            }
             return change;
         }
     }

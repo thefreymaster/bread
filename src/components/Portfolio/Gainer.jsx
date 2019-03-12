@@ -36,6 +36,7 @@ const Gainer = (props) => {
                         center={false}
                     />
                 </div>
+                <div className='flex flex-grow'></div>
                 <div className='flex flex-badge'>
                     <ChangeBadge
                         count={parseFloat(props.gainer.changePercent ? props.gainer.changePercent : 0).toFixed(2) + '%'}
