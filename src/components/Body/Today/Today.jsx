@@ -45,12 +45,14 @@ class Today extends Component {
         let messageJSON = JSON.parse(message)
         let change;
         let previousPrice;
+        let previousChange;
         if (messageJSON) {
             setTimeout(() => {
                 price = messageJSON.lastSalePrice;
                 showUpdate = true;
-                previousPrice = this.state.price
-                that.setState({price, showUpdate, previousPrice}, () => {
+                previousPrice = this.state.price;
+                previousChange = this.state.change;
+                that.setState({price, showUpdate, previousPrice, previousChange}, () => {
                     setTimeout(() => {
                         showUpdate = false;
                         that.setState({showUpdate})
@@ -66,7 +68,8 @@ class Today extends Component {
         this.state = {
             socket: io('https://ws-api.iextrading.com/1.0/tops'),
             showUpdate: false,
-            previousPrice: 0
+            previousPrice: 0,
+            previousChange: 0
         }
         this.state.socket.on('message', message => this.update(message))
 
@@ -81,6 +84,8 @@ class Today extends Component {
                     stats: response.stats,
                     price: response.quote.latestPrice,
                     quote: response.quote,
+                    change: getPercentChange(response.quote),
+                    previousChange: this.state.change,
                     previousPrice: this.state.price
                 })
             })
@@ -98,6 +103,7 @@ class Today extends Component {
                     stats: response.stats,
                     price: response.quote.latestPrice,
                     quote: response.quote,
+                    change: getPercentChange(response.quote)
                 })
             })
         }
@@ -148,8 +154,8 @@ class Today extends Component {
                                 duration={1}
                                 fontWeight={900}
                                 fontFamily={'Open Sans'}
-                                start={getPercentChange(this.state.quote)}
-                                title={getPercentChange(this.state.quote)}
+                                start={this.state.previousChange}
+                                title={this.state.change}
                                 color={this.getColor(parseFloat(this.state.quote.changePercent))}
                                 label="Percent Change Today" />
                         </div>
