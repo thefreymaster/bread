@@ -86,7 +86,9 @@ class Today extends Component {
                     quote: response.quote,
                     change: getPercentChange(response.quote),
                     previousChange: this.state.change,
-                    previousPrice: this.state.price
+                    previousPrice: this.state.price,
+                }, () => {
+                    that.props.sendUpdateToParent({week52High: response.quote.week52High, week52Low: response.quote.week52Low, price: response.quote.latestPrice})
                 })
             })
         }
@@ -103,7 +105,9 @@ class Today extends Component {
                     stats: response.stats,
                     price: response.quote.latestPrice,
                     quote: response.quote,
-                    change: getPercentChange(response.quote)
+                    change: getPercentChange(response.quote),
+                }, () => {
+                    that.props.sendUpdateToParent({week52High: response.quote.week52High, week52Low: response.quote.week52Low, price: response.quote.latestPrice})
                 })
             })
         }

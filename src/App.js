@@ -431,8 +431,6 @@ class App extends Component {
                 });
             }
             if (parseFloat(change) < -5 && market) {
-
-
                 notification.warning({
                     message: response[key].quote.companyName,
                     description: key + ' is down ' + getPercentChange(response[key].quote) + '% today.',
