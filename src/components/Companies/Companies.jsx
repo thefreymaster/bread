@@ -133,7 +133,7 @@ class Companies extends Component {
             open: false,
             fetchQuickQuotes: true,
             socket: io('https://ws-api.iextrading.com/1.0/tops'),
-            realTimeStreaming: false,
+            realTimeStreaming: true,
             determineIfMarketsAreOpen: determineIfMarketsAreOpen,
             minute: getMinutesOfDay(),
             hour: getHourOfDay(),

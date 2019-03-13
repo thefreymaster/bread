@@ -87,7 +87,7 @@ class YourShares extends Component {
         };
         if (this.props.userHasShares && !this.state.showAddShares) {
             return (
-                <div style={inline.component} className={classnames("flex flex-column width-" + this.props.width, {
+                <div style={inline.component} className={classnames("flex flex-column flex-center-vertically width-" + this.props.width, {
                     'hide': this.state.showAddShares,
                     'loaf-component': this.context.screen.md || this.context.screen.lg || this.context.screen.xl,
                     'loaf-component-mobile': this.context.screen.xs || this.context.screen.sm
