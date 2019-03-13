@@ -442,18 +442,18 @@ class App extends Component {
                     icon: <Icon type="fall" style={{ color: RED }} />,
                 });
             }
-            sorted.push(response[key].quote)
+            // sorted.push(response[key].quote)
         }
         // sorted.sort(function (a, b) {
         //   if (a.symbol < b.symbol) { return -1; }
         //   if (a.symbol > b.symbol) { return 1; }
         //   return 0;
         // })
-        that.state.trackedCompanies.map((company) => {
-          if(company.symbol === response[company.symbol].quote.symbol){
-            console.log(company.symbol)
-          }
-        })
+        // that.state.trackedCompanies.map((company) => {
+        //   if(company.symbol === response[company.symbol].quote.symbol){
+        //     console.log(company.symbol)
+        //   }
+        // })
 
         that.setState({
             quotes: response
