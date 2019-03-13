@@ -8,6 +8,12 @@ const app = express()
 app.use(helmet())
 app.set('x-powered-by', 'Canvas 23 Studios');
 
+app.get('*.js', function (req, res, next) {
+    req.url = req.url + '.gz';
+    res.set('Content-Encoding', 'gzip');
+    next();
+});
+
 app.use(cors());
 app.use(express.json());
 
