@@ -62,3 +62,6 @@
 .paddingR10{
     padding-right: 10px;
 }
+.ant-slider-handle{
+    display: none
+}

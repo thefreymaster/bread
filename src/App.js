@@ -413,6 +413,7 @@ class App extends Component {
         symbols.push(that.state.trackedCompanies[symbol].symbol)
     }
     let quote = getQuickQuotes(symbols, filter);
+    let sorted = []
     let market = that.state.determineIfMarketsAreOpen(this.state.day, this.state.hour, this.state.minute);
     quote.then(response => {
         let change;
@@ -431,8 +432,6 @@ class App extends Component {
                 });
             }
             if (parseFloat(change) < -5 && market) {
-
-
                 notification.warning({
                     message: response[key].quote.companyName,
                     description: key + ' is down ' + getPercentChange(response[key].quote) + '% today.',
@@ -443,7 +442,19 @@ class App extends Component {
                     icon: <Icon type="fall" style={{ color: RED }} />,
                 });
             }
+            // sorted.push(response[key].quote)
         }
+        // sorted.sort(function (a, b) {
+        //   if (a.symbol < b.symbol) { return -1; }
+        //   if (a.symbol > b.symbol) { return 1; }
+        //   return 0;
+        // })
+        // that.state.trackedCompanies.map((company) => {
+        //   if(company.symbol === response[company.symbol].quote.symbol){
+        //     console.log(company.symbol)
+        //   }
+        // })
+
         that.setState({
             quotes: response
         })

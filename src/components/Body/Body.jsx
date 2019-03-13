@@ -6,7 +6,10 @@ import YourShares from './YourShares/YourShares';
 import LineChart from '../LineChart/LineChart';
 import Systems from './Systems';
 
-class Loaf extends Component {
+class Bread extends Component {
+    receiveUpdateFromChild = (obj) => {
+        this.setState({...obj})
+    }
     componentWillMount(){
         if(this.props.activeTickerIndex === undefined)
         {
@@ -31,8 +34,19 @@ class Loaf extends Component {
             return (
                 <div className="flex flex-column" style={{marginRight: 15}}>
                     <div className={classnames("flex", {"flex-column": this.props.screen.xs, "flex-row": !this.props.screen.xs || !this.props.screen.sm})}>
-                        <Today screen={this.props.screen} trackedCompanies={this.props.trackedCompanies} removeCompanyFromTrackedCompanies={this.props.removeCompanyFromTrackedCompanies} ticker={this.props.activeTicker} />
-                        <YourShares width={50} index={index} count={count} price={price} trackedCompanies={this.props.trackedCompanies} saveShares={this.props.saveShares} ticker={this.props.activeTicker} userHasShares={userHasShares} />
+                        <Today sendUpdateToParent={this.receiveUpdateFromChild} screen={this.props.screen} trackedCompanies={this.props.trackedCompanies} removeCompanyFromTrackedCompanies={this.props.removeCompanyFromTrackedCompanies} ticker={this.props.activeTicker} />
+                        <YourShares 
+                            week52High={this.state.week52High} 
+                            week52Low={this.state.week52Low}
+                            price={this.state.price}
+                            width={50} 
+                            index={index} 
+                            count={count} 
+                            price={price} 
+                            trackedCompanies={this.props.trackedCompanies} 
+                            saveShares={this.props.saveShares} 
+                            ticker={this.props.activeTicker} 
+                            userHasShares={userHasShares} />
                     </div>
                     <div className="flex flex-row dashed-border-bottom dashed-border-top">
                         <LineChart screen={this.props.screen} width={'50%'} ticker={this.props.activeTicker} timeframe={'1d'} interval={10} title='1 Day' rightDivider={true} />
@@ -50,4 +64,4 @@ class Loaf extends Component {
     }
 }
 
-export default Loaf;
+export default Bread;

@@ -88,6 +88,9 @@ class Companies extends Component {
             return 'Equity Loss';
         }
     }
+    determineChange = (shares, price, quote) => {
+        return '$' + parseFloat((shares * quote) - (shares * price)).toFixed(2)
+    }
     determineColor = (shares, price, quote) => {
         if ((shares * quote) - (shares * price) === 0) {
             return GREY
@@ -253,20 +256,25 @@ class Companies extends Component {
                                                             center={false}
                                                         />
                                                     </div>
-                                                    {!that.state.quickQuotes ?
-                                                        null
-                                                        :
-                                                        that.state.quickQuotes[company.symbol]
-                                                            ?
-                                                            <div className={'flex flex-badge flex-column'}>
+                                                    <div className='flex felx-grow'></div>
+                                                    {!that.state.quickQuotes
+                                                        ? null
+                                                        : that.state.quickQuotes[company.symbol]
+                                                            ? <div className={'flex flex-badge flex-column'}>
                                                                 <ChangeBadge
                                                                     backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote.latestPrice)}
                                                                     company={company}
+                                                                    width={75}
                                                                     count={that.determineText(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote.latestPrice)}
                                                                 />
+                                                                <ChangeBadge
+                                                                    backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                                    company={company}
+                                                                    width={75}
+                                                                    count={that.determineChange(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                                />
                                                             </div>
-                                                            :
-                                                            null
+                                                            : null
                                                     }
                                                 </div>
 
