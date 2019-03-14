@@ -102,6 +102,11 @@ class Companies extends Component {
             return RED;
         }
     }
+    halt = () => {
+        this.setState({
+            realTimeStreaming: false
+        })
+    }
     update = (message) => {
         let that = this;
         let _quickQuotes = that.state.quickQuotes;
@@ -230,7 +235,7 @@ class Companies extends Component {
                                 null
                                 :
                                 <Fragment>
-                                    <div className={classnames('padding10 your-companies')}>
+                                    <div className={classnames('padding6 your-companies flex flex-row flex-center')}>
                                         <Metric
                                             fontFamily={'Open Sans'}
                                             fontWeight={900}
@@ -238,6 +243,10 @@ class Companies extends Component {
                                             title={'Your Tracked Companies'}
                                             center={false}
                                         />
+                                        <div className="flex flex-grow"></div>
+                                        <Tooltip placement="right" title={'Halt Real Time Streaming'}>
+                                            <Button onClick={this.halt} type="danger" size={'small'}>Halt</Button>
+                                        </Tooltip>
                                     </div>
                                     <div class="marginBottom26"></div>
                                 </Fragment>

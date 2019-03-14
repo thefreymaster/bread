@@ -364,6 +364,8 @@ class App extends Component {
     let trackedCompanies = sortCompaniesAscending(this.state.trackedCompanies);
     this.setState({
       trackedCompanies: trackedCompanies
+    }, () => {
+      this.setActiveTicker(trackedCompanies[0].symbol, trackedCompanies[0], false, 0)
     })
   }
   sortDecending = () => {
@@ -371,6 +373,8 @@ class App extends Component {
     let trackedCompanies = sortCompaniesDescending(this.state.trackedCompanies);
     this.setState({
       trackedCompanies: trackedCompanies
+    }, () => {
+      this.setActiveTicker(trackedCompanies[0].symbol, trackedCompanies[0], false, 0)
     })
   }
   sortABC = () => {
@@ -378,6 +382,8 @@ class App extends Component {
     let trackedCompanies = sortCompaniesABC(this.state.trackedCompanies);
     this.setState({
       trackedCompanies: trackedCompanies
+    }, () => {
+      this.setActiveTicker(trackedCompanies[0].symbol, trackedCompanies[0], false, 0)
     })
   }
 
@@ -386,6 +392,8 @@ class App extends Component {
     let trackedCompanies = sortCompaniesYTDChange(this.state.trackedCompanies);
     this.setState({
       trackedCompanies: trackedCompanies
+    }, () => {
+      this.setActiveTicker(trackedCompanies[0].symbol, trackedCompanies[0], false, 0)
     })
   }
 
