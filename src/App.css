@@ -108,6 +108,15 @@
 .flex-center-vertically{
     justify-content: center;
 }
+.flex-space{
+    justify-content: space-around;
+}
+.sorting-bar{
+    position: absolute;
+    top: -16px;
+    min-width: 300px;
+    z-index: 1;
+}
 .height-100{
     min-height: 100%;
 }
@@ -196,6 +205,9 @@
   .padding10{
       padding: 10px;
   }
+  .padding15{
+    padding: 15px;
+}
   .paddingTop10{
       padding-top: 10px;
   }

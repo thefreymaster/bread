@@ -7,7 +7,7 @@ import { Layout, message, notification, Icon } from 'antd';
 import { writeUserData, getFirebaseAuthObject, readUserCompanyData, updateUserCompanyData, updateUserCompanyShareData } from './api/FirebaseAPI';
 import { getQuickQuotes, getQuote } from './api/StatsAPI';
 
-import { determineIfMarketsAreOpen, getDayOfWeek, getMinutesOfDay, getHourOfDay, getPercentChange } from './components/HelperFunctions/Helper';
+import { determineIfMarketsAreOpen, getDayOfWeek, getMinutesOfDay, getHourOfDay, getPercentChange, sortCompaniesAscending, sortCompaniesDescending, sortCompaniesABC, sortCompaniesYTDChange } from './components/HelperFunctions/Helper';
 
 import classnames from 'classnames';
 
@@ -186,7 +186,11 @@ class App extends Component {
             screen: this.state.screen,
             trackedCompanies: this.state.trackedCompanies,
             setActiveTicker: this.setActiveTicker,
-            quotes: this.state.quotes
+            quotes: this.state.quotes,
+            sortAscending: this.sortAscending,
+            sortDecending: this.sortDecending,
+            sortABC: this.sortABC,
+            sortYTD: this.sortYTD
           }}>
           <BrowserRouter>
             <main>
@@ -355,6 +359,35 @@ class App extends Component {
 
 
   }
+  sortAscending = () => {
+    localStorage.setItem('COMPANIES_SORT', 'ASCENDING')
+    let trackedCompanies = sortCompaniesAscending(this.state.trackedCompanies);
+    this.setState({
+      trackedCompanies: trackedCompanies
+    })
+  }
+  sortDecending = () => {
+    localStorage.setItem('COMPANIES_SORT', 'DESCENDING')
+    let trackedCompanies = sortCompaniesDescending(this.state.trackedCompanies);
+    this.setState({
+      trackedCompanies: trackedCompanies
+    })
+  }
+  sortABC = () => {
+    localStorage.setItem('COMPANIES_SORT', 'ABC')
+    let trackedCompanies = sortCompaniesABC(this.state.trackedCompanies);
+    this.setState({
+      trackedCompanies: trackedCompanies
+    })
+  }
+
+  sortYTD = () => {
+    localStorage.setItem('COMPANIES_SORT', 'YTD')
+    let trackedCompanies = sortCompaniesYTDChange(this.state.trackedCompanies);
+    this.setState({
+      trackedCompanies: trackedCompanies
+    })
+  }
 
   componentDidMount() {
     if (localStorage.getItem('LOAF_USER')) {
@@ -412,14 +445,15 @@ class App extends Component {
     for (let symbol in that.state.trackedCompanies) {
         symbols.push(that.state.trackedCompanies[symbol].symbol)
     }
+    let index = 0;
     let quote = getQuickQuotes(symbols, filter);
-    let sorted = []
+    let trackedCompanies = that.state.trackedCompanies;
     let market = that.state.determineIfMarketsAreOpen(this.state.day, this.state.hour, this.state.minute);
     quote.then(response => {
         let change;
         for (let [key] of Object.entries(response)) {
             change = getPercentChange(response[key].quote);
-
+            trackedCompanies[index]['quote'] = response[key].quote;
             if (parseFloat(change) > 5 && market) {
                 notification.success({
                     message: response[key].quote.companyName,
@@ -442,21 +476,12 @@ class App extends Component {
                     icon: <Icon type="fall" style={{ color: RED }} />,
                 });
             }
-            // sorted.push(response[key].quote)
+            index++;
         }
-        // sorted.sort(function (a, b) {
-        //   if (a.symbol < b.symbol) { return -1; }
-        //   if (a.symbol > b.symbol) { return 1; }
-        //   return 0;
-        // })
-        // that.state.trackedCompanies.map((company) => {
-        //   if(company.symbol === response[company.symbol].quote.symbol){
-        //     console.log(company.symbol)
-        //   }
-        // })
 
         that.setState({
-            quotes: response
+            quotes: response,
+            trackedCompanies: trackedCompanies,
         })
         that.fetchingTrackedCompaniesComplete();
     })

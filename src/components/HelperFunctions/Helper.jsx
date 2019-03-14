@@ -49,4 +49,52 @@ function findIndex(symbol, trackedCompanies) {
     }
 }
 
-export { calculateTotalChange, getPercentChange, getPercentChangeGeneric, getDayOfWeek, getHourOfDay, getMinutesOfDay, determineIfMarketsAreOpen, findIndex }
+function sortCompaniesAscending(companies){
+    companies.sort(function (a, b) {
+        if (a.quote.changePercent < b.quote.changePercent) { return -1; }
+        if (a.quote.changePercent > b.quote.changePercent) { return 1; }
+        return 0;
+      })
+    return companies;
+}
+
+function sortCompaniesDescending(companies){
+    companies.sort(function (a, b) {
+        if (a.quote.changePercent > b.quote.changePercent) { return -1; }
+        if (a.quote.changePercent < b.quote.changePercent) { return 1; }
+        return 0;
+      })
+    return companies;
+}
+
+function sortCompaniesABC(companies){
+    companies.sort(function (a, b) {
+        if (a.symbol < b.symbol) { return -1; }
+        if (a.symbol > b.symbol) { return 1; }
+        return 0;
+      })
+    return companies;
+}
+
+function sortCompaniesYTDChange(companies){
+    companies.sort(function (a, b) {
+        if (a.quote.ytdChange > b.quote.ytdChange) { return -1; }
+        if (a.quote.ytdChange < b.quote.ytdChange) { return 1; }
+        return 0;
+      })
+    return companies;
+}
+
+export { calculateTotalChange, 
+          getPercentChange, 
+          getPercentChangeGeneric, 
+          getDayOfWeek, 
+          getHourOfDay, 
+          getMinutesOfDay, 
+          determineIfMarketsAreOpen, 
+          findIndex, 
+          sortCompaniesAscending,
+          sortCompaniesDescending,
+          sortCompaniesABC,
+          sortCompaniesYTDChange
+        }

@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import '../Companies/AddCompany/AddCompany.css';
-import { Button, notification, Icon } from 'antd';
+import { Button, notification, Icon, Tooltip } from 'antd';
 import YourShares from './../Body/YourShares/YourShares';
 import { getQuickQuotes } from '../../api/StatsAPI';
 import { Link } from "react-router-dom";
@@ -113,6 +113,22 @@ class Companies extends Component {
                 if (messageJSON.symbol) {
                     _quickQuotes[messageJSON.symbol].quote.latestPrice = messageJSON.lastSalePrice;
                     _quickQuotes[messageJSON.symbol].showUpdate = true;
+                    if (localStorage.getItem('COMPANIES_SORT')) {
+                        switch (localStorage.getItem('COMPANIES_SORT')) {
+                            case 'ABC':
+                                this.context.sortABC();
+                                break;
+                            case 'YTD':
+                                this.context.sortYTD();
+                                break;
+                            case 'ASCENDING':
+                                this.context.sortAscending();
+                                break;
+                            case 'DESCENDING':
+                                this.context.sortDecending();
+                                break;
+                        }
+                    }
 
                     that.setState({ quickQuotes: _quickQuotes }, () => {
                         setTimeout(() => {
@@ -157,6 +173,22 @@ class Companies extends Component {
             this.setState({
                 quickQuotes: this.context.quotes
             })
+        }
+        if (localStorage.getItem('COMPANIES_SORT')) {
+            switch (localStorage.getItem('COMPANIES_SORT')) {
+                case 'ABC':
+                    this.context.sortABC();
+                    break;
+                case 'YTD':
+                    this.context.sortYTD();
+                    break;
+                case 'ASCENDING':
+                    this.context.sortAscending();
+                    break;
+                case 'DESCENDING':
+                    this.context.sortDecending();
+                    break;
+            }
         }
         let socketSymbols = '';
         for (let symbol in that.props.trackedCompanies) {
@@ -222,6 +254,20 @@ class Companies extends Component {
                                 />
                                 : null
                         }
+                        <div className={'flex flex-row flex-space '}>
+                            <Tooltip placement="top" title={'Sort by ABC'}>
+                                <Button onClick={this.context.sortABC} type="dashed" shape="circle" icon="font-colors" />
+                            </Tooltip>
+                            <Tooltip placement="top" title={'Sort by Best YTD Change'}>
+                                <Button onClick={this.context.sortYTD} type="dashed" shape="circle" icon="calendar" />
+                            </Tooltip>
+                            <Tooltip placement="top" title={'Show Gainers First'}>
+                                <Button style={{ color: GREEN }} onClick={this.context.sortDecending} type="dashed" shape="circle" icon="rise" />
+                            </Tooltip>
+                            <Tooltip placement="top" title={'Show Losers First'}>
+                                <Button style={{ color: RED }} onClick={this.context.sortAscending} type="dashed" shape="circle" icon="fall" />
+                            </Tooltip>
+                        </div>
                         {Object.keys(this.props.trackedCompanies).map((index) => {
                             const company = this.props.trackedCompanies[index];
                             const userHasShares = this.props.trackedCompanies[index].shares.hasShares
