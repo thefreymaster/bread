@@ -118,6 +118,7 @@ class Companies extends Component {
                 if (messageJSON.symbol) {
                     _quickQuotes[messageJSON.symbol].quote.latestPrice = messageJSON.lastSalePrice;
                     _quickQuotes[messageJSON.symbol].showUpdate = true;
+                    /*
                     if (localStorage.getItem('COMPANIES_SORT')) {
                         switch (localStorage.getItem('COMPANIES_SORT')) {
                             case 'ABC':
@@ -134,6 +135,7 @@ class Companies extends Component {
                                 break;
                         }
                     }
+                    */
 
                     that.setState({ quickQuotes: _quickQuotes }, () => {
                         setTimeout(() => {
