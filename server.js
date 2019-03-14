@@ -3,14 +3,14 @@ var cors = require('cors');
 var path = require("path");
 var helmet = require('helmet');
 var request = require("request");
+var compression = require('compression')
 require('dotenv').config()
 const app = express()
-app.use(helmet())
+app.use(helmet());
+app.use(compression());
 app.set('x-powered-by', 'Canvas 23 Studios');
 
 app.get('*.js', function (req, res, next) {
-    req.url = req.url + '.gz';
-    res.set('Content-Encoding', 'gzip');
     next();
 });
 
