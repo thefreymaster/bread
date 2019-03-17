@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Badge } from 'antd';
-import { getIEXStatus } from './../../api/SystemsAPI';
+import { getIEXStatus, getBreadStatus } from './../../api/SystemsAPI';
 import { getDayOfWeek, getHourOfDay, getMinutesOfDay, determineIfMarketsAreOpen } from './../HelperFunctions/Helper';
 import { LoafContext } from './../../LoafContext';
+import {GREY} from './../../Constants';
 
 class Systems extends Component {
     componentWillMount() {
@@ -14,6 +15,13 @@ class Systems extends Component {
                 minute: getMinutesOfDay(),
                 hour: getHourOfDay(),
                 day: getDayOfWeek(),
+            }, () => {
+                let bread = getBreadStatus();
+                bread.then(response => {
+                    that.setState({
+                        bread: response
+                    })
+                })
             })
         })
     }
@@ -36,6 +44,7 @@ class Systems extends Component {
         else
             return (
                 <div style={inline.systems} className='systems flex flex-row flex-center'>
+
                     {
                         this.state.status.status === 'up'
                             ?

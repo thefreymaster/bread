@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import '../Companies/AddCompany/AddCompany.css';
-import { Button, notification, Icon, Tooltip } from 'antd';
+import { Button, notification, Badge, Tooltip } from 'antd';
 import YourShares from './../Body/YourShares/YourShares';
 import { getQuickQuotes } from '../../api/StatsAPI';
 import { Link } from "react-router-dom";
@@ -78,10 +78,11 @@ class Companies extends Component {
         }
     }
     determineText = (shares, price, quote) => {
-        if ((shares * quote) - (shares * price) === 0) {
+        let latestPrice = quote.latestPrice === 0 || !determineIfMarketsAreOpen() ? quote.extendedPrice : quote.latestPrice;
+        if ((shares * latestPrice) - (shares * price) === 0) {
             return 'No Equity'
         }
-        else if ((shares * quote) - (shares * price) > 0) {
+        else if ((shares * latestPrice) - (shares * price) > 0) {
             return 'Equity Gain';
         }
         else {
@@ -89,13 +90,16 @@ class Companies extends Component {
         }
     }
     determineChange = (shares, price, quote) => {
-        return '$' + parseFloat((shares * quote) - (shares * price)).toFixed(2)
+        let latestPrice = quote.latestPrice === 0 || !determineIfMarketsAreOpen() ? quote.extendedPrice : quote.latestPrice;
+        return '$' + parseFloat((shares * latestPrice) - (shares * price)).toFixed(2)
     }
     determineColor = (shares, price, quote) => {
-        if ((shares * quote) - (shares * price) === 0) {
+        let latestPrice = quote.latestPrice === 0 || !determineIfMarketsAreOpen() ? quote.extendedPrice : quote.latestPrice;
+
+        if ((shares * latestPrice) - (shares * price) === 0) {
             return GREY
         }
-        else if ((shares * quote) - (shares * price) > 0) {
+        else if ((shares * latestPrice) - (shares * price) > 0) {
             return GREEN;
         }
         else {
@@ -156,7 +160,7 @@ class Companies extends Component {
             open: false,
             fetchQuickQuotes: true,
             socket: io('https://ws-api.iextrading.com/1.0/tops'),
-            realTimeStreaming: true,
+            realTimeStreaming: false,
             determineIfMarketsAreOpen: determineIfMarketsAreOpen,
             minute: getMinutesOfDay(),
             hour: getHourOfDay(),
@@ -246,15 +250,21 @@ class Companies extends Component {
                                             center={false}
                                         />
                                         <div className="flex flex-grow"></div>
-                                        <Tooltip placement="right" title={'Halt Real Time Streaming'}>
-                                            <Button onClick={this.halt} type="danger" size={'small'}>Halt</Button>
-                                        </Tooltip>
+                                        {
+                                            this.state.realTimeStreaming
+                                                ?
+                                                <Tooltip placement="right" title={'Halt Real Time Streaming'}>
+                                                    <Button onClick={this.halt} type="danger" size={'small'}>Halt</Button>
+                                                </Tooltip>
+                                                :
+                                                <Badge count={'Streaming Halted'} style={{ backgroundColor: RED, opacity: .6 }} />
+                                        }
                                     </div>
                                     <div class="marginBottom26"></div>
                                 </Fragment>
                         }
                         {
-                            this.context.quotes && (!this.context.screen.xs && !this.context.screen.sm)
+                            this.context.quotes
                                 ?
                                 <PortfolioLink
                                     screen={this.props.screen}
@@ -265,19 +275,33 @@ class Companies extends Component {
                                 />
                                 : null
                         }
-                        <div className={'flex flex-row flex-space '}>
-                            <Tooltip placement="top" title={'Sort by ABC'}>
-                                <Button onClick={this.context.sortABC} type="dashed" shape="circle" icon="font-colors" />
-                            </Tooltip>
-                            <Tooltip placement="top" title={'Sort by Best YTD Change'}>
-                                <Button onClick={this.context.sortYTD} type="dashed" shape="circle" icon="calendar" />
-                            </Tooltip>
-                            <Tooltip placement="top" title={'Show Gainers First'}>
-                                <Button style={{ color: GREEN }} onClick={this.context.sortDecending} type="dashed" shape="circle" icon="rise" />
-                            </Tooltip>
-                            <Tooltip placement="top" title={'Show Losers First'}>
-                                <Button style={{ color: RED }} onClick={this.context.sortAscending} type="dashed" shape="circle" icon="fall" />
-                            </Tooltip>
+                        <div className={'flex flex-row flex-space'} style={{ marginTop: 10 }}>
+                            {
+                                this.context.screen.xs || this.context.screen.sm
+                                    ?
+                                    <Fragment>
+                                        <Button size='large' onClick={this.context.sortABC} type="dashed" shape="circle" icon="font-colors" />
+                                        <Button size='large' onClick={this.context.sortYTD} type="dashed" shape="circle" icon="calendar" />
+                                        <Button size='large' style={{ color: GREEN }} onClick={this.context.sortDecending} type="dashed" shape="circle" icon="rise" />
+                                        <Button size='large' style={{ color: RED }} onClick={this.context.sortAscending} type="dashed" shape="circle" icon="fall" />
+                                    </Fragment>
+                                    :
+                                    <Fragment>
+                                        <Tooltip placement="top" title={'Sort by ABC'}>
+                                            <Button size='large' onClick={this.context.sortABC} type="dashed" shape="circle" icon="font-colors" />
+                                        </Tooltip>
+                                        <Tooltip placement="top" title={'Sort by Best YTD Change'}>
+                                            <Button size='large' onClick={this.context.sortYTD} type="dashed" shape="circle" icon="calendar" />
+                                        </Tooltip>
+                                        <Tooltip placement="top" title={'Show Gainers First'}>
+                                            <Button size='large' style={{ color: GREEN }} onClick={this.context.sortDecending} type="dashed" shape="circle" icon="rise" />
+                                        </Tooltip>
+                                        <Tooltip placement="top" title={'Show Losers First'}>
+                                            <Button size='large' style={{ color: RED }} onClick={this.context.sortAscending} type="dashed" shape="circle" icon="fall" />
+                                        </Tooltip>
+                                    </Fragment>
+                            }
+
                         </div>
                         {Object.keys(this.props.trackedCompanies).map((index) => {
                             const company = this.props.trackedCompanies[index];
@@ -319,16 +343,16 @@ class Companies extends Component {
                                                         : that.state.quickQuotes[company.symbol]
                                                             ? <div className={'flex flex-badge flex-column'}>
                                                                 <ChangeBadge
-                                                                    backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                                    backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
                                                                     company={company}
                                                                     width={75}
-                                                                    count={that.determineText(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                                    count={that.determineText(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
                                                                 />
                                                                 <ChangeBadge
-                                                                    backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                                    backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
                                                                     company={company}
                                                                     width={75}
-                                                                    count={that.determineChange(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                                    count={that.determineChange(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
                                                                 />
                                                             </div>
                                                             : null

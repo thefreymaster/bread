@@ -8,18 +8,18 @@ function getPercentChangeGeneric(latestValue, previousValue) {
     return ((latestValue - previousValue) / latestValue * 100).toFixed(2)
 }
 function getDayOfWeek(){
-    return new Date().getDay()
+    return new Date().getUTCDay()
 }
 function getHourOfDay(){
-    return new Date().getHours();
+    return new Date().getUTCHours();
 }
 function getMinutesOfDay(){
-    return new Date().getMinutes();
+    return new Date().getUTCMinutes();
 }
 function determineIfMarketsAreOpen(day, hour, minute){
     if(day !== 0 && day !== 6){
-        if(hour > 9 && hour < 16){
-            if(hour === 9)
+        if(hour >= 14 && hour < 21){
+            if(hour === 14)
             {
                 if(minute > 30)
                 {

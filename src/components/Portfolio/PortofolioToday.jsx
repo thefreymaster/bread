@@ -4,7 +4,7 @@ import { GREEN, RED, GREY } from '../../Constants';
 
 
 const PortfolioToday = (props) => {
-    let {currentTotal, previousTotal, percentChange, total} = props;
+    let { currentTotal, previousTotal, percentChange, total } = props;
     return (
         <div className={"loaf-component flex flex-column flex-center border-right"} style={{ height: (window.innerHeight - 84) * 0.40, width: '50%' }}>
             <Metric
@@ -24,6 +24,19 @@ const PortfolioToday = (props) => {
                     label="Initial Cost"
                     number
                     center
+                    width={'33%'}
+                    titleFontSize={18}
+                    fontWeight={900}
+                    duration={1}
+                    decimals={0}
+                    fontFamily={'Open Sans'}
+                    prefix={'$'} />
+                <Metric
+                    title={currentTotal-total}
+                    label="Total Income"
+                    number
+                    center
+                    color={currentTotal-total > 0 ? GREEN : RED}
                     width={'33%'}
                     titleFontSize={18}
                     fontWeight={900}

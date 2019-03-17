@@ -138,6 +138,13 @@ class YourShares extends Component {
             return (
                 <div className={classnames("loaf-component flex flex-column width-50 flex-center show-zoom-animation", { 'hide': this.props.userHasShares, 'width-50': desktop, 'width-100': mobile })}>
                     <NoShares showAddShares={this.showAddShares} />
+                    {
+                        !this.context.screen.xs && !this.context.screen.sm
+                            ? <div className="shares-divider with-75">
+                                <Slider max={this.props.week52High * 0.3 + this.props.week52High} disabled range marks={marks} defaultValue={[0, 0]} />
+                            </div>
+                            : null
+                    }
                 </div>
             )
         }

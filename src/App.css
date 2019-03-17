@@ -1,18 +1,4 @@
-.ant-layout-sider{
-    background-color: white !important;
 
-}
-.ant-layout{
-    background-color: white !important;
-}
-.ant-layout-header{
-    background-color: white !important;
-    box-shadow: inset 0px -2px 0px 0 #72727224;
-    font-family: 'Abril Fatface', cursive;
-}
-.ant-layout-footer{
-    background-color: white !important;
-}
 .logo{
     max-width: 32px;
     border-radius: 5px;
@@ -144,12 +130,6 @@
     min-width: 100%;
     max-width: 100%;
 }
-.ant-list-item{
-    padding: 20px 0 !important;
-}
-.ant-layout-content{
-    overflow: hidden !important;
-}
 .absolute{
     position: absolute;
     margin-top: -20px;
@@ -237,9 +217,7 @@
     bottom: 0;
 
 }
-.ant-badge{
-    z-index: 0 !important;
-}
+
 .add-new-button-mobile{
     position: fixed;
     bottom: 0;
