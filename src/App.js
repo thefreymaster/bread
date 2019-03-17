@@ -194,6 +194,7 @@ class App extends Component {
       return (
         <LoafContext.Provider
           value={{
+            activeTicker: this.state.activeTicker,
             screen: this.state.screen,
             trackedCompanies: this.state.trackedCompanies,
             setActiveTicker: this.setActiveTicker,
