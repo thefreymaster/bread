@@ -28,3 +28,9 @@
 .ant-badge{
     z-index: 0 !important;
 }
+.ant-steps-item-finish > .ant-steps-item-tail:after{
+    background-color: #595959 !important;
+}
+.ant-steps-item-tail{
+    left: 13px !important;
+}
