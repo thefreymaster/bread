@@ -45,11 +45,24 @@ class Companies extends Component {
         }
     }
     getPercentChange(quote) {
-        return ((quote.latestPrice - quote.previousClose) / quote.latestPrice * 100).toFixed(2)
+        if (quote.latestPrice === quote.previousClose || quote.latestPrice === 0) {
+            return 'Premarket'
+        }
+        else {
+            return ((quote.latestPrice - quote.previousClose) / quote.latestPrice * 100).toFixed(2) + '%'
+        }
+    }
+    getPrice(quote) {
+        if (quote.latestPrice === 0) {
+            return quote.extendedPrice;
+        }
+        else {
+            return quote.latestPrice;
+        }
     }
     getPercentAndPrice(company) {
         if (this.state.quickQuotes[company.symbol]) {
-            return this.getPercentChange(this.state.quickQuotes[company.symbol].quote) + '% • $' + (this.state.quickQuotes[company.symbol].quote.latestPrice)
+            return this.getPercentChange(this.state.quickQuotes[company.symbol].quote) + ' • $' + (this.getPrice(this.state.quickQuotes[company.symbol].quote))
         }
     }
     setBackgroundColor(company, showUpdate) {
@@ -313,7 +326,7 @@ class Companies extends Component {
                             return (
                                 <Link to="/quote" key={company.symbol} onClick={() => { this.props.setActiveTicker(company.symbol, company, false, index) }}>
                                     <div
-                                        className={classnames('padding10 companies-button loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === that.props.activeTicker})}>
+                                        className={classnames('padding10 companies-button loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === that.props.activeTicker })}>
                                         <div className={classnames("flex flex-row")}>
                                             <div className={'flex flex-column width-100'}>
                                                 <div className={classnames("flex flex-row")}>
