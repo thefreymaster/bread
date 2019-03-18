@@ -275,7 +275,7 @@ class Companies extends Component {
                                 />
                                 : null
                         }
-                        <div className={'flex flex-row flex-space'} style={{ marginTop: 10 }}>
+                        <div className={'flex flex-row flex-space margin10'} style={{ marginTop: 10 }}>
                             {
                                 this.context.screen.xs || this.context.screen.sm
                                     ?
@@ -313,7 +313,7 @@ class Companies extends Component {
                             return (
                                 <Link to="/quote" key={company.symbol} onClick={() => { this.props.setActiveTicker(company.symbol, company, false, index) }}>
                                     <div
-                                        className={classnames('padding10 margin10 companies-button loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === that.props.activeTicker, 'box-shadow-bottom': that.props.trackedCompanies.length !== parseInt(index) })}>
+                                        className={classnames('padding10 companies-button loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === that.props.activeTicker})}>
                                         <div className={classnames("flex flex-row")}>
                                             <div className={'flex flex-column width-100'}>
                                                 <div className={classnames("flex flex-row")}>
