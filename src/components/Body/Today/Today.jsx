@@ -3,8 +3,9 @@ import Metric from "../Metric";
 import { getBatchData } from './../../../api/StatsAPI';
 import Loader from 'react-loader-spinner'
 import { GREEN, RED, GREY, LIGHT_GREEN, LIGHT_RED } from '../../../Constants';
+import { getDayOfWeek, getHourOfDay, getMinutesOfDay, determineIfMarketsAreOpen } from './../../HelperFunctions/Helper';
 import { getPercentChange } from '../../HelperFunctions/Helper';
-import { Button } from '../../../../node_modules/antd';
+import { Button, Badge } from '../../../../node_modules/antd';
 import classnames from 'classnames'
 import io from 'socket.io-client'
 import { LoafContext } from './../../../LoafContext';
@@ -29,7 +30,7 @@ class Today extends Component {
         if (this.state.showUpdate && this.state.quote) {
             let change = getPercentChange(this.state.quote);
             change = parseFloat(change);
-            
+
             if (change > 0) {
                 return LIGHT_GREEN;
             }
@@ -52,10 +53,10 @@ class Today extends Component {
                 showUpdate = true;
                 previousPrice = this.state.price;
                 previousChange = this.state.change;
-                that.setState({price, showUpdate, previousPrice, previousChange}, () => {
+                that.setState({ price, showUpdate, previousPrice, previousChange }, () => {
                     setTimeout(() => {
                         showUpdate = false;
-                        that.setState({showUpdate})
+                        that.setState({ showUpdate })
 
                     }, 1000);
                 })
@@ -88,7 +89,7 @@ class Today extends Component {
                     previousChange: this.state.change,
                     previousPrice: this.state.price,
                 }, () => {
-                    that.props.sendUpdateToParent({week52High: response.quote.week52High, week52Low: response.quote.week52Low, price: response.quote.latestPrice})
+                    that.props.sendUpdateToParent({ week52High: response.quote.week52High, week52Low: response.quote.week52Low, price: response.quote.latestPrice })
                 })
             })
         }
@@ -107,7 +108,7 @@ class Today extends Component {
                     quote: response.quote,
                     change: getPercentChange(response.quote),
                 }, () => {
-                    that.props.sendUpdateToParent({week52High: response.quote.week52High, week52Low: response.quote.week52Low, price: response.quote.latestPrice})
+                    that.props.sendUpdateToParent({ week52High: response.quote.week52High, week52Low: response.quote.week52Low, price: response.quote.latestPrice })
                 })
             })
         }
@@ -130,15 +131,22 @@ class Today extends Component {
         else {
             return (
                 <div className={"loaf-component flex flex-column flex-center border-right"} style={{ height: (window.innerHeight - 84) * 0.40, width: '50%' }}>
-                    <Metric 
-                        titleFontSize={72} 
+                    {/* {
+                        determineIfMarketsAreOpen(getMinutesOfDay(), getHourOfDay(), getDayOfWeek())
+                            ?
+                            <Badge offset={[0, 0]} status="processing" />
+                            :
+                            <Badge offset={[0, 0]} status="error" />
+                    } */}
+                    <Metric
+                        titleFontSize={72}
                         center
-                        title={this.state.quote.symbol} 
-                        labelFontSize={24} 
-                        label={this.state.stats.companyName} 
+                        title={this.state.quote.symbol}
+                        labelFontSize={24}
+                        label={this.state.stats.companyName}
                         labelCloseToTitle={true} />
                     <div className="flex flex-row">
-                        <div className={classnames({'width-100': mobile, 'width-60': desktop})} style={{marginRight: 25}}>
+                        <div className={classnames({ 'width-100': mobile, 'width-60': desktop })} style={{ marginRight: 25 }}>
                             <Metric
                                 title={parseFloat(this.state.price).toFixed(2)}
                                 label="Latest Price"
