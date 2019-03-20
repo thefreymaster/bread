@@ -7,7 +7,7 @@ const GetRecomendations = (props) => {
         <div>
             <div className="width-100">
                 <Metric
-                    title="Recomendations"
+                    title="Recommendations"
                     label="Get Buy, Hold, and Sell Ratings"
                     center
                     width={'100%'}
