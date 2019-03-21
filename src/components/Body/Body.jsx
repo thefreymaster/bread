@@ -107,7 +107,17 @@ class Bread extends Component {
                                 <LineChart screen={this.props.screen} width={'50%'} ticker={this.props.activeTicker} timeframe={'5y'} interval={20} title='5 Year' rightDivider />
                             </div>
                         </div>
-                        <div className="flex flex-column width-30 dashed-border-top flex-center-start dashed-border-right">
+
+                        <div className="flex flex-column width-20 dashed-border-top flex-center dashed-border-right">
+                            {
+                                this.state.getRecomendations
+                                ?
+                                <Recomendations />
+                                :
+                                <GetRecomendations showRecomendations={this.showRecomendations} />
+                            }
+                        </div>
+                        <div className="flex flex-column width-30 dashed-border-top flex-center-start">
                             {
                                 !this.state.news
                                 ?
@@ -118,15 +128,6 @@ class Bread extends Component {
                                         <News article={article} />
                                     )
                                 })
-                            }
-                        </div>
-                        <div className="flex flex-column width-20 dashed-border-top flex-center">
-                            {
-                                this.state.getRecomendations
-                                ?
-                                <Recomendations />
-                                :
-                                <GetRecomendations showRecomendations={this.showRecomendations} />
                             }
                         </div>
                     </div>
