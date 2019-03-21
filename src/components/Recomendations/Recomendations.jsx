@@ -68,9 +68,9 @@ class Recomendations extends Component {
             return (
                 <div className="flex flex-center show-zoom-animation">
                     <Steps direction="vertical" current={this.getCurrentStep()}>
-                        <Step title="Buy" icon={<Icon style={{ color: this.state.buy > this.state.sell && this.state.buy > this.state.hold ? GREEN : LIGHT_GREY }} type="login" />} description={`${this.state.buy} out of ${this.state.total} say buy`} />
-                        <Step title="Hold" icon={<Icon style={{ color: this.state.hold > this.state.buy && this.state.hold > this.state.sell ? GREY : LIGHT_GREY }} type="sync" />} description={`${this.state.hold} out of ${this.state.total} say hold`} />
-                        <Step title="Sell" icon={<Icon style={{ color: this.state.sell > this.state.buy && this.state.sell > this.state.hold ? RED : LIGHT_GREY }} type="logout" />} description={`${this.state.sell} out of ${this.state.total} say sell`} />
+                        <Step title="Buy" icon={<Icon style={{ color: this.state.buy > this.state.sell && this.state.buy > this.state.hold ? GREEN : LIGHT_GREY }} type="login" />} description={`${this.state.buy} out of ${this.state.total}`} />
+                        <Step title="Hold" icon={<Icon style={{ color: this.state.hold > this.state.buy && this.state.hold > this.state.sell ? GREY : LIGHT_GREY }} type="sync" />} description={`${this.state.hold} out of ${this.state.total}`} />
+                        <Step title="Sell" icon={<Icon style={{ color: this.state.sell > this.state.buy && this.state.sell > this.state.hold ? RED : LIGHT_GREY }} type="logout" />} description={`${this.state.sell} out of ${this.state.total}`} />
                     </Steps>
                 </div>
             )

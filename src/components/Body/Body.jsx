@@ -7,7 +7,8 @@ import LineChart from '../LineChart/LineChart';
 import Systems from './Systems';
 import Recomendations from '../Recomendations/Recomendations';
 import GetRecomendations from '../Recomendations/GetRecomendations';
-
+import { getCompanyNews } from './../../api/NewsAPI';
+import News from './../News/News';
 
 
 class Bread extends Component {
@@ -22,6 +23,20 @@ class Bread extends Component {
     componentWillMount() {
         if (this.props.activeTickerIndex === undefined) {
             this.props.setActiveTicker(this.props.trackedCompanies[0].symbol, this.props.trackedCompanies[0], false)
+            let news = getCompanyNews(this.props.trackedCompanies[0].symbol);
+            news.then(response => {
+                let newsFiltered = [];
+                let index = 0;
+                response.forEach(element => {
+                    if(index < 4){
+                        newsFiltered.push(element);
+                    }
+                    index++;
+                });
+                this.setState({
+                    news: newsFiltered
+                })
+            })
         }
     }
     componentDidUpdate(prevProps){
@@ -30,7 +45,23 @@ class Bread extends Component {
             this.setState({
                 getRecomendations: false
             })
+
         }
+        let news = getCompanyNews(this.props.activeTicker);
+        news.then(response => {
+            let newsFiltered = [];
+            let index = 0;
+            response.forEach(element => {
+                if(index < 4){
+                    newsFiltered.push(element);
+                }
+                index++;
+            });
+            this.setState({
+                news: newsFiltered
+            })
+        })
+
     }
     constructor(props) {
         super(props);
@@ -66,7 +97,7 @@ class Bread extends Component {
                             userHasShares={userHasShares} />
                     </div>
                     <div className='flex flex-row'>
-                        <div className="flex flex-column dashed-border-top width-75">
+                        <div className="flex flex-column dashed-border-top width-50">
                             <div className="flex flex-row dashed-border-bottom width-100">
                                 <LineChart screen={this.props.screen} width={'50%'} ticker={this.props.activeTicker} timeframe={'1d'} interval={10} title='1 Day' rightDivider />
                                 <LineChart screen={this.props.screen} width={'50%'} ticker={this.props.activeTicker} timeframe={'6m'} interval={2} title='6 Month' rightDivider />
@@ -76,7 +107,20 @@ class Bread extends Component {
                                 <LineChart screen={this.props.screen} width={'50%'} ticker={this.props.activeTicker} timeframe={'5y'} interval={20} title='5 Year' rightDivider />
                             </div>
                         </div>
-                        <div className="flex flex-column width-25 dashed-border-top flex-center">
+                        <div className="flex flex-column width-30 dashed-border-top flex-center-start dashed-border-right">
+                            {
+                                !this.state.news
+                                ?
+                                null
+                                :
+                                this.state.news.map((article) => {
+                                    return(
+                                        <News article={article} />
+                                    )
+                                })
+                            }
+                        </div>
+                        <div className="flex flex-column width-20 dashed-border-top flex-center">
                             {
                                 this.state.getRecomendations
                                 ?
@@ -86,14 +130,6 @@ class Bread extends Component {
                             }
                         </div>
                     </div>
-                    {/* <div className="flex flex-row dashed-border-bottom dashed-border-top">
-                        <LineChart screen={this.props.screen} width={'33%'} ticker={this.props.activeTicker} timeframe={'1d'} interval={10} title='1 Day' rightDivider />
-                        <LineChart screen={this.props.screen} width={'33%'} ticker={this.props.activeTicker} timeframe={'6m'} interval={2} title='6 Month' rightDivider />
-                    </div> */}
-                    {/* <div className="flex flex-row">
-                        <LineChart screen={this.props.screen} width={'33%'} ticker={this.props.activeTicker} timeframe={'1y'} interval={5} title='1 Year' rightDivider />
-                        <LineChart screen={this.props.screen} width={'33%'} ticker={this.props.activeTicker} timeframe={'5y'} interval={20} title='5 Year' rightDivider />
-                    </div> */}
                     <Systems />
                 </div>
             )

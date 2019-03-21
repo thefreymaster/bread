@@ -24,8 +24,6 @@ class Portfolio extends Component {
     }
     render() {
         const index = this.props.activeTickerIndex;
-
-        console.log(this.context)
         if (!this.context.portfolio)
             return null
         else {
