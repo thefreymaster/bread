@@ -5,10 +5,12 @@ const LIGHT_RED = '#d37768'
 const GREY = '#000000a6';
 const LIGHT_GREY = '#00000038';
 const YELLOW = '#e7be07';
-const IEXENDPOINT = 'https://cloud.iexapis.com/beta';
+const IEXENDPOINT = process.env.REACT_APP_IEX_ENDPOINT;
 const IEXTOKEN = '?token=' + process.env.REACT_APP_IEX_TOKEN;
 const IEXTOKEN_WITHAND = '&token=' + process.env.REACT_APP_IEX_TOKEN
 
+const POSITIVE_WORDS = ['strong', 'outperforming', 'gainers', 'leads', 'brilliant', 'increases', 'jumped', 'well', 'rises', 'unbelievable', 'king'];
+const NEGATIVE_WORDS = ['sell', 'despite', 'pricey', 'frustrated', 'issues', 'struggles', 'layoffs', 'denies', 'restructure']
 
 export { 
     GREEN, 
@@ -20,5 +22,7 @@ export {
     LIGHT_RED,
     IEXENDPOINT,
     IEXTOKEN,
-    IEXTOKEN_WITHAND
+    IEXTOKEN_WITHAND,
+    POSITIVE_WORDS,
+    NEGATIVE_WORDS,
  }

@@ -34,3 +34,6 @@
 .ant-steps-item-tail{
     left: 13px !important;
 }
+.ant-list-split .ant-list-item {
+    border-bottom: 2px dashed #e8e8e8 !important;
+}

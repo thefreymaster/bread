@@ -40,7 +40,6 @@ const {
 
 class App extends Component {
   setActiveTicker = (value, company, addCompanyToTrackedList, index) => {
-    console.log(company)
     if (index === undefined && addCompanyToTrackedList === false) {
       index = 0;
     }
@@ -56,7 +55,6 @@ class App extends Component {
     this.setState({
       portfolio: portfolio
     }, () => {
-      console.log(this.state.portfolio)
     })
   }
   saveShares = (price, count) => {

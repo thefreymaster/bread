@@ -19,7 +19,9 @@
 }
 
 .right-sider{
-    box-shadow: inset 2px 0px 0px 0 #72727224;
+    /* box-shadow: inset 2px 0px 0px 0 #72727224; */
+    border-left: 2px dashed #72727224 !important;
+
     max-width: 150px !important;
     min-width: 150px !important;
 }

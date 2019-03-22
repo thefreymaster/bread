@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import classnames from 'classnames';
 import "./Body.css";
 import Today from './Today/Today';
@@ -9,6 +9,7 @@ import Recomendations from '../Recomendations/Recomendations';
 import GetRecomendations from '../Recomendations/GetRecomendations';
 import { getCompanyNews } from './../../api/NewsAPI';
 import News from './../News/News';
+import { LoafContext } from '../../LoafContext';
 
 
 class Bread extends Component {
@@ -28,7 +29,7 @@ class Bread extends Component {
                 let newsFiltered = [];
                 let index = 0;
                 response.forEach(element => {
-                    if(index < 4){
+                    if (index < 4) {
                         newsFiltered.push(element);
                     }
                     index++;
@@ -39,30 +40,29 @@ class Bread extends Component {
             })
         }
     }
-    componentDidUpdate(prevProps){
-        if(this.props.activeTicker !== prevProps.activeTicker)
-        {
+    componentDidUpdate(prevProps) {
+        if (this.props.activeTicker !== prevProps.activeTicker) {
             this.setState({
                 getRecomendations: false
             })
-
-        }
-        let news = getCompanyNews(this.props.activeTicker);
-        news.then(response => {
-            let newsFiltered = [];
-            let index = 0;
-            response.forEach(element => {
-                if(index < 4){
-                    newsFiltered.push(element);
-                }
-                index++;
-            });
-            this.setState({
-                news: newsFiltered
+            let news = getCompanyNews(this.props.activeTicker);
+            news.then(response => {
+                let newsFiltered = [];
+                let index = 0;
+                response.forEach(element => {
+                    if (index < 4) {
+                        newsFiltered.push(element);
+                    }
+                    index++;
+                });
+                this.setState({
+                    news: newsFiltered
+                })
             })
-        })
-
+        }
     }
+    static contextType = LoafContext;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -79,14 +79,16 @@ class Bread extends Component {
             const userHasShares = this.props.trackedCompanies[index].shares.hasShares
             const count = this.props.trackedCompanies[index].shares.count;
             const price = this.props.trackedCompanies[index].shares.price;
+            let quote = this.context.quotes[this.context.activeTicker].quote;
+
             return (
                 <div className="flex flex-column" style={{ marginRight: 15 }}>
                     <div className={classnames("flex", { "flex-column": this.props.screen.xs, "flex-row": !this.props.screen.xs || !this.props.screen.sm })}>
                         <Today sendUpdateToParent={this.receiveUpdateFromChild} screen={this.props.screen} trackedCompanies={this.props.trackedCompanies} removeCompanyFromTrackedCompanies={this.props.removeCompanyFromTrackedCompanies} ticker={this.props.activeTicker} />
                         <YourShares
-                            week52High={this.state.week52High}
-                            week52Low={this.state.week52Low}
-                            price={this.state.price}
+                            week52High={quote.week52High}
+                            week52Low={quote.week52Low}
+                            price={quote.price}
                             width={50}
                             index={index}
                             count={count}
@@ -111,24 +113,14 @@ class Bread extends Component {
                         <div className="flex flex-column width-20 dashed-border-top flex-center dashed-border-right">
                             {
                                 this.state.getRecomendations
-                                ?
-                                <Recomendations />
-                                :
-                                <GetRecomendations showRecomendations={this.showRecomendations} />
+                                    ?
+                                    <Recomendations />
+                                    :
+                                    <GetRecomendations showRecomendations={this.showRecomendations} />
                             }
                         </div>
-                        <div className="flex flex-column width-30 dashed-border-top flex-center-start">
-                            {
-                                !this.state.news
-                                ?
-                                null
-                                :
-                                this.state.news.map((article) => {
-                                    return(
-                                        <News article={article} />
-                                    )
-                                })
-                            }
+                        <div className="flex flex-column width-30 dashed-border-top flex-center-start news-container">
+                            <News news={this.state.news} />
                         </div>
                     </div>
                     <Systems />
