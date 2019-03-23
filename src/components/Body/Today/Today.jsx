@@ -3,11 +3,13 @@ import Metric from "../Metric";
 import { getBatchData } from './../../../api/StatsAPI';
 import Loader from 'react-loader-spinner'
 import { GREEN, RED, GREY, LIGHT_GREEN, LIGHT_RED } from '../../../Constants';
+import { getDayOfWeek, getHourOfDay, getMinutesOfDay, determineIfMarketsAreOpen } from './../../HelperFunctions/Helper';
 import { getPercentChange } from '../../HelperFunctions/Helper';
-import { Button } from '../../../../node_modules/antd';
+import { Button, Badge } from '../../../../node_modules/antd';
 import classnames from 'classnames'
 import io from 'socket.io-client'
 import { LoafContext } from './../../../LoafContext';
+import { debug } from 'util';
 
 const filter = 'changePercent,latestPrice,symbol,companyName,previousClose,close'
 
@@ -29,7 +31,7 @@ class Today extends Component {
         if (this.state.showUpdate && this.state.quote) {
             let change = getPercentChange(this.state.quote);
             change = parseFloat(change);
-            
+
             if (change > 0) {
                 return LIGHT_GREEN;
             }
@@ -52,10 +54,10 @@ class Today extends Component {
                 showUpdate = true;
                 previousPrice = this.state.price;
                 previousChange = this.state.change;
-                that.setState({price, showUpdate, previousPrice, previousChange}, () => {
+                that.setState({ price, showUpdate, previousPrice, previousChange }, () => {
                     setTimeout(() => {
                         showUpdate = false;
-                        that.setState({showUpdate})
+                        that.setState({ showUpdate })
 
                     }, 1000);
                 })
@@ -78,19 +80,6 @@ class Today extends Component {
         let that = this;
         if (this.props.ticker !== prevProps.ticker) {
             this.state.socket.emit('unsubscribe', prevProps.ticker)
-            let data = getBatchData(this.props.ticker, 'quote,stats', filter);
-            data.then(response => {
-                this.setState({
-                    stats: response.stats,
-                    price: response.quote.latestPrice,
-                    quote: response.quote,
-                    change: getPercentChange(response.quote),
-                    previousChange: this.state.change,
-                    previousPrice: this.state.price,
-                }, () => {
-                    that.props.sendUpdateToParent({week52High: response.quote.week52High, week52Low: response.quote.week52Low, price: response.quote.latestPrice})
-                })
-            })
         }
     }
     componentWillMount() {
@@ -99,24 +88,12 @@ class Today extends Component {
             that.state.socket.on('connect', () => {
                 that.state.socket.emit('subscribe', this.props.ticker)
             })
-            let data = getBatchData(this.props.ticker, 'quote,stats', filter);
-            data.then(response => {
-                this.setState({
-                    stats: response.stats,
-                    price: response.quote.latestPrice,
-                    quote: response.quote,
-                    change: getPercentChange(response.quote),
-                }, () => {
-                    that.props.sendUpdateToParent({week52High: response.quote.week52High, week52Low: response.quote.week52Low, price: response.quote.latestPrice})
-                })
-            })
         }
     }
     render() {
         const mobile = this.context.screen.xs || this.context.screen.sm ? true : false
         const desktop = this.context.screen.md || this.context.screen.lg || this.context.screen.xl ? true : false
-
-        if (!this.state.stats)
+        if (!this.context.quotes)
             return (
                 <div className="flex flex-row flex-center show-zoom-animation" style={{ height: 200, width: '50%' }}>
                     <Loader
@@ -128,22 +105,23 @@ class Today extends Component {
                 </div>
             )
         else {
+            let quote = this.context.quotes[this.context.activeTicker].quote;
             return (
                 <div className={"loaf-component flex flex-column flex-center border-right"} style={{ height: (window.innerHeight - 84) * 0.40, width: '50%' }}>
-                    <Metric 
-                        titleFontSize={72} 
+                    <Metric
+                        titleFontSize={72}
                         center
-                        title={this.state.quote.symbol} 
-                        labelFontSize={24} 
-                        label={this.state.stats.companyName} 
+                        title={quote.symbol}
+                        labelFontSize={24}
+                        label={quote.companyName}
                         labelCloseToTitle={true} />
                     <div className="flex flex-row">
-                        <div className={classnames({'width-100': mobile, 'width-60': desktop})} style={{marginRight: 25}}>
+                        <div className={classnames({ 'width-100': mobile, 'width-60': desktop })} style={{ marginRight: 25 }}>
                             <Metric
-                                title={parseFloat(this.state.price).toFixed(2)}
+                                title={parseFloat(quote.latestPrice).toFixed(2)}
                                 label="Latest Price"
                                 number
-                                start={this.state.previousPrice}
+                                start={quote.previousPrice}
                                 fontWeight={900}
                                 duration={1}
                                 decimals={2}
@@ -158,9 +136,9 @@ class Today extends Component {
                                 duration={1}
                                 fontWeight={900}
                                 fontFamily={'Open Sans'}
-                                start={this.state.previousChange}
-                                title={this.state.change}
-                                color={this.getColor(parseFloat(this.state.quote.changePercent))}
+                                start={quote.previousChange}
+                                title={quote.changePercent*100}
+                                color={this.getColor(parseFloat(quote.changePercent))}
                                 label="Percent Change Today" />
                         </div>
                     </div>

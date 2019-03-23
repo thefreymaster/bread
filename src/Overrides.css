@@ -1,0 +1,39 @@
+.ant-badge-count{
+    border-radius: 2px !important;
+}
+.ant-btn{
+    border-radius: 4px !important;
+}
+.ant-layout-sider{
+    background-color: white !important;
+
+}
+.ant-layout{
+    background-color: white !important;
+}
+.ant-layout-header{
+    background-color: white !important;
+    box-shadow: inset 0px -2px 0px 0 #72727224;
+    font-family: 'Abril Fatface', cursive;
+}
+.ant-layout-footer{
+    background-color: white !important;
+}
+.ant-list-item{
+    padding: 20px 0 !important;
+}
+.ant-layout-content{
+    overflow: hidden !important;
+}
+.ant-badge{
+    z-index: 0 !important;
+}
+.ant-steps-item-finish > .ant-steps-item-tail:after{
+    background-color: #595959 !important;
+}
+.ant-steps-item-tail{
+    left: 13px !important;
+}
+.ant-list-split .ant-list-item {
+    border-bottom: 2px dashed #e8e8e8 !important;
+}

@@ -11,5 +11,14 @@ function getIEXStatus(ticker) {
             console.log(error);
         });
 }
+function getBreadStatus(ticker) {
+    return axios.get('/api/status')
+        .then(function (response) {
+            return response.data;
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+}
 
-export { getIEXStatus }
+export { getIEXStatus, getBreadStatus }

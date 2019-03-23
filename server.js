@@ -35,6 +35,13 @@ var server = app.listen(process.env.PORT || port, function () {
     console.log('Running Express server on port: ' + port);
 });
 
+app.get('/api/status', (req, res) => {
+    res.send({
+        system: true,
+        version: '1.00'
+    })
+})
+
 app.get('/api/quick-quote/:symbols', function (req, res) {
     let quick = {
         price: '',

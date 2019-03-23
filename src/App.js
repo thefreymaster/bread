@@ -2,12 +2,13 @@ import React, { Component, Fragment } from 'react';
 import { BrowserRouter, Route, Redirect, Switch, withRouter } from "react-router-dom";
 
 import './App.css';
+import './Overrides.css'
 import 'antd/dist/antd.css';
 import { Layout, message, notification, Icon } from 'antd';
 import { writeUserData, getFirebaseAuthObject, readUserCompanyData, updateUserCompanyData, updateUserCompanyShareData } from './api/FirebaseAPI';
 import { getQuickQuotes, getQuote } from './api/StatsAPI';
 
-import { determineIfMarketsAreOpen, getDayOfWeek, getMinutesOfDay, getHourOfDay, getPercentChange } from './components/HelperFunctions/Helper';
+import { determineIfMarketsAreOpen, getDayOfWeek, getMinutesOfDay, getHourOfDay, getPercentChange, sortCompaniesAscending, sortCompaniesDescending, sortCompaniesABC, sortCompaniesYTDChange } from './components/HelperFunctions/Helper';
 
 import classnames from 'classnames';
 
@@ -26,6 +27,8 @@ import { LoafContext } from './LoafContext';
 import { showNotification } from './components/HelperFunctions/Notifications';
 import RightSider from './components/RightSider/RightSider'
 import { RED, GREEN } from './Constants';
+import { getPortfolioTotal, getBest, getWorst } from './api/PortfolioAPI';
+
 
 const firebase = getFirebaseAuthObject();
 const filter = 'ytdChange,changePercent,week52High,week52Low,latestPrice,previousClose,extendedPrice,companyName,symbol'
@@ -48,6 +51,24 @@ class App extends Component {
       activeTickerIndex: parseInt(index)
     }, addCompanyToTrackedList ? this.addCompanyToTrackedCompanies(company) : null)
   }
+  setActiveAfterSubmit = (value, company, index) => {
+    if (index === undefined) {
+      index = 0;
+    }
+    else{
+      index = this.state.trackedCompanies.length;
+    }
+    this.setState({
+      activeTicker: value,
+      activeTickerIndex: parseInt(index)
+    })
+  }
+  receiveDataFromChild = (portfolio) => {
+    this.setState({
+      portfolio: portfolio
+    }, () => {
+    })
+  }
   saveShares = (price, count) => {
     let that = this;
     let _trackedCompanies = that.state.trackedCompanies;
@@ -69,7 +90,7 @@ class App extends Component {
     }
 
   }
-  addCompanyToTrackedCompanies = (company) => {
+  addCompanyToTrackedCompanies = (symbol, company) => {
     let that = this;
     let _trackedCompanies = this.state.trackedCompanies;
     let quote = {};
@@ -82,14 +103,16 @@ class App extends Component {
       quote = getQuote(company.symbol);
       quote.then((response) => {
         quotes = that.state.quotes;
-        if(!quotes){
-          quotes = {[response.symbol]: {quote: response}}
+        if (!quotes) {
+          quotes = { [response.symbol]: { quote: response } }
         }
-        else{
-          quotes = Object.assign(quotes, {[response.symbol]: {quote: response}})
+        else {
+          quotes = Object.assign(quotes, { [response.symbol]: { quote: response } })
         }
         that.setState({
           quotes: quotes
+        }, () => {
+          that.setActiveAfterSubmit(symbol, company)
         })
       })
     }
@@ -98,16 +121,16 @@ class App extends Component {
       quote = getQuote(company.symbol);
       quote.then((response) => {
         quotes = that.state.quotes;
-        if(!quotes){
-          quotes = {[response.symbol]: {quote: response}}
+        if (!quotes) {
+          quotes = { [response.symbol]: { quote: response } }
         }
-        else{
-          quotes = Object.assign(quotes, {[response.symbol]: {quote: response}})
+        else {
+          quotes = Object.assign(quotes, { [response.symbol]: { quote: response } })
         }
-        debugger;
-
         that.setState({
           quotes: quotes
+        }, () => {
+          that.setActiveAfterSubmit(symbol, company)
         })
       })
     }
@@ -183,10 +206,17 @@ class App extends Component {
       return (
         <LoafContext.Provider
           value={{
+            addCompanyToTrackedCompanies: this.addCompanyToTrackedCompanies,
+            activeTicker: this.state.activeTicker,
             screen: this.state.screen,
             trackedCompanies: this.state.trackedCompanies,
             setActiveTicker: this.setActiveTicker,
-            quotes: this.state.quotes
+            quotes: this.state.quotes,
+            sortAscending: this.sortAscending,
+            sortDecending: this.sortDecending,
+            sortABC: this.sortABC,
+            sortYTD: this.sortYTD,
+            portfolio: this.state.portfolio
           }}>
           <BrowserRouter>
             <main>
@@ -251,10 +281,10 @@ class App extends Component {
                         null
                         :
                         <Sider className={classnames("left-sider", { "left-sider-small": this.state.screen.xs || this.state.screen.sm, "left-sider-large": this.state.screen.md || this.state.screen.lg || this.state.screen.xl })} style={{ maxHeight: window.innerHeight - 84 }}>
-                          <Companies 
-                            screen={this.state.screen} 
-                            activeTicker={this.state.activeTicker} 
-                            trackedCompanies={this.state.trackedCompanies} 
+                          <Companies
+                            screen={this.state.screen}
+                            activeTicker={this.state.activeTicker}
+                            trackedCompanies={this.state.trackedCompanies}
                             setActiveTicker={this.setActiveTicker} />
                         </Sider>
 
@@ -309,12 +339,13 @@ class App extends Component {
                                 screen={this.state.screen}
                                 firebase={firebase} />
                               :
-                              <Portfolio 
-                                screen={this.state.screen} 
-                                activeTicker={this.state.activeTicker} 
-                                trackedCompanies={this.state.trackedCompanies} 
+                              <Portfolio
+                                screen={this.state.screen}
+                                sendDataToParent={this.receiveDataFromChild}
+                                activeTicker={this.state.activeTicker}
+                                trackedCompanies={this.state.trackedCompanies}
                                 setActiveTicker={this.setActiveTicker} />
-                            }
+                          }
                           />
                           <Route path="/" render={props =>
                             this.state.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
@@ -355,6 +386,47 @@ class App extends Component {
 
 
   }
+  sortAscending = () => {
+    localStorage.setItem('COMPANIES_SORT', 'ASCENDING')
+    let trackedCompanies = sortCompaniesAscending(this.state.trackedCompanies);
+    this.setState({
+      trackedCompanies: trackedCompanies
+    }, () => {
+      if (this.state.activeTicker !== "portfolio")
+        this.setActiveTicker(trackedCompanies[0].symbol, trackedCompanies[0], false, 0)
+    })
+  }
+  sortDecending = () => {
+    localStorage.setItem('COMPANIES_SORT', 'DESCENDING')
+    let trackedCompanies = sortCompaniesDescending(this.state.trackedCompanies);
+    this.setState({
+      trackedCompanies: trackedCompanies
+    }, () => {
+      if (this.state.activeTicker !== "portfolio")
+        this.setActiveTicker(trackedCompanies[0].symbol, trackedCompanies[0], false, 0)
+    })
+  }
+  sortABC = () => {
+    localStorage.setItem('COMPANIES_SORT', 'ABC')
+    let trackedCompanies = sortCompaniesABC(this.state.trackedCompanies);
+    this.setState({
+      trackedCompanies: trackedCompanies
+    }, () => {
+      if (this.state.activeTicker !== "portfolio")
+        this.setActiveTicker(trackedCompanies[0].symbol, trackedCompanies[0], false, 0)
+    })
+  }
+
+  sortYTD = () => {
+    localStorage.setItem('COMPANIES_SORT', 'YTD')
+    let trackedCompanies = sortCompaniesYTDChange(this.state.trackedCompanies);
+    this.setState({
+      trackedCompanies: trackedCompanies
+    }, () => {
+      if (this.state.activeTicker !== "portfolio")
+        this.setActiveTicker(trackedCompanies[0].symbol, trackedCompanies[0], false, 0)
+    })
+  }
 
   componentDidMount() {
     if (localStorage.getItem('LOAF_USER')) {
@@ -374,7 +446,7 @@ class App extends Component {
           })
           this.setState({
             trackedCompanies: companies,
-          }, () =>  {
+          }, () => {
             this.getQuotesData();
           })
         }
@@ -403,62 +475,65 @@ class App extends Component {
     setTimeout(() => {
       window.location.reload()
     }, 3600000);
-    
+
 
   }
   getQuotesData = () => {
     let that = this;
     let symbols = [];
     for (let symbol in that.state.trackedCompanies) {
-        symbols.push(that.state.trackedCompanies[symbol].symbol)
+      symbols.push(that.state.trackedCompanies[symbol].symbol)
     }
+    let index = 0;
     let quote = getQuickQuotes(symbols, filter);
-    let sorted = []
+    let trackedCompanies = that.state.trackedCompanies;
     let market = that.state.determineIfMarketsAreOpen(this.state.day, this.state.hour, this.state.minute);
     quote.then(response => {
-        let change;
-        for (let [key] of Object.entries(response)) {
-            change = getPercentChange(response[key].quote);
-
-            if (parseFloat(change) > 5 && market) {
-                notification.success({
-                    message: response[key].quote.companyName,
-                    description: key + ' is up ' + getPercentChange(response[key].quote) + '% today.',
-                    onClick: () => {
-                        this.findIndex(key)
-                    },
-                    duration: 5,
-                    icon: <Icon type="rise" style={{ color: GREEN }} />,
-                });
-            }
-            if (parseFloat(change) < -5 && market) {
-                notification.warning({
-                    message: response[key].quote.companyName,
-                    description: key + ' is down ' + getPercentChange(response[key].quote) + '% today.',
-                    onClick: () => {
-                        this.findIndex(key)
-                    },
-                    duration: 5,
-                    icon: <Icon type="fall" style={{ color: RED }} />,
-                });
-            }
-            // sorted.push(response[key].quote)
+      let change;
+      for (let [key] of Object.entries(response)) {
+        change = getPercentChange(response[key].quote);
+        trackedCompanies[index]['quote'] = response[key].quote;
+        if (parseFloat(change) > 5 && market) {
+          notification.success({
+            message: response[key].quote.companyName,
+            description: key + ' is up ' + getPercentChange(response[key].quote) + '% today.',
+            onClick: () => {
+              this.findIndex(key)
+            },
+            duration: 5,
+            icon: <Icon type="rise" style={{ color: GREEN }} />,
+          });
         }
-        // sorted.sort(function (a, b) {
-        //   if (a.symbol < b.symbol) { return -1; }
-        //   if (a.symbol > b.symbol) { return 1; }
-        //   return 0;
-        // })
-        // that.state.trackedCompanies.map((company) => {
-        //   if(company.symbol === response[company.symbol].quote.symbol){
-        //     console.log(company.symbol)
-        //   }
-        // })
+        if (parseFloat(change) < -5 && market) {
+          notification.warning({
+            message: response[key].quote.companyName,
+            description: key + ' is down ' + getPercentChange(response[key].quote) + '% today.',
+            onClick: () => {
+              this.findIndex(key)
+            },
+            duration: 5,
+            icon: <Icon type="fall" style={{ color: RED }} />,
+          });
+        }
+        index++;
+      }
 
-        that.setState({
-            quotes: response
-        })
-        that.fetchingTrackedCompaniesComplete();
+      that.setState({
+        quotes: response,
+        trackedCompanies: trackedCompanies,
+      }, () => {
+        this.getPortfolioData();
+      })
+      that.fetchingTrackedCompaniesComplete();
+    })
+  }
+  getPortfolioData = () => {
+    let that = this;
+    let data = getPortfolioTotal(that.state.trackedCompanies, that.state.quotes);
+    data.then(response => {
+      that.setState({
+        portfolio: response.data
+      })
     })
   }
   checkDeviceSize() {

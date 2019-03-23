@@ -5,6 +5,7 @@ import { Input } from 'antd';
 import Metric from '../../Body/Metric';
 import SearchedCompanies from '../AddCompany/SearchedCompanies';
 import classnames from 'classnames';
+import { LoafContext } from '../../../LoafContext';
 const Search = Input.Search;
 
 class AddCompany extends Component {
@@ -22,6 +23,7 @@ class AddCompany extends Component {
             searchedCompanies: searchedCompanies
         })
     }
+    static contextType = LoafContext;
     constructor(props) {
         super(props)
         this.state = {
@@ -80,7 +82,7 @@ class AddCompany extends Component {
                     />
                 </div>
 
-                <SearchedCompanies setActiveTicker={this.props.setActiveTicker} searchedCompanies={this.state.searchedCompanies} />
+                <SearchedCompanies addCompanyToTrackedCompanies={this.context.addCompanyToTrackedCompanies} setActiveTicker={this.props.setActiveTicker} searchedCompanies={this.state.searchedCompanies} />
             </div>
         )
     }

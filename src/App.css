@@ -1,18 +1,4 @@
-.ant-layout-sider{
-    background-color: white !important;
 
-}
-.ant-layout{
-    background-color: white !important;
-}
-.ant-layout-header{
-    background-color: white !important;
-    box-shadow: inset 0px -2px 0px 0 #72727224;
-    font-family: 'Abril Fatface', cursive;
-}
-.ant-layout-footer{
-    background-color: white !important;
-}
 .logo{
     max-width: 32px;
     border-radius: 5px;
@@ -33,7 +19,9 @@
 }
 
 .right-sider{
-    box-shadow: inset 2px 0px 0px 0 #72727224;
+    /* box-shadow: inset 2px 0px 0px 0 #72727224; */
+    border-left: 2px dashed #72727224 !important;
+
     max-width: 150px !important;
     min-width: 150px !important;
 }
@@ -108,12 +96,29 @@
 .flex-center-vertically{
     justify-content: center;
 }
+.flex-space{
+    justify-content: space-around;
+}
+.sorting-bar{
+    position: absolute;
+    top: -16px;
+    min-width: 300px;
+    z-index: 1;
+}
 .height-100{
     min-height: 100%;
+}
+.width-20{
+    max-width: 20%;
+    min-width: 20%;
 }
 .width-25{
     max-width: 25%;
     min-width: 25%;
+}
+.width-30{
+    max-width: 30%;
+    min-width: 30%;
 }
 .width-33{
     max-width: 33%;
@@ -131,15 +136,17 @@
     max-width: 60%;
     min-width: 60%;
 }
+.width-66{
+    max-width: 66%;
+    min-width: 66%;
+}
+.width-75{
+    max-width: 75%;
+    min-width: 75%;
+}
 .width-100{
     min-width: 100%;
     max-width: 100%;
-}
-.ant-list-item{
-    padding: 20px 0 !important;
-}
-.ant-layout-content{
-    overflow: hidden !important;
 }
 .absolute{
     position: absolute;
@@ -193,9 +200,15 @@
 .marginBottom64{
     margin-bottom: 64px;
 }
+.padding6{
+    padding: 6px;
+}
   .padding10{
       padding: 10px;
   }
+  .padding15{
+    padding: 15px;
+}
   .paddingTop10{
       padding-top: 10px;
   }
@@ -222,9 +235,7 @@
     bottom: 0;
 
 }
-.ant-badge{
-    z-index: 0 !important;
-}
+
 .add-new-button-mobile{
     position: fixed;
     bottom: 0;

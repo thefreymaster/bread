@@ -65,3 +65,11 @@
 .ant-slider-handle{
     display: none
 }
+.with-75{
+    min-width: 75%;
+    max-width:75%;
+}
+.news-container{
+    overflow: scroll;
+    max-height: 384px;
+}

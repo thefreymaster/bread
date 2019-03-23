@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import '../Companies/AddCompany/AddCompany.css';
-import { Button, notification, Icon } from 'antd';
+import { Button, notification, Badge, Tooltip } from 'antd';
 import YourShares from './../Body/YourShares/YourShares';
 import { getQuickQuotes } from '../../api/StatsAPI';
 import { Link } from "react-router-dom";
@@ -45,11 +45,24 @@ class Companies extends Component {
         }
     }
     getPercentChange(quote) {
-        return ((quote.latestPrice - quote.previousClose) / quote.latestPrice * 100).toFixed(2)
+        if (quote.latestPrice === quote.previousClose || quote.latestPrice === 0) {
+            return 'Premarket'
+        }
+        else {
+            return ((quote.latestPrice - quote.previousClose) / quote.latestPrice * 100).toFixed(2) + '%'
+        }
+    }
+    getPrice(quote) {
+        if (quote.latestPrice === 0) {
+            return quote.extendedPrice;
+        }
+        else {
+            return quote.latestPrice;
+        }
     }
     getPercentAndPrice(company) {
         if (this.state.quickQuotes[company.symbol]) {
-            return this.getPercentChange(this.state.quickQuotes[company.symbol].quote) + '% • $' + (this.state.quickQuotes[company.symbol].quote.latestPrice)
+            return this.getPercentChange(this.state.quickQuotes[company.symbol].quote) + ' • $' + (this.getPrice(this.state.quickQuotes[company.symbol].quote))
         }
     }
     setBackgroundColor(company, showUpdate) {
@@ -78,10 +91,11 @@ class Companies extends Component {
         }
     }
     determineText = (shares, price, quote) => {
-        if ((shares * quote) - (shares * price) === 0) {
+        let latestPrice = quote.latestPrice === 0 || !determineIfMarketsAreOpen() ? quote.extendedPrice : quote.latestPrice;
+        if ((shares * latestPrice) - (shares * price) === 0) {
             return 'No Equity'
         }
-        else if ((shares * quote) - (shares * price) > 0) {
+        else if ((shares * latestPrice) - (shares * price) > 0) {
             return 'Equity Gain';
         }
         else {
@@ -89,18 +103,26 @@ class Companies extends Component {
         }
     }
     determineChange = (shares, price, quote) => {
-        return '$' + parseFloat((shares * quote) - (shares * price)).toFixed(2)
+        let latestPrice = quote.latestPrice === 0 || !determineIfMarketsAreOpen() ? quote.extendedPrice : quote.latestPrice;
+        return '$' + parseFloat((shares * latestPrice) - (shares * price)).toFixed(2)
     }
     determineColor = (shares, price, quote) => {
-        if ((shares * quote) - (shares * price) === 0) {
+        let latestPrice = quote.latestPrice === 0 || !determineIfMarketsAreOpen() ? quote.extendedPrice : quote.latestPrice;
+
+        if ((shares * latestPrice) - (shares * price) === 0) {
             return GREY
         }
-        else if ((shares * quote) - (shares * price) > 0) {
+        else if ((shares * latestPrice) - (shares * price) > 0) {
             return GREEN;
         }
         else {
             return RED;
         }
+    }
+    halt = () => {
+        this.setState({
+            realTimeStreaming: false
+        })
     }
     update = (message) => {
         let that = this;
@@ -113,6 +135,24 @@ class Companies extends Component {
                 if (messageJSON.symbol) {
                     _quickQuotes[messageJSON.symbol].quote.latestPrice = messageJSON.lastSalePrice;
                     _quickQuotes[messageJSON.symbol].showUpdate = true;
+                    /*
+                    if (localStorage.getItem('COMPANIES_SORT')) {
+                        switch (localStorage.getItem('COMPANIES_SORT')) {
+                            case 'ABC':
+                                this.context.sortABC();
+                                break;
+                            case 'YTD':
+                                this.context.sortYTD();
+                                break;
+                            case 'ASCENDING':
+                                this.context.sortAscending();
+                                break;
+                            case 'DESCENDING':
+                                this.context.sortDecending();
+                                break;
+                        }
+                    }
+                    */
 
                     that.setState({ quickQuotes: _quickQuotes }, () => {
                         setTimeout(() => {
@@ -158,6 +198,22 @@ class Companies extends Component {
                 quickQuotes: this.context.quotes
             })
         }
+        if (localStorage.getItem('COMPANIES_SORT')) {
+            switch (localStorage.getItem('COMPANIES_SORT')) {
+                case 'ABC':
+                    this.context.sortABC();
+                    break;
+                case 'YTD':
+                    this.context.sortYTD();
+                    break;
+                case 'ASCENDING':
+                    this.context.sortAscending();
+                    break;
+                case 'DESCENDING':
+                    this.context.sortDecending();
+                    break;
+            }
+        }
         let socketSymbols = '';
         for (let symbol in that.props.trackedCompanies) {
             socketSymbols = socketSymbols + that.props.trackedCompanies[symbol].symbol + ',';
@@ -198,7 +254,7 @@ class Companies extends Component {
                                 null
                                 :
                                 <Fragment>
-                                    <div className={classnames('padding10 your-companies')}>
+                                    <div className={classnames('padding6 your-companies flex flex-row flex-center')}>
                                         <Metric
                                             fontFamily={'Open Sans'}
                                             fontWeight={900}
@@ -206,12 +262,22 @@ class Companies extends Component {
                                             title={'Your Tracked Companies'}
                                             center={false}
                                         />
+                                        <div className="flex flex-grow"></div>
+                                        {
+                                            this.state.realTimeStreaming
+                                                ?
+                                                <Tooltip placement="right" title={'Halt Real Time Streaming'}>
+                                                    <Button onClick={this.halt} type="danger" size={'small'}>Halt</Button>
+                                                </Tooltip>
+                                                :
+                                                <Badge count={'Streaming Halted'} style={{ backgroundColor: RED, opacity: .6 }} />
+                                        }
                                     </div>
                                     <div class="marginBottom26"></div>
                                 </Fragment>
                         }
                         {
-                            this.context.quotes && (!this.context.screen.xs && !this.context.screen.sm)
+                            this.context.quotes
                                 ?
                                 <PortfolioLink
                                     screen={this.props.screen}
@@ -222,6 +288,34 @@ class Companies extends Component {
                                 />
                                 : null
                         }
+                        <div className={'flex flex-row flex-space margin10'} style={{ marginTop: 10 }}>
+                            {
+                                this.context.screen.xs || this.context.screen.sm
+                                    ?
+                                    <Fragment>
+                                        <Button size='large' onClick={this.context.sortABC} type="dashed" shape="circle" icon="font-colors" />
+                                        <Button size='large' onClick={this.context.sortYTD} type="dashed" shape="circle" icon="calendar" />
+                                        <Button size='large' style={{ color: GREEN }} onClick={this.context.sortDecending} type="dashed" shape="circle" icon="rise" />
+                                        <Button size='large' style={{ color: RED }} onClick={this.context.sortAscending} type="dashed" shape="circle" icon="fall" />
+                                    </Fragment>
+                                    :
+                                    <Fragment>
+                                        <Tooltip placement="top" title={'Sort by ABC'}>
+                                            <Button size='large' onClick={this.context.sortABC} type="dashed" shape="circle" icon="font-colors" />
+                                        </Tooltip>
+                                        <Tooltip placement="top" title={'Sort by Best YTD Change'}>
+                                            <Button size='large' onClick={this.context.sortYTD} type="dashed" shape="circle" icon="calendar" />
+                                        </Tooltip>
+                                        <Tooltip placement="top" title={'Show Gainers First'}>
+                                            <Button size='large' style={{ color: GREEN }} onClick={this.context.sortDecending} type="dashed" shape="circle" icon="rise" />
+                                        </Tooltip>
+                                        <Tooltip placement="top" title={'Show Losers First'}>
+                                            <Button size='large' style={{ color: RED }} onClick={this.context.sortAscending} type="dashed" shape="circle" icon="fall" />
+                                        </Tooltip>
+                                    </Fragment>
+                            }
+
+                        </div>
                         {Object.keys(this.props.trackedCompanies).map((index) => {
                             const company = this.props.trackedCompanies[index];
                             const userHasShares = this.props.trackedCompanies[index].shares.hasShares
@@ -232,7 +326,7 @@ class Companies extends Component {
                             return (
                                 <Link to="/quote" key={company.symbol} onClick={() => { this.props.setActiveTicker(company.symbol, company, false, index) }}>
                                     <div
-                                        className={classnames('padding10 margin10 companies-button loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === that.props.activeTicker, 'box-shadow-bottom': that.props.trackedCompanies.length !== parseInt(index) })}>
+                                        className={classnames('padding10 companies-button loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === that.props.activeTicker })}>
                                         <div className={classnames("flex flex-row")}>
                                             <div className={'flex flex-column width-100'}>
                                                 <div className={classnames("flex flex-row")}>
@@ -262,16 +356,16 @@ class Companies extends Component {
                                                         : that.state.quickQuotes[company.symbol]
                                                             ? <div className={'flex flex-badge flex-column'}>
                                                                 <ChangeBadge
-                                                                    backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                                    backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
                                                                     company={company}
                                                                     width={75}
-                                                                    count={that.determineText(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                                    count={that.determineText(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
                                                                 />
                                                                 <ChangeBadge
-                                                                    backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                                    backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
                                                                     company={company}
                                                                     width={75}
-                                                                    count={that.determineChange(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote.latestPrice)}
+                                                                    count={that.determineChange(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
                                                                 />
                                                             </div>
                                                             : null

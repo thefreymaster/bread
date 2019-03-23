@@ -4,6 +4,7 @@ import { List } from 'antd';
 import { getBatchData } from '../../api/StatsAPI';
 import { GREEN, RED, YELLOW, GREY } from '../../Constants';
 import PoweredBy from './PoweredBy';
+import { LoafContext } from '../../LoafContext';
 
 const filter = 'beta,ytdChange,changePercent,week52High,week52Low,week52change,latestPrice,profitMargin,priceToSales,latestVolume,dividendYield'
 
@@ -20,6 +21,8 @@ class CompanyStatistics extends Component {
             return RED;
         }
     }
+    static contextType = LoafContext;
+
     constructor(props) {
         super(props)
         this.state = {}
@@ -27,24 +30,23 @@ class CompanyStatistics extends Component {
     componentDidMount() {
         if (this.props.activeTicker && this.props.activeTicker !== 'portfolio') {
 
-            let data = getBatchData(this.props.activeTicker, 'quote,stats', filter);
+            let data = getBatchData(this.props.activeTicker, 'stats', filter);
             data.then(response => {
                 this.setState({
                     stats: response.stats,
-                    quote: response.quote,
                     data: [
                         {
-                            title: parseFloat(response.quote.week52High).toFixed(2),
+                            title: parseFloat(this.context.quotes[this.props.activeTicker].quote.week52High).toFixed(2),
                             label: '52 Week High',
-                            color: response.quote.week52High > 0 ? GREEN : RED,
+                            color: this.context.quotes[this.props.activeTicker].quote.week52High > 0 ? GREEN : RED,
                             decimals: 2,
                             suffix: '',
                             prefix: '$',
                             duration: 1
                         },
                         {
-                            title: parseFloat(response.quote.week52Low).toFixed(2),
-                            color: response.quote.week52Low > 0 ? GREEN : RED,
+                            title: parseFloat(this.context.quotes[this.props.activeTicker].quote.week52Low).toFixed(2),
+                            color: this.context.quotes[this.props.activeTicker].quote.week52Low > 0 ? GREEN : RED,
                             label: '52 Week Low',
                             decimals: 2,
                             suffix: '',
@@ -61,12 +63,12 @@ class CompanyStatistics extends Component {
                             duration: 1
                         },
                         {
-                            title: parseFloat(response.quote.ytdChange * 100).toFixed(2),
+                            title: parseFloat(this.context.quotes[this.props.activeTicker].quote.ytdChange * 100).toFixed(2),
                             label: 'Change YTD',
                             decimals: 2,
                             suffix: '%',
                             prefix: '',
-                            color: response.quote.ytdChange > 0 ? GREEN : RED,
+                            color: this.context.quotes[this.props.activeTicker].quote.ytdChange > 0 ? GREEN : RED,
                             duration: 1
                         },
                         {
@@ -95,15 +97,7 @@ class CompanyStatistics extends Component {
                             suffix: 'B',
                             prefix: '$',
                             duration: 1
-                        },
-                        // {
-                        //     title: parseFloat(response.quote.latestVolume),
-                        //     label: 'Latest Volume',
-                        //     decimals: 0,
-                        //     suffix: '',
-                        //     prefix: '',
-                        //     duration: 1
-                        // },
+                        }
                     ]
                 })
             })
@@ -113,24 +107,23 @@ class CompanyStatistics extends Component {
         if (this.props.activeTicker !== prevProps.activeTicker && this.props.activeTicker !== 'portfolio') // Check if it's a new user, you can also use some unique property, like the ID
         {
 
-            let data = getBatchData(this.props.activeTicker, 'quote,stats');
+            let data = getBatchData(this.props.activeTicker, 'stats');
             data.then(response => {
                 this.setState({
                     stats: response.stats,
-                    quote: response.quote,
                     data: [
                         {
-                            title: parseFloat(response.quote.week52High).toFixed(2),
+                            title: parseFloat(this.context.quotes[this.props.activeTicker].quote.week52High).toFixed(2),
                             label: '52 Week High',
-                            color: response.quote.week52High > 0 ? GREEN : RED,
+                            color: this.context.quotes[this.props.activeTicker].quote.week52High > 0 ? GREEN : RED,
                             decimals: 2,
                             suffix: '',
                             prefix: '$',
                             duration: 1
                         },
                         {
-                            title: parseFloat(response.quote.week52Low).toFixed(2),
-                            color: response.quote.week52Low > 0 ? GREEN : RED,
+                            title: parseFloat(this.context.quotes[this.props.activeTicker].quote.week52Low).toFixed(2),
+                            color: this.context.quotes[this.props.activeTicker].quote.week52Low > 0 ? GREEN : RED,
                             label: '52 Week Low',
                             decimals: 2,
                             suffix: '',
@@ -147,12 +140,12 @@ class CompanyStatistics extends Component {
                             duration: 1
                         },
                         {
-                            title: parseFloat(response.quote.ytdChange * 100).toFixed(2),
+                            title: parseFloat(this.context.quotes[this.props.activeTicker].quote.ytdChange * 100).toFixed(2),
                             label: 'Change YTD',
                             decimals: 2,
                             suffix: '%',
                             prefix: '',
-                            color: response.quote.ytdChange > 0 ? GREEN : RED,
+                            color: this.context.quotes[this.props.activeTicker].quote.ytdChange > 0 ? GREEN : RED,
                             duration: 1
                         },
                         {
@@ -182,14 +175,6 @@ class CompanyStatistics extends Component {
                             prefix: '$',
                             duration: 1
                         },
-                        // {
-                        //     title: parseFloat(response.quote.latestVolume),
-                        //     label: 'Latest Volume',
-                        //     decimals: 0,
-                        //     suffix: '',
-                        //     prefix: '',
-                        //     duration: 1
-                        // },
                     ]
                 })
             })

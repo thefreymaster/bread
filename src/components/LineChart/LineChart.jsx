@@ -81,9 +81,9 @@ class LineChart extends Component {
                         data={this.state.data}
                         margin={{
                             "top": 50,
-                            "right": 110,
+                            "right": 40,
                             "bottom": 50,
-                            "left": 60
+                            "left": 40
                         }}
                         xScale={{
                             "type": "point"
