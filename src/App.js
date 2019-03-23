@@ -51,6 +51,18 @@ class App extends Component {
       activeTickerIndex: parseInt(index)
     }, addCompanyToTrackedList ? this.addCompanyToTrackedCompanies(company) : null)
   }
+  setActiveAfterSubmit = (value, company, index) => {
+    if (index === undefined) {
+      index = 0;
+    }
+    else{
+      index = this.state.trackedCompanies.length;
+    }
+    this.setState({
+      activeTicker: value,
+      activeTickerIndex: parseInt(index)
+    })
+  }
   receiveDataFromChild = (portfolio) => {
     this.setState({
       portfolio: portfolio
@@ -78,7 +90,7 @@ class App extends Component {
     }
 
   }
-  addCompanyToTrackedCompanies = (company) => {
+  addCompanyToTrackedCompanies = (symbol, company) => {
     let that = this;
     let _trackedCompanies = this.state.trackedCompanies;
     let quote = {};
@@ -99,6 +111,8 @@ class App extends Component {
         }
         that.setState({
           quotes: quotes
+        }, () => {
+          that.setActiveAfterSubmit(symbol, company)
         })
       })
     }
@@ -113,10 +127,10 @@ class App extends Component {
         else {
           quotes = Object.assign(quotes, { [response.symbol]: { quote: response } })
         }
-        debugger;
-
         that.setState({
           quotes: quotes
+        }, () => {
+          that.setActiveAfterSubmit(symbol, company)
         })
       })
     }
@@ -192,6 +206,7 @@ class App extends Component {
       return (
         <LoafContext.Provider
           value={{
+            addCompanyToTrackedCompanies: this.addCompanyToTrackedCompanies,
             activeTicker: this.state.activeTicker,
             screen: this.state.screen,
             trackedCompanies: this.state.trackedCompanies,
