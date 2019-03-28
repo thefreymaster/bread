@@ -119,7 +119,7 @@ class Bread extends Component {
                                     <GetRecomendations showRecomendations={this.showRecomendations} />
                             }
                         </div>
-                        <div className="flex flex-column width-30 dashed-border-top flex-center-start news-container">
+                        <div className="flex flex-column width-30 dashed-border-top flex-center-start news-container" style={{height: (window.innerHeight-20)*0.5}}>
                             <News news={this.state.news} />
                         </div>
                     </div>
