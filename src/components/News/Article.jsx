@@ -24,7 +24,7 @@ const Article = (props) => {
         if (positive && negative)
             return 'heat-map'
         else{
-            return 'paper-clip'
+            return 'exception'
         }
 
     }

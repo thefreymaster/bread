@@ -37,3 +37,9 @@
 .ant-list-split .ant-list-item {
     border-bottom: 2px dashed #e8e8e8 !important;
 }
+body{
+    color: #000000cc !important;
+}
+a{
+    color: #000000cc !important;
+}
