@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Redirect, Switch, withRouter } from "react-router
 
 import './App.css';
 import './Overrides.css'
+import './Animations.css'
 import 'antd/dist/antd.css';
 import { Layout, message, notification, Icon } from 'antd';
 import { writeUserData, getFirebaseAuthObject, readUserCompanyData, updateUserCompanyData, updateUserCompanyShareData } from './api/FirebaseAPI';

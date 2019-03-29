@@ -21,6 +21,16 @@ import { withRouter } from 'react-router-dom';
 const filter = 'ytdChange,changePercent,week52High,week52Low,latestPrice,previousClose,extendedPrice,companyName,symbol'
 
 class Companies extends Component {
+    condense = () => {
+        this.setState({
+            condensed: false
+        })
+    }
+    expand = () => {
+        this.setState({
+            condensed: true
+        })
+    }
     openAddCompanySideBar = () => {
         this.setState({
             open: true
@@ -130,7 +140,7 @@ class Companies extends Component {
         let messageJSON = JSON.parse(message)
         // console.log(JSON.parse(message))
         let change;
-        if (messageJSON) {
+        if (messageJSON && messageJSON.lastSalePrice !== _quickQuotes[messageJSON.symbol].quote.latestPrice) {
             setTimeout(() => {
                 if (messageJSON.symbol) {
                     _quickQuotes[messageJSON.symbol].quote.latestPrice = messageJSON.lastSalePrice;
@@ -178,9 +188,11 @@ class Companies extends Component {
             minute: getMinutesOfDay(),
             hour: getHourOfDay(),
             day: getDayOfWeek(),
+            condensed: false
         }
         this.state.socket.on('message', message => this.state.realTimeStreaming ? this.update(message) : null)
-
+        this.condense = this.condense.bind(this);
+        this.expand = this.expand.bind(this);
 
     }
     findIndex = (symbol) => {
@@ -312,6 +324,17 @@ class Companies extends Component {
                                         <Tooltip placement="top" title={'Show Losers First'}>
                                             <Button size='large' style={{ color: RED }} onClick={this.context.sortAscending} type="dashed" shape="circle" icon="fall" />
                                         </Tooltip>
+                                        {
+                                            this.state.condensed
+                                                ?
+                                                <Tooltip placement="top" title={'Expand Companies'}>
+                                                    <Button size='large' onClick={this.condense} type="dashed" shape="circle" icon="fullscreen" />
+                                                </Tooltip>
+                                                :
+                                                <Tooltip placement="top" title={'Condense Companies'}>
+                                                    <Button size='large' onClick={this.expand} type="dashed" shape="circle" icon="fullscreen-exit" />
+                                                </Tooltip>
+                                        }
                                     </Fragment>
                             }
 
@@ -336,7 +359,7 @@ class Companies extends Component {
                                                             fontWeight={900}
                                                             titleFontSize={14}
                                                             title={company.symbol}
-                                                            label={!that.state.quickQuotes ? null : that.state.quickQuotes[company.symbol] !== undefined ? that.state.quickQuotes[company.symbol].quote.companyName : null}
+                                                            label={!that.state.quickQuotes && this.state.condensed ? null : that.state.quickQuotes[company.symbol] !== undefined && !this.state.condensed ? that.state.quickQuotes[company.symbol].quote.companyName : null}
                                                             center={false}
                                                         />
                                                         <Metric
@@ -355,12 +378,19 @@ class Companies extends Component {
                                                         ? null
                                                         : that.state.quickQuotes[company.symbol]
                                                             ? <div className={'flex flex-badge flex-column'}>
-                                                                <ChangeBadge
-                                                                    backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
-                                                                    company={company}
-                                                                    width={75}
-                                                                    count={that.determineText(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
-                                                                />
+                                                                {
+                                                                    this.state.condensed
+                                                                        ?
+                                                                        null
+                                                                        :
+                                                                        <ChangeBadge
+                                                                            backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
+                                                                            company={company}
+                                                                            width={75}
+                                                                            count={that.determineText(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
+                                                                        />
+                                                                }
+
                                                                 <ChangeBadge
                                                                     backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
                                                                     company={company}

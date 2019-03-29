@@ -10,9 +10,21 @@ import GetRecomendations from '../Recomendations/GetRecomendations';
 import { getCompanyNews } from './../../api/NewsAPI';
 import News from './../News/News';
 import { LoafContext } from '../../LoafContext';
+import Loader from 'react-loader-spinner'
+
 
 
 class Bread extends Component {
+    newsIsLoading = () => {
+        this.setState({
+            newsIsLoading: true
+        })
+    }
+    newsComplete = () => {
+        this.setState({
+            newsIsLoading: false
+        })
+    }
     showRecomendations = () => {
         this.setState({
             getRecomendations: true
@@ -23,7 +35,8 @@ class Bread extends Component {
     }
     componentWillMount() {
         if (this.props.activeTickerIndex === undefined) {
-            this.props.setActiveTicker(this.props.trackedCompanies[0].symbol, this.props.trackedCompanies[0], false)
+            this.props.setActiveTicker(this.props.trackedCompanies[0].symbol, this.props.trackedCompanies[0], false);
+            this.newsIsLoading()
             let news = getCompanyNews(this.props.trackedCompanies[0].symbol);
             news.then(response => {
                 let newsFiltered = [];
@@ -36,12 +49,14 @@ class Bread extends Component {
                 });
                 this.setState({
                     news: newsFiltered
-                })
+                });
+                this.newsComplete();
             })
         }
     }
     componentDidUpdate(prevProps) {
         if (this.props.activeTicker !== prevProps.activeTicker) {
+            this.newsIsLoading()
             this.setState({
                 getRecomendations: false
             })
@@ -58,6 +73,7 @@ class Bread extends Component {
                 this.setState({
                     news: newsFiltered
                 })
+                this.newsComplete();
             })
         }
     }
@@ -68,7 +84,8 @@ class Bread extends Component {
         this.state = {
             green: "#2ec061",
             red: "#c61515",
-            getRecomendations: false
+            getRecomendations: false,
+            newsIsLoading: false,
         }
     }
     render() {
@@ -119,8 +136,23 @@ class Bread extends Component {
                                     <GetRecomendations showRecomendations={this.showRecomendations} />
                             }
                         </div>
-                        <div className="flex flex-column width-30 dashed-border-top flex-center-start news-container" style={{height: (window.innerHeight-20)*0.5}}>
-                            <News news={this.state.news} />
+                        <div className="flex flex-column width-30 dashed-border-top flex-center-start news-container" style={{ height: (window.innerHeight - 20) * 0.5 }}>
+                            {
+                                this.state.newsIsLoading
+                                    ?
+                                    <div className="flex flex-row flex-center show-zoom-animation fade-in-animation" style={{ height: '100%', width: this.props.width }}>
+                                        <Loader
+                                            type="Bars"
+                                            color="#000000a6"
+                                            height="20"
+                                            width="20"
+                                        />
+                                    </div>
+                                    :
+                                    <div className="fade-in-animation opacity-0">
+                                        <News news={this.state.news} />
+                                    </div>
+                            }
                         </div>
                     </div>
                     <Systems />

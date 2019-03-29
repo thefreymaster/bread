@@ -8,9 +8,17 @@ const News = (props) => {
         return (
             <div style={{ paddingTop: 20, paddingBottom: 20 }}>
                 {props.news.map((article, index) => {
-                    return (
-                        <Article article={article} index={index} length={props.news.length} />
-                    )
+                    debugger;
+                    if (props.news.length === 0)
+                        return (
+                            <div className="flex flex-center">
+                                <p>No New Found</p>
+                            </div>
+                        )
+                    else
+                        return (
+                            <Article article={article} index={index} length={props.news.length} />
+                        )
                 })}
             </div>
         )
