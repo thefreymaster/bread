@@ -186,28 +186,31 @@ class CompanyStatistics extends Component {
         else {
             return (
                 <Fragment>
+                     <div className='shares-divider-no-padding'></div>
                     <List
                         itemLayout="horizontal"
                         dataSource={this.state.data}
-                        renderItem={item => (
-                            <List.Item>
-                                <Metric
-                                    number
-                                    fontFamily={'Open Sans'}
-                                    color={item.color}
-                                    fontWeight={900}
-                                    paddingleft
-                                    duration={item.duration}
-                                    suffix={item.suffix}
-                                    prefix={item.prefix}
-                                    decimals={item.decimals}
-                                    titleFontSize={14}
-                                    title={item.title}
-                                    labelFontSize={11}
-                                    label={item.label} />
+                        renderItem={item => {
+                            return (
+                                <List.Item>
+                                    <Metric
+                                        number
+                                        fontFamily={'Open Sans'}
+                                        color={item.color}
+                                        fontWeight={900}
+                                        paddingleft
+                                        duration={item.duration}
+                                        suffix={item.suffix}
+                                        prefix={item.prefix}
+                                        decimals={item.decimals}
+                                        titleFontSize={14}
+                                        title={item.title}
+                                        labelFontSize={11}
+                                        label={item.label} />
                                     <div className='shares-divider'></div>
-                            </List.Item>
-                        )}
+                                </List.Item>
+                            )
+                        }}
                     />
                     <PoweredBy />
                 </Fragment>

@@ -107,7 +107,7 @@ class Today extends Component {
         else {
             let quote = this.context.quotes[this.context.activeTicker].quote;
             return (
-                <div className={"loaf-component flex flex-column flex-center border-right"} style={{ height: (window.innerHeight - 84) * 0.40, width: '50%' }}>
+                <div className={"loaf-component flex flex-column flex-center border-top border-right"} style={{ height: (window.innerHeight - 84) * 0.40, width: '50%' }}>
                     <Metric
                         titleFontSize={72}
                         center

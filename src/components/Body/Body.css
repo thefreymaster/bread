@@ -28,6 +28,9 @@
 .border-right{
     border-right: 2px dashed #72727224;
 }
+.border-top{
+    border-top: 2px dashed #72727224;
+}
 .marginBottom10{
     margin-bottom: 10px;
 }
@@ -41,6 +44,9 @@
     border-top: 2px dashed #dfdfdf;
 	margin-top: 10px;
 	padding-top: 10px;
+}
+.shares-divider-no-padding{
+    border-top: 2px dashed #dfdfdf;
 }
 .systems{
     bottom: 0;

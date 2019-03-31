@@ -164,7 +164,13 @@
     border-bottom: 2px dashed #ebebeb;
     border-right: 2px dashed #ebebeb;
     border-bottom-right-radius: 12px;
+    border-top-right-radius: 12px;
+    border-top: 2px dashed #ebebeb;
     z-index: 1;
+}
+.logo-large{
+    max-width: 48px;
+    border-radius: 5px;
 }
 .border-bottom-dashed{
     border-bottom: 2px dashed #dedede;

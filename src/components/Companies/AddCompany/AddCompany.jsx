@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Icon } from 'antd';
+import { Button, Icon, AutoComplete } from 'antd';
 import { getAllSymbols } from '../../../api/SymbolsAPI';
 import { Input } from 'antd';
 import Metric from '../../Body/Metric';
@@ -12,12 +12,20 @@ class AddCompany extends Component {
     search = (e) => {
         let searchedCompanies = []
         for (let symbol of this.state.symbols) {
-            if (symbol.symbol.toUpperCase().includes(e.target.value.toUpperCase())) {
+            if(e.target.value.length === 1){
+                if (symbol.symbol.toUpperCase().includes(e.target.value.toUpperCase()) && symbol.symbol.length === 1) {
+                    searchedCompanies.push(symbol)
+                }
+            }
+            else if (symbol.symbol.toUpperCase().includes(e.target.value.toUpperCase()) && symbol.symbol.length >= 2 && e.target.value.length >= 2) {
                 searchedCompanies.push(symbol)
             }
-            // else if (symbol.name.toUpperCase().includes(e.target.value.toUpperCase())) {
-            //     searchedCompanies.push(symbol)
-            // }
+            else if (symbol.symbol.toUpperCase().includes(e.target.value.toUpperCase()) && symbol.symbol.length >= 3 && e.target.value.length >= 3) {
+                searchedCompanies.push(symbol)
+            }
+            else if (symbol.symbol.toUpperCase().includes(e.target.value.toUpperCase()) && symbol.symbol.length >= 4 && e.target.value.length >= 4) {
+                searchedCompanies.push(symbol)
+            }
         }
         this.setState({
             searchedCompanies: searchedCompanies
@@ -44,13 +52,13 @@ class AddCompany extends Component {
             this.setState({
                 symbolsFetched: false,
             })
-            let data = getAllSymbols();
-            data.then(response => {
-                this.setState({
-                    symbols: response,
-                    symbolsFetched: true,
-                })
-            })
+            // let data = getAllSymbols();
+            // data.then(response => {
+            //     this.setState({
+            //         symbols: response,
+            //         symbolsFetched: true,
+            //     })
+            // })
         }
     }
     render() {
@@ -70,7 +78,7 @@ class AddCompany extends Component {
                     label={'Search by a valid company symbol'}
                     center={true}
                 />
-                <div className={classnames("padding10 flex margin-auto", {'width-40': this.props.screen.md || this.props.screen.lg || this.props.screen.xl, 'width-100': this.props.screen.xs || this.props.screen.sm})}>
+                <div className={classnames("padding10 flex margin-auto", { 'width-40': this.props.screen.md || this.props.screen.lg || this.props.screen.xl, 'width-100': this.props.screen.xs || this.props.screen.sm })}>
                     <Search
                         addonBefore={this.state.symbolsFetched ? null : <Icon type="loading" />}
                         disabled={!this.state.symbolsFetched}

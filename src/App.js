@@ -29,6 +29,7 @@ import { showNotification } from './components/HelperFunctions/Notifications';
 import RightSider from './components/RightSider/RightSider'
 import { RED, GREEN } from './Constants';
 import { getPortfolioTotal, getBest, getWorst } from './api/PortfolioAPI';
+import Settings from './components/Settings/Settings';
 
 
 const firebase = getFirebaseAuthObject();
@@ -56,7 +57,7 @@ class App extends Component {
     if (index === undefined) {
       index = 0;
     }
-    else{
+    else {
       index = this.state.trackedCompanies.length;
     }
     this.setState({
@@ -208,6 +209,7 @@ class App extends Component {
         <LoafContext.Provider
           value={{
             addCompanyToTrackedCompanies: this.addCompanyToTrackedCompanies,
+            account: JSON.parse(localStorage.getItem('LOAF_USER')),
             activeTicker: this.state.activeTicker,
             screen: this.state.screen,
             trackedCompanies: this.state.trackedCompanies,
@@ -348,6 +350,16 @@ class App extends Component {
                                 setActiveTicker={this.setActiveTicker} />
                           }
                           />
+                          <Route path="/settings" render={props =>
+                            this.state.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
+                              ?
+                              <Redirect
+                                to={'/rise'}
+                              />
+                              :
+                              <Settings />
+                          }
+                          />
                           <Route path="/" render={props =>
                             this.state.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
                               ?
@@ -359,6 +371,7 @@ class App extends Component {
                                 to={'/quote'}
                               />}
                           />
+
 
                         </Switch>
                       </Content>

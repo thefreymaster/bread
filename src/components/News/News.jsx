@@ -8,7 +8,6 @@ const News = (props) => {
         return (
             <div style={{ paddingTop: 20, paddingBottom: 20 }}>
                 {props.news.map((article, index) => {
-                    debugger;
                     if (props.news.length === 0)
                         return (
                             <div className="flex flex-center">

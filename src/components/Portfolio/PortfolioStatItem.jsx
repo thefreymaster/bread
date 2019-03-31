@@ -9,7 +9,7 @@ const PortfolioStatItem = (props) => {
     }
     else {
         return (
-            <div className='flex flex-row width-100'>
+            <div className='flex flex-row width-100' style={props.style}>
                 <div className='flex flex-column width-100'>
                     <Metric
                         fontFamily={'Open Sans'}

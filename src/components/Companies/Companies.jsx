@@ -378,6 +378,12 @@ class Companies extends Component {
                                                         ? null
                                                         : that.state.quickQuotes[company.symbol]
                                                             ? <div className={'flex flex-badge flex-column'}>
+                                                                <ChangeBadge
+                                                                    backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
+                                                                    company={company}
+                                                                    width={75}
+                                                                    count={that.determineText(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
+                                                                />
                                                                 {
                                                                     this.state.condensed
                                                                         ?
@@ -387,16 +393,12 @@ class Companies extends Component {
                                                                             backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
                                                                             company={company}
                                                                             width={75}
-                                                                            count={that.determineText(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
+                                                                            count={that.determineChange(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
                                                                         />
                                                                 }
 
-                                                                <ChangeBadge
-                                                                    backgroundColor={that.determineColor(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
-                                                                    company={company}
-                                                                    width={75}
-                                                                    count={that.determineChange(company.shares.count, company.shares.price, that.state.quickQuotes[company.symbol].quote)}
-                                                                />
+
+
                                                             </div>
                                                             : null
                                                     }
