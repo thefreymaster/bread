@@ -11,11 +11,9 @@ const SearchedCompanies = (props) => {
             props.searchedCompanies.map((company, index) => {
                 if (index < 10)
                     return (
-                        <Link to="/quote">
                             <div className=" loaf-button-hover-action paddingTop10 paddingLeft10 paddingButtom10" onClick={() => { props.addCompanyToTrackedCompanies(company.symbol, company, true) }}>
                                 <Metric center fontFamily={'Open Sans'} fontWeight={900} titleFontSize={14} title={company.symbol} labelFontSize={11} />
                             </div>
-                        </Link>
 
                     )
             })

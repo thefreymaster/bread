@@ -1,5 +1,6 @@
 import React from 'react'
 import Article from './Article';
+import { Icon } from 'antd'
 
 const News = (props) => {
     if (!props.news)
@@ -8,17 +9,20 @@ const News = (props) => {
         return (
             <div style={{ paddingTop: 20, paddingBottom: 20 }}>
                 {props.news.map((article, index) => {
-                    if (props.news.length === 0)
-                        return (
-                            <div className="flex flex-center">
-                                <p>No New Found</p>
-                            </div>
-                        )
-                    else
-                        return (
-                            <Article article={article} index={index} length={props.news.length} />
-                        )
+                    return (
+                        <Article article={article} index={index} length={props.news.length} />
+                    )
                 })}
+                {
+                    props.news.length === 0
+                        ?
+                        <div className="flex flex-column">
+                            <Icon style={{fontSize: 24}} type="info-circle" />
+                            <p>No News Available</p>
+                        </div>
+                        :
+                        null
+                }
             </div>
         )
 }

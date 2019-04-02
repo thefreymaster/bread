@@ -347,7 +347,7 @@ class Companies extends Component {
 
                             const that = this;
                             return (
-                                <Link to="/quote" key={company.symbol} onClick={() => { this.props.setActiveTicker(company.symbol, company, false, index) }}>
+                                <Link to={`/quote/${company.symbol.toLowerCase()}`} key={company.symbol} onClick={() => { this.props.setActiveTicker(company.symbol, company, false, index) }}>
                                     <div
                                         className={classnames('padding10 companies-button loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === that.props.activeTicker })}>
                                         <div className={classnames("flex flex-row")}>

@@ -26,7 +26,7 @@ class Navigation extends Component {
                         ?
                         <Fragment>
                             <Link to="/login">
-                                <Button style={{ borderRadius: 50 }} className={'loaf-button open-sans'} type="default" icon="lock">Sign In</Button>
+                                <Button style={{ borderRadius: 50 }} className={'loaf-button open-sans'} type="default" icon="login">Sign In</Button>
                             </Link>
                             <Link to="/login">
                                 <Button className={'loaf-button open-sans'} style={{ marginLeft: 10, borderRadius: 50 }} type="default" icon="user-add">Register</Button>

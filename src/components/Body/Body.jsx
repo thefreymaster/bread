@@ -11,7 +11,8 @@ import { getCompanyNews } from './../../api/NewsAPI';
 import News from './../News/News';
 import { LoafContext } from '../../LoafContext';
 import Loader from 'react-loader-spinner'
-
+import { withRouter } from 'react-router-dom';
+import { findIndex } from './../HelperFunctions/Helper';
 
 
 class Bread extends Component {
@@ -34,7 +35,25 @@ class Bread extends Component {
         this.setState({ ...obj })
     }
     componentWillMount() {
-        if (this.props.activeTickerIndex === undefined) {
+        let { pathname } = this.props.location;
+        let containsSymbol = pathname.indexOf('/quote/');
+        let urlParamIndex = -1;
+        if (containsSymbol !== -1) {
+            let symbol = pathname.substring(7, pathname.lenght)
+            this.props.trackedCompanies.map((company, index) => {
+                if (company.symbol === (symbol).toUpperCase()) {
+                    urlParamIndex = index
+                }
+            })
+            // if(urlParamIndex === -1)
+            // {
+            //     this.context.addCompanyToTrackedCompanies((symbol).toUpperCase(), this.props.trackedCompanies[urlParamIndex], true);
+            // }
+            // else{
+                this.context.setActiveTicker((symbol).toUpperCase(), this.props.trackedCompanies[urlParamIndex], false, urlParamIndex);
+            // }
+        }
+        else {
             this.props.setActiveTicker(this.props.trackedCompanies[0].symbol, this.props.trackedCompanies[0], false);
             this.newsIsLoading()
             let news = getCompanyNews(this.props.trackedCompanies[0].symbol);
@@ -96,7 +115,7 @@ class Bread extends Component {
             const userHasShares = this.props.trackedCompanies[index].shares.hasShares
             const count = this.props.trackedCompanies[index].shares.count;
             const price = this.props.trackedCompanies[index].shares.price;
-            let quote = this.context.quotes[this.context.activeTicker].quote;
+            let { quote } = this.context.quotes[this.context.activeTicker];
 
             return (
                 <div className="flex flex-column" style={{ marginRight: 15 }}>
@@ -118,7 +137,7 @@ class Bread extends Component {
                     <div className='flex flex-row'>
                         <div className="flex flex-column dashed-border-top width-50">
                             <div className="flex flex-row dashed-border-bottom width-100">
-                                <LineChart screen={this.props.screen} width={'50%'} ticker={this.props.activeTicker} timeframe={'1d'} interval={10} title='1 Day' rightDivider />
+                                <LineChart screen={this.props.screen} width={'50%'} ticker={this.props.activeTicker} timeframe={'1d'} interval={8} title='1 Day' rightDivider />
                                 <LineChart screen={this.props.screen} width={'50%'} ticker={this.props.activeTicker} timeframe={'6m'} interval={2} title='6 Month' rightDivider />
                             </div>
                             <div className="flex flex-row width-100">
@@ -126,17 +145,23 @@ class Bread extends Component {
                                 <LineChart screen={this.props.screen} width={'50%'} ticker={this.props.activeTicker} timeframe={'5y'} interval={20} title='5 Year' rightDivider />
                             </div>
                         </div>
+                        {
+                            this.context.screen.lg || this.context.screen.xl
+                                ?
+                                <div className="flex flex-column width-20 dashed-border-top flex-center dashed-border-right">
+                                    {
+                                        this.state.getRecomendations
+                                            ?
+                                            <Recomendations />
+                                            :
+                                            <GetRecomendations showRecomendations={this.showRecomendations} />
+                                    }
+                                </div>
+                                :
+                                null
+                        }
 
-                        <div className="flex flex-column width-20 dashed-border-top flex-center dashed-border-right">
-                            {
-                                this.state.getRecomendations
-                                    ?
-                                    <Recomendations />
-                                    :
-                                    <GetRecomendations showRecomendations={this.showRecomendations} />
-                            }
-                        </div>
-                        <div className="flex flex-column width-30 dashed-border-top flex-center-start news-container" style={{ height: (window.innerHeight - 20) * 0.5 }}>
+                        <div className={classnames('flex flex-column dashed-border-top flex-center-start news-container', { 'width-30': this.context.screen.lg || this.context.screen.xl, 'width-50': this.context.screen.xs || this.context.screen.sm || this.context.screen.md })} style={{ height: (window.innerHeight - 20) * 0.5 }}>
                             {
                                 this.state.newsIsLoading
                                     ?
@@ -163,4 +188,4 @@ class Bread extends Component {
     }
 }
 
-export default Bread;
+export default withRouter(Bread);

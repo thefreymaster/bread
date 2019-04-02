@@ -54,6 +54,7 @@ class App extends Component {
     }, addCompanyToTrackedList ? this.addCompanyToTrackedCompanies(company) : null)
   }
   setActiveAfterSubmit = (value, company, index) => {
+    let that = this;
     if (index === undefined) {
       index = 0;
     }
@@ -63,6 +64,11 @@ class App extends Component {
     this.setState({
       activeTicker: value,
       activeTickerIndex: parseInt(index)
+    }, () => {
+      debugger;
+      return (
+        <Redirect to={`/quote/${that.state.activeTicker}`} />
+      )
     })
   }
   receiveDataFromChild = (portfolio) => {
@@ -96,7 +102,7 @@ class App extends Component {
     let that = this;
     let _trackedCompanies = this.state.trackedCompanies;
     let quote = {};
-    let quotes = {}
+    let quotes = {};
     company['shares'] = { price: '', count: '', hasShares: false };
     _trackedCompanies.push(company);
     if (localStorage.getItem('LOAF_USER')) {
@@ -251,7 +257,7 @@ class App extends Component {
                       } />
                       <Route path="/rise" render={props => <GetStarted />
                       } />
-                      <Route path="/quote" render={props =>
+                      <Route path={`/quote/${this.state.activeTicker}`} render={props =>
                         this.state.trackedCompanies.length === 0
                           ?
                           <AddCompany
@@ -406,8 +412,10 @@ class App extends Component {
     this.setState({
       trackedCompanies: trackedCompanies
     }, () => {
-      if (this.state.activeTicker !== "portfolio")
+      if (this.state.activeTicker !== "portfolio" && this.state.activeTicker === undefined)
         this.setActiveTicker(trackedCompanies[0].symbol, trackedCompanies[0], false, 0)
+      else
+        this.setActiveTicker(trackedCompanies[this.state.activeTickerIndex].symbol, trackedCompanies[this.state.activeTickerIndex], false, this.state.activeTickerIndex)
     })
   }
   sortDecending = () => {
@@ -416,8 +424,11 @@ class App extends Component {
     this.setState({
       trackedCompanies: trackedCompanies
     }, () => {
-      if (this.state.activeTicker !== "portfolio")
+      if (this.state.activeTicker !== "portfolio" && this.state.activeTicker === undefined)
         this.setActiveTicker(trackedCompanies[0].symbol, trackedCompanies[0], false, 0)
+      else
+        this.setActiveTicker(trackedCompanies[this.state.activeTickerIndex].symbol, trackedCompanies[this.state.activeTickerIndex], false, this.state.activeTickerIndex)
+
     })
   }
   sortABC = () => {
@@ -426,8 +437,10 @@ class App extends Component {
     this.setState({
       trackedCompanies: trackedCompanies
     }, () => {
-      if (this.state.activeTicker !== "portfolio")
+      if (this.state.activeTicker !== "portfolio" && this.state.activeTicker === undefined)
         this.setActiveTicker(trackedCompanies[0].symbol, trackedCompanies[0], false, 0)
+      else
+        this.setActiveTicker(trackedCompanies[this.state.activeTickerIndex].symbol, trackedCompanies[this.state.activeTickerIndex], false, this.state.activeTickerIndex)
     })
   }
 
@@ -437,8 +450,10 @@ class App extends Component {
     this.setState({
       trackedCompanies: trackedCompanies
     }, () => {
-      if (this.state.activeTicker !== "portfolio")
+      if (this.state.activeTicker !== "portfolio" && this.state.activeTicker === undefined)
         this.setActiveTicker(trackedCompanies[0].symbol, trackedCompanies[0], false, 0)
+      else
+        this.setActiveTicker(trackedCompanies[this.state.activeTickerIndex].symbol, trackedCompanies[this.state.activeTickerIndex], false, this.state.activeTickerIndex)
     })
   }
 
@@ -469,16 +484,20 @@ class App extends Component {
     else if (localStorage.getItem("trackedCompanies")) {
       this.fetchingTrackedCompanies();
       let _trackedCompanies = JSON.parse(localStorage.getItem("trackedCompanies"));
-      _trackedCompanies.sort(function (a, b) {
-        if (a.symbol < b.symbol) { return -1; }
-        if (a.symbol > b.symbol) { return 1; }
-        return 0;
-      })
+      // _trackedCompanies.sort(function (a, b) {
+      //   if (a.symbol < b.symbol) { return -1; }
+      //   if (a.symbol > b.symbol) { return 1; }
+      //   return 0;
+      // })
 
       this.setState({
         trackedCompanies: _trackedCompanies,
       }, () => {
-        this.setActiveTicker(_trackedCompanies[0].symbol, _trackedCompanies[0], false)
+        if (this.state.activeTicker !== "portfolio" || this.state.activeTicker === undefined)
+          this.setActiveTicker(_trackedCompanies[0].symbol, _trackedCompanies[0], false, 0)
+        else
+          this.setActiveTicker(_trackedCompanies[this.state.activeTickerIndex].symbol, _trackedCompanies[this.state.activeTickerIndex], false, this.state.activeTickerIndex)
+        
         this.getQuotesData();
       })
     }

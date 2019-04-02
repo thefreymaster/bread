@@ -9,7 +9,7 @@ const IEXENDPOINT = process.env.REACT_APP_IEX_ENDPOINT;
 const IEXTOKEN = '?token=' + process.env.REACT_APP_IEX_TOKEN;
 const IEXTOKEN_WITHAND = '&token=' + process.env.REACT_APP_IEX_TOKEN
 
-const POSITIVE_WORDS = ['strong', 'outperforming', 'gainers', 'leads', 'brilliant', 'increases', 'jumped', 'well', 'rises', 'unbelievable', 'king'];
+const POSITIVE_WORDS = ['strong', 'outperforming', 'gainers', 'leads', 'brilliant', 'increases', 'jumped', 'well', 'rises', 'unbelievable', 'king', 'rose'];
 const NEGATIVE_WORDS = ['sell', 'despite', 'pricey', 'frustrated', 'issues', 'struggles', 'layoffs', 'denies', 'restructure']
 
 export { 
