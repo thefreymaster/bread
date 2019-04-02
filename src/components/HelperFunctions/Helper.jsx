@@ -41,6 +41,8 @@ function determineIfMarketsAreOpen(day, hour, minute){
         return false;
     }
 }
+
+
 function findIndex(symbol, trackedCompanies) {
     for (let index of Object.keys(trackedCompanies)) {
         if (trackedCompanies[index].symbol === symbol) {
@@ -85,6 +87,15 @@ function sortCompaniesYTDChange(companies){
     return companies;
 }
 
+function searchForSymbol(companies, newSymbol) {
+    for(let company of companies){
+        if(company.symbol === (newSymbol).toUpperCase() && company.symbol.length === newSymbol.length)
+        {
+            return company;
+        }
+    }
+}
+
 export { calculateTotalChange, 
           getPercentChange, 
           getPercentChangeGeneric, 
@@ -96,5 +107,6 @@ export { calculateTotalChange,
           sortCompaniesAscending,
           sortCompaniesDescending,
           sortCompaniesABC,
-          sortCompaniesYTDChange
+          sortCompaniesYTDChange,
+          searchForSymbol
         }

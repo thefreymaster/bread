@@ -26,7 +26,7 @@ const Settings = (props: Object) => (
                                         title={'Bread'}
                                         center
                                         color={GREY}
-                                        label={'Version 1.00'}
+                                        label={'Version 1.01'}
                                         labelFontSize={12}
                                     />
                                 </div>

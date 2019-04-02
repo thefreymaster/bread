@@ -12,7 +12,8 @@ import News from './../News/News';
 import { LoafContext } from '../../LoafContext';
 import Loader from 'react-loader-spinner'
 import { withRouter } from 'react-router-dom';
-import { findIndex } from './../HelperFunctions/Helper';
+import { findIndex, searchForSymbol } from './../HelperFunctions/Helper';
+import { getAllSymbols } from '../../api/SymbolsAPI';
 
 
 class Bread extends Component {
@@ -39,19 +40,23 @@ class Bread extends Component {
         let containsSymbol = pathname.indexOf('/quote/');
         let urlParamIndex = -1;
         if (containsSymbol !== -1) {
-            let symbol = pathname.substring(7, pathname.lenght)
+            let symbol = pathname.substring(7, pathname.length)
             this.props.trackedCompanies.map((company, index) => {
                 if (company.symbol === (symbol).toUpperCase()) {
                     urlParamIndex = index
                 }
             })
-            // if(urlParamIndex === -1)
-            // {
-            //     this.context.addCompanyToTrackedCompanies((symbol).toUpperCase(), this.props.trackedCompanies[urlParamIndex], true);
-            // }
-            // else{
+            if(urlParamIndex === -1)
+            {
+                let symbols = getAllSymbols()
+                symbols.then((response) => {
+                    let company = searchForSymbol(response, symbol)
+                    this.context.addCompanyToTrackedCompanies((symbol).toUpperCase(), company, true);
+                })
+            }
+            else{
                 this.context.setActiveTicker((symbol).toUpperCase(), this.props.trackedCompanies[urlParamIndex], false, urlParamIndex);
-            // }
+            }
         }
         else {
             this.props.setActiveTicker(this.props.trackedCompanies[0].symbol, this.props.trackedCompanies[0], false);

@@ -65,7 +65,6 @@ class App extends Component {
       activeTicker: value,
       activeTickerIndex: parseInt(index)
     }, () => {
-      debugger;
       return (
         <Redirect to={`/quote/${that.state.activeTicker}`} />
       )
@@ -203,7 +202,8 @@ class App extends Component {
       minute: getMinutesOfDay(),
       hour: getHourOfDay(),
       day: getDayOfWeek(),
-      determineIfMarketsAreOpen: determineIfMarketsAreOpen
+      determineIfMarketsAreOpen: determineIfMarketsAreOpen,
+      quotes: {}
     }
   }
 
