@@ -195,8 +195,11 @@ app.post('/api/portfolio/worst', (req, res) => {
         worst: worst
     });
 })
+app.get('/quote/:symbol', function (request, response) {
+    response.sendFile(path.resolve(__dirname, 'build/index.html'));
+});
 
-app.get('/quote', function (request, response) {
+app.get('/quote/:symbol', function (request, response) {
     response.sendFile(path.resolve(__dirname, 'build/index.html'));
 });
 app.get('/add', function (request, response) {
