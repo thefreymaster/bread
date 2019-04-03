@@ -3,24 +3,19 @@ import Metric from '../Body/Metric';
 import { Button, Icon} from 'antd';
 import { signinWithGoogle, readUserCompanyData } from './../../api/FirebaseAPI';
 import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
+import { LoafContext } from '../../LoafContext';
 
 
 class Login extends Component {
-    loginWithGoogle = () => {
-
-    }
-    constructor(props) {
-        super(props)
-        this.state = {}
-    }
+    static contextType = LoafContext;
     render() {
         const inline = {
             addcompany: {
                 height: window.innerHeight - 84,
-                left: this.props.screen.xs || this.props.screen.sm ? 100 : 200,
+                left: this.context.screen.xs || this.context.screen.sm ? 100 : 200,
             }
         }
-        const trackedCompanies = this.props.trackedCompanies;
+        const trackedCompanies = this.context.trackedCompanies;
         return (
             <div style={inline.addcompany} className="flex flex-center flex-column">
                 <Metric

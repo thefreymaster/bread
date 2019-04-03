@@ -15,7 +15,7 @@ class Portfolio extends Component {
 
     }
     componentDidMount() {
-        this.props.setActiveTicker('portfolio', '', false, -1);
+        this.context.setActiveTicker('portfolio', '', false, -1);
     }
     static contextType = LoafContext;
     constructor(props) {
@@ -37,11 +37,11 @@ class Portfolio extends Component {
                         total={this.context.portfolio.total}
                          />
                     <div className={"loaf-component flex flex-column flex-start-center"} style={{ height: (window.innerHeight - 84) * 0.40, width: '50%' }}>
-                        <Link className='width-100' to="/quote" onClick={() => this.props.setActiveTicker(this.context.portfolio.gainer.symbol, this.context.portfolio.gainer, false, findIndex(this.context.portfolio.gainer.symbol, this.props.trackedCompanies))}>
+                        <Link className='width-100' to="/quote" onClick={() => this.context.setActiveTicker(this.context.portfolio.gainer.symbol, this.context.portfolio.gainer, false, findIndex(this.context.portfolio.gainer.symbol, this.context.trackedCompanies))}>
                             <Gainer gainer={this.context.portfolio.gainer} />
                         </Link>
                         <div className="shares-divider width-100"></div>
-                        <Link className='width-100' to="/quote" onClick={() => this.props.setActiveTicker(this.context.portfolio.loser.symbol, this.context.portfolio.loser, false, findIndex(this.context.portfolio.loser.symbol, this.props.trackedCompanies))}>
+                        <Link className='width-100' to="/quote" onClick={() => this.context.setActiveTicker(this.context.portfolio.loser.symbol, this.context.portfolio.loser, false, findIndex(this.context.portfolio.loser.symbol, this.context.trackedCompanies))}>
                             <Loser loser={this.context.portfolio.loser} />
                         </Link>
                     </div>
@@ -56,7 +56,7 @@ class Portfolio extends Component {
                                     height="20"
                                     width="20"
                                 />
-                            </div> : <PieGraph width={'100%'} change={this.context.portfolio.percentChange} currentTotal={this.context.portfolio.currentTotal} data={this.props.trackedCompanies} quotes={this.context.quotes} />
+                            </div> : <PieGraph width={'100%'} change={this.context.portfolio.percentChange} currentTotal={this.context.portfolio.currentTotal} data={this.context.trackedCompanies} quotes={this.context.quotes} />
                         }
                     </div>
                     <div className="flex flex-column dashed-border-top width-40">
@@ -70,7 +70,7 @@ class Portfolio extends Component {
                                 />
                             </div>
                                 :
-                                <BarGraph width={'100%'} total={this.context.portfolio.total} change={this.context.portfolio.percentChange} currentTotal={this.context.portfolio.currentTotal} data={this.props.trackedCompanies} quotes={this.context.quotes} />
+                                <BarGraph width={'100%'} total={this.context.portfolio.total} change={this.context.portfolio.percentChange} currentTotal={this.context.portfolio.currentTotal} data={this.context.trackedCompanies} quotes={this.context.quotes} />
                         }
                     </div>
                 </div>
