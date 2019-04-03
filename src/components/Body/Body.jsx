@@ -51,10 +51,27 @@ class Bread extends Component {
                 symbols.then((response) => {
                     let company = searchForSymbol(response, symbol)
                     this.context.addCompanyToTrackedCompanies((symbol).toUpperCase(), company, true);
+                    
                 })
             }
             else {
                 this.context.setActiveTicker((symbol).toUpperCase(), this.props.trackedCompanies[urlParamIndex], false, urlParamIndex);
+                this.newsIsLoading()
+                let news = getCompanyNews(this.props.trackedCompanies[urlParamIndex].symbol);
+                news.then(response => {
+                    let newsFiltered = [];
+                    let index = 0;
+                    response.forEach(element => {
+                        if (index < 4) {
+                            newsFiltered.push(element);
+                        }
+                        index++;
+                    });
+                    this.setState({
+                        news: newsFiltered
+                    });
+                    this.newsComplete();
+                })
             }
         }
         else {
@@ -78,7 +95,7 @@ class Bread extends Component {
         }
     }
     componentDidUpdate(prevProps) {
-        if (this.props.activeTicker !== prevProps.activeTicker) {
+        if (this.props.activeTicker !== prevProps.activeTicker && prevProps.activeTicker !== '') {
             this.newsIsLoading()
             this.setState({
                 getRecomendations: false
@@ -112,7 +129,10 @@ class Bread extends Component {
         }
     }
     render() {
-        if (this.props.activeTickerIndex === undefined || this.props.trackedCompanies.length === 0)
+        const mobile = this.context.screen.xs || this.context.screen.sm ? true : false
+        const desktop = this.context.screen.md || this.context.screen.lg || this.context.screen.xl ? true : false
+
+        if (this.props.activeTickerIndex === undefined || this.props.trackedCompanies.length === 0 || mobile)
             return null;
         else {
             const index = this.props.activeTickerIndex;

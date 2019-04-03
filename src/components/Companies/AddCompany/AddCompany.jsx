@@ -52,20 +52,13 @@ class AddCompany extends Component {
             this.setState({
                 symbolsFetched: false,
             })
-            // let data = getAllSymbols();
-            // data.then(response => {
-            //     this.setState({
-            //         symbols: response,
-            //         symbolsFetched: true,
-            //     })
-            // })
         }
     }
     render() {
         const inline = {
             addcompany: {
                 height: window.innerHeight - 84,
-                left: this.props.screen.xs || this.props.screen.sm ? 100 : 200,
+                left: this.context.screen.xs || this.context.screen.sm ? 100 : 200,
             }
         }
         return (
@@ -78,7 +71,7 @@ class AddCompany extends Component {
                     label={'Search by a valid company symbol'}
                     center={true}
                 />
-                <div className={classnames("padding10 flex margin-auto", { 'width-40': this.props.screen.md || this.props.screen.lg || this.props.screen.xl, 'width-100': this.props.screen.xs || this.props.screen.sm })}>
+                <div className={classnames("padding10 flex margin-auto", { 'width-40': this.context.screen.md || this.context.screen.lg || this.context.screen.xl, 'width-100': this.context.screen.xs || this.context.screen.sm })}>
                     <Search
                         addonBefore={this.state.symbolsFetched ? null : <Icon type="loading" />}
                         disabled={!this.state.symbolsFetched}
@@ -90,7 +83,7 @@ class AddCompany extends Component {
                     />
                 </div>
 
-                <SearchedCompanies addCompanyToTrackedCompanies={this.context.addCompanyToTrackedCompanies} setActiveTicker={this.props.setActiveTicker} searchedCompanies={this.state.searchedCompanies} />
+                <SearchedCompanies addCompanyToTrackedCompanies={this.context.addCompanyToTrackedCompanies} setActiveTicker={this.context.activeTicker} searchedCompanies={this.state.searchedCompanies} />
             </div>
         )
     }

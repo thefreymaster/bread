@@ -196,9 +196,9 @@ class Companies extends Component {
 
     }
     findIndex = (symbol) => {
-        for (let index of Object.keys(this.props.trackedCompanies)) {
-            if (this.props.trackedCompanies[index].symbol === symbol) {
-                this.props.setActiveTicker(symbol, '', false, index);
+        for (let index of Object.keys(this.context.trackedCompanies)) {
+            if (this.context.trackedCompanies[index].symbol === symbol) {
+                this.context.setActiveTicker(symbol, '', false, index);
                 notification.destroy()
             }
         }
@@ -236,7 +236,7 @@ class Companies extends Component {
         })
     }
     componentWillReceiveProps(nextProps) {
-        if (this.props.activeTicker !== nextProps.activeTicker && this.props.trackedCompanies.length > 0) {
+        if (this.props.activeTicker !== nextProps.activeTicker && this.context.trackedCompanies.length > 0) {
             this.setState({
                 quickQuotes: this.context.quotes
             })
@@ -292,10 +292,10 @@ class Companies extends Component {
                             this.context.quotes
                                 ?
                                 <PortfolioLink
-                                    screen={this.props.screen}
+                                    screen={this.context.screen}
                                     activeTicker={this.props.activeTicker}
-                                    trackedCompanies={this.props.trackedCompanies}
-                                    setActiveTicker={this.props.setActiveTicker}
+                                    trackedCompanies={this.context.trackedCompanies}
+                                    setActiveTicker={this.context.setActiveTicker}
                                     quickQuotes={this.state.quickQuotes}
                                 />
                                 : null
@@ -339,15 +339,15 @@ class Companies extends Component {
                             }
 
                         </div>
-                        {Object.keys(this.props.trackedCompanies).map((index) => {
-                            const company = this.props.trackedCompanies[index];
-                            const userHasShares = this.props.trackedCompanies[index].shares.hasShares
-                            const count = this.props.trackedCompanies[index].shares.count;
-                            const price = this.props.trackedCompanies[index].shares.price;
+                        {Object.keys(this.context.trackedCompanies).map((index) => {
+                            const company = this.context.trackedCompanies[index];
+                            const userHasShares = this.context.trackedCompanies[index].shares.hasShares
+                            const count = this.context.trackedCompanies[index].shares.count;
+                            const price = this.context.trackedCompanies[index].shares.price;
 
                             const that = this;
                             return (
-                                <Link to={`/quote/${company.symbol.toLowerCase()}`} key={company.symbol} onClick={() => { this.props.setActiveTicker(company.symbol, company, false, index) }}>
+                                <Link to={`/quote/${company.symbol.toLowerCase()}`} key={company.symbol} onClick={() => { this.context.setActiveTicker(company.symbol, company, false, index) }}>
                                     <div
                                         className={classnames('padding10 companies-button loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === that.props.activeTicker })}>
                                         <div className={classnames("flex flex-row")}>
@@ -435,18 +435,11 @@ class Companies extends Component {
                                 </Link>
                             )
                         })}
-                        {
-                            this.context.screen.xs || this.context.screen.sm
-                                ?
-                                <Systems position='inline' />
-                                :
-                                null
-                        }
                         <div className={classnames({ "marginBottom54": mobile, "marginBottom64": desktop })}></div>
                     </Fragment>
                 }
                 <Link to="/add">
-                    <div className={classnames('padding10 add-new-button add-new-button', { 'add-button-button-desktop': !this.props.screen.xs && !this.props.screen.sm, 'add-new-button-mobile': this.props.screen.xs || this.props.screen.sm })}>
+                    <div className={classnames('padding10 add-new-button add-new-button', { 'add-button-button-desktop': !this.context.screen.xs && !this.context.screen.sm, 'add-new-button-mobile': this.context.screen.xs || this.context.screen.sm })}>
                         <Button onClick={this.openAddCompanySideBar} style={{ borderRadius: 50 }} className="width100 radius50 loaf-button">{'Track New Company'}</Button>
                     </div>
                 </Link>
@@ -455,4 +448,4 @@ class Companies extends Component {
     }
 }
 
-export default withRouter(Companies);
+export default Companies;
