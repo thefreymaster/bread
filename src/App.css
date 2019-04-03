@@ -164,7 +164,13 @@
     border-bottom: 2px dashed #ebebeb;
     border-right: 2px dashed #ebebeb;
     border-bottom-right-radius: 12px;
-    z-index: 1;
+    border-top-right-radius: 12px;
+    border-top: 2px dashed #ebebeb;
+    z-index: 2;
+}
+.logo-large{
+    max-width: 48px;
+    border-radius: 5px;
 }
 .border-bottom-dashed{
     border-bottom: 2px dashed #dedede;
@@ -226,7 +232,7 @@
     min-width: 100%;
     background-color: #ffffff78;
     border-top: 2px dashed #eeeeee;
-    z-index: 1;
+    z-index: 2;
 }
 .add-button-button-desktop{
     border-top-right-radius: 12px;
@@ -239,6 +245,7 @@
 .add-new-button-mobile{
     position: fixed;
     bottom: 0;
+    z-index: 2;
 }
 .marginBottom26 {
     margin-bottom: 26px;

@@ -36,13 +36,13 @@ class PortfolioStatistics extends Component {
         else {
             if (Object.keys(this.state.best).length !== 0 || Object.keys(this.state.worst).length !== 0) {
                 return (
-                    <div className="flex flex-column width-100 flex-center">
+                    <div className="flex flex-column width-100 flex-center border-top">
                         {
                             Object.keys(this.state.best).length === 0
                                 ?
                                 <None center titleFontSize={18} title='None' label='No Best Investments' />
                                 :
-                                <PortfolioStatItem color={GREEN} label='Best Return' stat={this.state.best} />
+                                <PortfolioStatItem  style={{marginTop: 5}} color={GREEN} label='Best Return' stat={this.state.best} />
                         }
                         <div className="shares-divider width-100 flex-center"></div>
                         {

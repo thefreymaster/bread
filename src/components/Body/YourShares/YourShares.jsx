@@ -7,6 +7,7 @@ import AddShares from './AddShares';
 import { getPrice } from '../../../api/StatsAPI';
 import { GREEN, RED, GREY } from '../../../Constants';
 import { LoafContext } from './../../../LoafContext';
+import { getPercentChangeGeneric } from '../../HelperFunctions/Helper';
 
 
 class YourShares extends Component {
@@ -85,22 +86,21 @@ class YourShares extends Component {
                 label: <strong>{'$' + this.props.week52High}</strong>,
             },
         };
-        if (this.props.userHasShares && !this.state.showAddShares) {
+        if (!this.state.showAddShares) {
             return (
-                <div style={inline.component} className={classnames("flex flex-column flex-center-vertically width-" + this.props.width, {
+                <div style={inline.component} className={classnames("flex flex-column border-top flex-center-vertically width-" + this.props.width, {
                     'hide': this.state.showAddShares,
                     'loaf-component': this.context.screen.md || this.context.screen.lg || this.context.screen.xl,
                     'loaf-component-mobile': this.context.screen.xs || this.context.screen.sm
                 })}>
                     <div className={classnames('flex flex-row', { 'shares-divider': this.context.screen.xs || this.context.screen.sm })}>
                         <div className='width-60'>
-                            <Metric titleFontSize={mobile ? 14 : 36} title="Your Shares" labelFontSize={mobile ? 12 : 21} label={this.props.count + " Shares"} />
+                            <Metric titleFontSize={mobile ? 14 : 24} title="Your Shares" labelFontSize={mobile ? 12 : 21} label={this.props.count === '' ? '0 Shares' : this.props.count + " Shares"} />
                         </div>
                         <div className='width-40 flex-center flex'>
                             <Button style={{ borderRadius: 50 }} onClick={this.showAddShares} className="width100 loaf-button">Add Shares</Button>
                         </div>
                     </div>
-                    {/* <div className='flex-grow'></div> */}
                     <div className="flex flex-row shares-divider">
                         <div className='width-25'>
                             <Metric fontWeight={900} number duration={1} fontFamily={'Open Sans'} titleFontSize={18} prefix="$" title={this.props.price * this.props.count} label="Initial Cost" />
@@ -113,7 +113,7 @@ class YourShares extends Component {
                         </div>
                         <div className='width-25'>
                             <Metric fontWeight={900} decimals={2} number duration={1}
-                                color={((this.props.count * this.state.currentPrice) - (this.props.price * this.props.count)) / (this.props.price * this.props.count) > 0 ? GREEN : RED} fontFamily={'Open Sans'} titleFontSize={18} title={((this.props.count * this.state.currentPrice) - (this.props.price * this.props.count)) / (this.props.price * this.props.count) * 100} suffix="%" label="Total Change" />
+                                color={getPercentChangeGeneric(this.props.count * this.state.currentPrice, this.props.price * this.props.count) > 0 ? GREEN : RED} fontFamily={'Open Sans'} titleFontSize={18} title={getPercentChangeGeneric(this.props.count * this.state.currentPrice, this.props.price * this.props.count)} suffix="%" label="Total Change" />
                         </div>
                     </div>
                     {
@@ -123,28 +123,13 @@ class YourShares extends Component {
                             </div>
                             : null
                     }
-
                 </div>
             )
         }
         else if (this.state.showAddShares) {
             return (
-                <div className={classnames("loaf-component flex flex-column flex-center show-zoom-animation", { 'hide': this.props.userHasShares, 'width-50': desktop, 'width-100': mobile })}>
+                <div className={classnames("loaf-component flex flex-column flex-center show-zoom-animation border-top", { 'hide': this.props.userHasShares, 'width-50': desktop, 'width-100': mobile })}>
                     <AddShares ticker={this.props.ticker} saveShares={this.saveSharesAndCloseAddShares} hideAddShares={this.hideAddShares} />
-                </div>
-            )
-        }
-        else {
-            return (
-                <div className={classnames("loaf-component flex flex-column width-50 flex-center show-zoom-animation", { 'hide': this.props.userHasShares, 'width-50': desktop, 'width-100': mobile })}>
-                    <NoShares showAddShares={this.showAddShares} />
-                    {
-                        !this.context.screen.xs && !this.context.screen.sm
-                            ? <div className="shares-divider with-75">
-                                <Slider max={this.props.week52High * 0.3 + this.props.week52High} disabled range marks={marks} defaultValue={[0, 0]} />
-                            </div>
-                            : null
-                    }
                 </div>
             )
         }

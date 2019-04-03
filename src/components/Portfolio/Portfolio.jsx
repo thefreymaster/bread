@@ -29,7 +29,7 @@ class Portfolio extends Component {
         else
         return (
             <div className="flex flex-column" style={{ marginRight: 15 }}>
-                <div className='flex flex-row'>
+                <div className='flex flex-row border-top'>
                     <PortfolioToday 
                         currentTotal={this.context.portfolio.currentTotal} 
                         previousTotal={this.context.portfolio.previousTotal}

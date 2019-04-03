@@ -10,7 +10,7 @@ const RightSider = (props) => {
             <PortfolioStatistics activeTicker={props.activeTicker} />
         )
     }
-    else if(props.location.pathname === '/quote'){
+    else if(props.location.pathname.indexOf('/quote/') !== -1){
         return (
             <CompanyStatistics activeTicker={props.activeTicker} />
         )

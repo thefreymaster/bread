@@ -36,7 +36,8 @@ class Systems extends Component {
     render() {
         const inline = {
             systems: {
-                position: this.props.position
+                position: 'absolute',
+                width: window.innerWidth-340
             }
         }
         if (!this.state.status)

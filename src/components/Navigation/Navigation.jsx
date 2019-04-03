@@ -1,12 +1,12 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom'
-import { Button } from 'antd';
+import { Button, Icon } from 'antd';
 import Metric from '../Body/Metric';
 import { signOutUser } from './../../api/FirebaseAPI';
 import LOAF from '../../assets/loaf.svg';
 
 class Navigation extends Component {
-    
+
     constructor(props) {
         super(props)
         this.state = {}
@@ -15,7 +15,7 @@ class Navigation extends Component {
         return (
             <div className="flex flex-row flex-center-start">
                 <Link to="/quote">
-                    <div  className="flex flex-row flex-center-start">
+                    <div className="flex flex-row flex-center-start">
                         <img src={LOAF} className='logo' />
                         <div>{this.props.title}</div>
                     </div>
@@ -26,7 +26,7 @@ class Navigation extends Component {
                         ?
                         <Fragment>
                             <Link to="/login">
-                                <Button  style={{borderRadius: 50}} className={'loaf-button open-sans'} type="default" icon="lock">Sign In</Button>
+                                <Button style={{ borderRadius: 50 }} className={'loaf-button open-sans'} type="default" icon="login">Sign In</Button>
                             </Link>
                             <Link to="/login">
                                 <Button className={'loaf-button open-sans'} style={{ marginLeft: 10, borderRadius: 50 }} type="default" icon="user-add">Register</Button>
@@ -41,7 +41,9 @@ class Navigation extends Component {
                                 title={this.props.screen.xs || this.props.screen.sm ? null : 'Hi there, ' + JSON.parse(localStorage.getItem('LOAF_USER')).displayName}
                                 center={true}
                             />
-                            <Button onClick={signOutUser} className={'loaf-button open-sans'} style={{ marginLeft: 10, borderRadius: 50 }} type="default">Sign Out</Button>
+                            <Link to="/settings">
+                                <Button icon={'setting'} className={'loaf-button open-sans'} style={{ marginLeft: 10, borderRadius: 50 }} type="default"></Button>
+                            </Link>
                         </Fragment>
 
                 }
