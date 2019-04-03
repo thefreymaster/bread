@@ -46,15 +46,14 @@ class Bread extends Component {
                     urlParamIndex = index
                 }
             })
-            if(urlParamIndex === -1)
-            {
+            if (urlParamIndex === -1) {
                 let symbols = getAllSymbols()
                 symbols.then((response) => {
                     let company = searchForSymbol(response, symbol)
                     this.context.addCompanyToTrackedCompanies((symbol).toUpperCase(), company, true);
                 })
             }
-            else{
+            else {
                 this.context.setActiveTicker((symbol).toUpperCase(), this.props.trackedCompanies[urlParamIndex], false, urlParamIndex);
             }
         }
@@ -167,22 +166,7 @@ class Bread extends Component {
                         }
 
                         <div className={classnames('flex flex-column dashed-border-top flex-center-start news-container', { 'width-30': this.context.screen.lg || this.context.screen.xl, 'width-50': this.context.screen.xs || this.context.screen.sm || this.context.screen.md })} style={{ height: (window.innerHeight - 20) * 0.5 }}>
-                            {
-                                this.state.newsIsLoading
-                                    ?
-                                    <div className="flex flex-row flex-center show-zoom-animation fade-in-animation" style={{ height: '100%', width: this.props.width }}>
-                                        <Loader
-                                            type="Bars"
-                                            color="#000000a6"
-                                            height="20"
-                                            width="20"
-                                        />
-                                    </div>
-                                    :
-                                    <div className="fade-in-animation opacity-0">
-                                        <News news={this.state.news} />
-                                    </div>
-                            }
+                            {<News news={this.state.news} />}
                         </div>
                     </div>
                     <Systems />

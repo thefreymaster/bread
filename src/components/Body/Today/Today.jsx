@@ -107,7 +107,7 @@ class Today extends Component {
         else {
             let quote = this.context.quotes[this.context.activeTicker].quote;
             return (
-                <div className={"loaf-component flex flex-column flex-center border-top border-right"} style={{ height: (window.innerHeight - 84) * 0.40, width: '50%' }}>
+                <div className={"loaf-component flex flex-column flex-center border-top border-right"} style={{ width: '50%' }}>
                     <Metric
                         titleFontSize={72}
                         center
@@ -116,7 +116,7 @@ class Today extends Component {
                         label={quote.companyName}
                         labelCloseToTitle={true} />
                     <div className="flex flex-row">
-                        <div className={classnames({ 'width-100': mobile, 'width-60': desktop })} style={{ marginRight: 25 }}>
+                        <div className={classnames({ 'width-100': mobile, 'width-50': desktop })} style={{ marginRight: 25 }}>
                             <Metric
                                 title={parseFloat(quote.latestPrice).toFixed(2)}
                                 label="Latest Price"
@@ -128,7 +128,7 @@ class Today extends Component {
                                 fontFamily={'Open Sans'}
                                 prefix={'$'} />
                         </div>
-                        <div className='width-100'>
+                        <div className='width-50'>
                             <Metric
                                 number
                                 suffix={'%'}

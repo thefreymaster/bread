@@ -166,7 +166,7 @@
     border-bottom-right-radius: 12px;
     border-top-right-radius: 12px;
     border-top: 2px dashed #ebebeb;
-    z-index: 1;
+    z-index: 2;
 }
 .logo-large{
     max-width: 48px;
@@ -232,7 +232,7 @@
     min-width: 100%;
     background-color: #ffffff78;
     border-top: 2px dashed #eeeeee;
-    z-index: 1;
+    z-index: 2;
 }
 .add-button-button-desktop{
     border-top-right-radius: 12px;
@@ -245,6 +245,7 @@
 .add-new-button-mobile{
     position: fixed;
     bottom: 0;
+    z-index: 2;
 }
 .marginBottom26 {
     margin-bottom: 26px;
