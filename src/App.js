@@ -412,7 +412,7 @@ class App extends Component {
     this.setState({
       trackedCompanies: trackedCompanies
     }, () => {
-      if (this.state.activeTicker !== "portfolio" && this.state.activeTicker === undefined)
+      if (this.state.activeTicker === "portfolio" || this.state.activeTicker === "settings" || this.state.activeTicker === '')
         this.setActiveTicker(trackedCompanies[0].symbol, trackedCompanies[0], false, 0)
       else
         this.setActiveTicker(trackedCompanies[this.state.activeTickerIndex].symbol, trackedCompanies[this.state.activeTickerIndex], false, this.state.activeTickerIndex)
@@ -424,7 +424,7 @@ class App extends Component {
     this.setState({
       trackedCompanies: trackedCompanies
     }, () => {
-      if (this.state.activeTicker !== "portfolio" && this.state.activeTicker === undefined)
+      if (this.state.activeTicker === "portfolio" || this.state.activeTicker === "settings" || this.state.activeTicker === '')
         this.setActiveTicker(trackedCompanies[0].symbol, trackedCompanies[0], false, 0)
       else
         this.setActiveTicker(trackedCompanies[this.state.activeTickerIndex].symbol, trackedCompanies[this.state.activeTickerIndex], false, this.state.activeTickerIndex)
@@ -437,7 +437,7 @@ class App extends Component {
     this.setState({
       trackedCompanies: trackedCompanies
     }, () => {
-      if (this.state.activeTicker !== "portfolio" && this.state.activeTicker === undefined)
+      if (this.state.activeTicker === "portfolio" || this.state.activeTicker === "settings" || this.state.activeTicker === '')
         this.setActiveTicker(trackedCompanies[0].symbol, trackedCompanies[0], false, 0)
       else
         this.setActiveTicker(trackedCompanies[this.state.activeTickerIndex].symbol, trackedCompanies[this.state.activeTickerIndex], false, this.state.activeTickerIndex)
@@ -450,7 +450,7 @@ class App extends Component {
     this.setState({
       trackedCompanies: trackedCompanies
     }, () => {
-      if (this.state.activeTicker !== "portfolio" && this.state.activeTicker === undefined)
+      if (this.state.activeTicker === "portfolio" || this.state.activeTicker === "settings" || this.state.activeTicker === '')
         this.setActiveTicker(trackedCompanies[0].symbol, trackedCompanies[0], false, 0)
       else
         this.setActiveTicker(trackedCompanies[this.state.activeTickerIndex].symbol, trackedCompanies[this.state.activeTickerIndex], false, this.state.activeTickerIndex)
