@@ -51,7 +51,7 @@ class Bread extends Component {
                 symbols.then((response) => {
                     let company = searchForSymbol(response, symbol)
                     this.context.addCompanyToTrackedCompanies((symbol).toUpperCase(), company, true);
-                    
+
                 })
             }
             else {
@@ -61,7 +61,7 @@ class Bread extends Component {
                 news.then(response => {
                     let newsFiltered = [];
                     let index = 0;
-                    if(response !== undefined){
+                    if (response !== undefined) {
                         response.forEach(element => {
                             if (index < 4) {
                                 newsFiltered.push(element);
@@ -83,12 +83,14 @@ class Bread extends Component {
             news.then(response => {
                 let newsFiltered = [];
                 let index = 0;
-                response.forEach(element => {
-                    if (index < 4) {
-                        newsFiltered.push(element);
-                    }
-                    index++;
-                });
+                if (response !== undefined) {
+                    response.forEach(element => {
+                        if (index < 4) {
+                            newsFiltered.push(element);
+                        }
+                        index++;
+                    });
+                }
                 this.setState({
                     news: newsFiltered
                 });
@@ -106,15 +108,18 @@ class Bread extends Component {
             news.then(response => {
                 let newsFiltered = [];
                 let index = 0;
-                response.forEach(element => {
-                    if (index < 4) {
-                        newsFiltered.push(element);
-                    }
-                    index++;
-                });
-                this.setState({
-                    news: newsFiltered
-                })
+                if (response !== undefined) {
+
+                    response.forEach(element => {
+                        if (index < 4) {
+                            newsFiltered.push(element);
+                        }
+                        index++;
+                    });
+                    this.setState({
+                        news: newsFiltered
+                    })
+                }
                 this.newsComplete();
             })
         }
@@ -136,7 +141,7 @@ class Bread extends Component {
 
         if ((this.props.activeTickerIndex === undefined || this.props.trackedCompanies.length === 0 || mobile))
             return null;
-        else if(!this.context.quotes[this.context.activeTicker])
+        else if (!this.context.quotes[this.context.activeTicker])
             return null;
         else {
             const index = this.props.activeTickerIndex;
@@ -146,7 +151,7 @@ class Bread extends Component {
             let { quote } = this.context.quotes[this.context.activeTicker];
 
             return (
-                <div className="flex flex-column" style={{ marginRight: 15, height: window.innerHeight-95 }}>
+                <div className="flex flex-column" style={{ marginRight: 15, height: window.innerHeight - 95 }}>
                     <div className={classnames("flex", { "flex-column": this.props.screen.xs, "flex-row": !this.props.screen.xs || !this.props.screen.sm })}>
                         <Today sendUpdateToParent={this.receiveUpdateFromChild} screen={this.props.screen} trackedCompanies={this.props.trackedCompanies} removeCompanyFromTrackedCompanies={this.props.removeCompanyFromTrackedCompanies} ticker={this.props.activeTicker} />
                         <YourShares

@@ -132,7 +132,7 @@ class App extends Component {
         if (!quotes) {
           quotes = { [response.symbol]: { quote: response } }
         }
-        else {
+        else if(response !== undefined){
           quotes = Object.assign(quotes, { [response.symbol]: { quote: response } })
         }
         that.setState({
