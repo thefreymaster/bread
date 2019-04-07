@@ -26,7 +26,7 @@ const Settings = (props: Object) => (
                                         title={'Bread'}
                                         center
                                         color={GREY}
-                                        label={'Version 1.01'}
+                                        label={process.env.REACT_APP_VERSION}
                                         labelFontSize={12}
                                     />
                                 </div>
@@ -60,7 +60,7 @@ const Settings = (props: Object) => (
                             </div>
                             <div className="flex flex-row">
                                 <div className="flex flex-column loaf-component flex-center width-100" style={{ padding: 25 }}>
-                                    <Button icon="logout" size="large" onClick={signOutUser} className={'loaf-button open-sans'} style={{ borderRadius: 50 }} type="default">Logout</Button>
+                                    <Button icon="logout" size="large" onClick={signOutUser} className={'loaf-button open-sans'} style={{ borderRadius: 50, minWidth: 100 }} type="default">Logout</Button>
                                 </div>
                             </div>
 

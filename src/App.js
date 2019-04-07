@@ -30,6 +30,7 @@ import RightSider from './components/RightSider/RightSider'
 import { RED, GREEN } from './Constants';
 import { getPortfolioTotal, getBest, getWorst } from './api/PortfolioAPI';
 import Settings from './components/Settings/Settings';
+import Choices from './components/Choices/Choices';
 
 
 const firebase = getFirebaseAuthObject();
@@ -66,7 +67,7 @@ class App extends Component {
       activeTickerIndex: parseInt(index)
     }, () => {
       return (
-        <Redirect to={`/quote/${that.state.activeTicker}`} />
+        <Redirect to={'/quote/' + that.state.activeTicker} />
       )
     })
   }
@@ -97,7 +98,7 @@ class App extends Component {
     }
 
   }
-  addCompanyToTrackedCompanies = (symbol, company) => {
+  addCompanyToTrackedCompanies = (symbol, company, popup) => {
     let that = this;
     let _trackedCompanies = this.state.trackedCompanies;
     let quote = {};
@@ -141,7 +142,9 @@ class App extends Component {
         })
       })
     }
-    message.success(company.symbol + ' successfully added to account.');
+    if (popup) {
+      message.success(company.symbol + ' successfully added to account.');
+    }
     this.setState({
       trackedCompanies: _trackedCompanies
     })
@@ -233,19 +236,28 @@ class App extends Component {
           <BrowserRouter>
             <main>
               <Layout>
-                <Header style={{ marginBottom: this.state.screen.xs || this.state.screen.sm ? 0 : 20 }}>
+                <Header style={{ zIndex: 0 }}>
                   <Navigation title={'Bread'} screen={this.state.screen} />
                 </Header>
                 <Layout style={{ minHeight: window.innerHeight - 64 }}>
                   {this.state.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false || mobile
                     ? null :
-                    <Sider className={classnames("left-sider left-sider-large")} style={{ maxHeight: window.innerHeight - 84 }}>
+                    <Sider className={classnames("left-sider left-sider-large")} style={{ maxHeight: window.innerHeight - 84, marginTop: 42 }}>
                       <Companies activeTicker={this.state.activeTicker} />
                     </Sider>
                   }
                   <Content>
                     <Switch>
                       <Route path="/add" render={props => <AddCompany />} />
+                      <Route path="/choices" render={props =>
+                        this.state.trackedCompanies.length === 0
+                          ?
+                          <Choices />
+                          :
+                          <Redirect
+                            to={'/quote'}
+                          />
+                      } />
                       <Route path="/login" render={props =>
                         localStorage.getItem('LOAF_USER')
                           ?
@@ -301,7 +313,7 @@ class App extends Component {
                           />
                           :
                           <Redirect to={'/quote'} />
-                        }
+                      }
                       />
 
 
@@ -408,12 +420,6 @@ class App extends Component {
     else if (localStorage.getItem("trackedCompanies")) {
       this.fetchingTrackedCompanies();
       let _trackedCompanies = JSON.parse(localStorage.getItem("trackedCompanies"));
-      // _trackedCompanies.sort(function (a, b) {
-      //   if (a.symbol < b.symbol) { return -1; }
-      //   if (a.symbol > b.symbol) { return 1; }
-      //   return 0;
-      // })
-
       this.setState({
         trackedCompanies: _trackedCompanies,
       }, () => {

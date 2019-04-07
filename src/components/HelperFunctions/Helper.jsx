@@ -86,6 +86,21 @@ function sortCompaniesYTDChange(companies){
       })
     return companies;
 }
+function filterLowVolumeCompaniesOut(companies){
+    return companies.filter(company => company.avgTotalVolume > 10000000);
+}
+function filterCompaniesWithoutSymbols(companies){
+    return companies.filter(company => company.symbol);
+}
+
+function sortCompaniesYTDChangeForChoices(companies){
+    companies.sort(function (a, b) {
+        if (a.ytdChange > b.ytdChange) { return -1; }
+        if (a.ytdChange < b.ytdChange) { return 1; }
+        return 0;
+      })
+    return companies;
+}
 
 function searchForSymbol(companies, newSymbol) {
     for(let company of companies){
@@ -108,5 +123,8 @@ export { calculateTotalChange,
           sortCompaniesDescending,
           sortCompaniesABC,
           sortCompaniesYTDChange,
-          searchForSymbol
+          searchForSymbol,
+          sortCompaniesYTDChangeForChoices,
+          filterLowVolumeCompaniesOut,
+          filterCompaniesWithoutSymbols
         }

@@ -285,7 +285,6 @@ class Companies extends Component {
                                                 <Badge count={'Streaming Halted'} style={{ backgroundColor: RED, opacity: .6 }} />
                                         }
                                     </div>
-                                    <div class="marginBottom26"></div>
                                 </Fragment>
                         }
                         {
@@ -346,6 +345,9 @@ class Companies extends Component {
                             const price = this.context.trackedCompanies[index].shares.price;
 
                             const that = this;
+                            if(!that.state.quickQuotes[company.symbol]){
+                                return null;
+                            }
                             return (
                                 <Link to={`/quote/${company.symbol.toLowerCase()}`} key={company.symbol} onClick={() => { this.context.setActiveTicker(company.symbol, company, false, index) }}>
                                     <div

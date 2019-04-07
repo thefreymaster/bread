@@ -61,15 +61,17 @@ class Bread extends Component {
                 news.then(response => {
                     let newsFiltered = [];
                     let index = 0;
-                    response.forEach(element => {
-                        if (index < 4) {
-                            newsFiltered.push(element);
-                        }
-                        index++;
-                    });
-                    this.setState({
-                        news: newsFiltered
-                    });
+                    if(response !== undefined){
+                        response.forEach(element => {
+                            if (index < 4) {
+                                newsFiltered.push(element);
+                            }
+                            index++;
+                        });
+                        this.setState({
+                            news: newsFiltered
+                        });
+                    }
                     this.newsComplete();
                 })
             }
@@ -132,7 +134,9 @@ class Bread extends Component {
         const mobile = this.context.screen.xs || this.context.screen.sm ? true : false
         const desktop = this.context.screen.md || this.context.screen.lg || this.context.screen.xl ? true : false
 
-        if (this.props.activeTickerIndex === undefined || this.props.trackedCompanies.length === 0 || mobile)
+        if ((this.props.activeTickerIndex === undefined || this.props.trackedCompanies.length === 0 || mobile))
+            return null;
+        else if(!this.context.quotes[this.context.activeTicker])
             return null;
         else {
             const index = this.props.activeTickerIndex;
@@ -142,7 +146,7 @@ class Bread extends Component {
             let { quote } = this.context.quotes[this.context.activeTicker];
 
             return (
-                <div className="flex flex-column" style={{ marginRight: 15 }}>
+                <div className="flex flex-column" style={{ marginRight: 15, height: window.innerHeight-95 }}>
                     <div className={classnames("flex", { "flex-column": this.props.screen.xs, "flex-row": !this.props.screen.xs || !this.props.screen.sm })}>
                         <Today sendUpdateToParent={this.receiveUpdateFromChild} screen={this.props.screen} trackedCompanies={this.props.trackedCompanies} removeCompanyFromTrackedCompanies={this.props.removeCompanyFromTrackedCompanies} ticker={this.props.activeTicker} />
                         <YourShares

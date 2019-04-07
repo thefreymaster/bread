@@ -1,5 +1,6 @@
 import React from 'react';
 import Loader from 'react-loader-spinner'
+import Logo from './Logo';
 
 function Load() {
     const inline = {
@@ -9,12 +10,13 @@ function Load() {
         }
     }
     return (
-        <div style={inline.loader} className={'flex flex-center'}>
+        <div style={inline.loader} className={'flex flex-center flex-column'}>
+            <Logo />
             <Loader
-                type="Bars"
+                type="Oval"
                 color="#000000a6"
-                height="30"
-                width="30"
+                height="80"
+                width="80"
             />
         </div>
 

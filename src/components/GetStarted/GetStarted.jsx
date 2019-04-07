@@ -35,7 +35,7 @@ class GetStarted extends Component {
                 />
                 <div className='padding10 width-40 flex-center'>
                     <Button size="large" style={{borderRadius: 50}} onClick={this.redirect} className="width100 loaf-button">{'Get Rising'}</Button>
-                    {!this.state.redirect ? null : <Redirect to='/add' />}
+                    {!this.state.redirect ? null : <Redirect to='/choices' />}
                 </div>
             </div>
         )
