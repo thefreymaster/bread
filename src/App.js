@@ -231,7 +231,9 @@ class App extends Component {
             sortDecending: this.sortDecending,
             sortABC: this.sortABC,
             sortYTD: this.sortYTD,
-            portfolio: this.state.portfolio
+            portfolio: this.state.portfolio,
+            fetching: this.fetchingTrackedCompanies,
+            fetchingComplete: this.fetchingTrackedCompaniesComplete,
           }}>
           <BrowserRouter>
             <main>

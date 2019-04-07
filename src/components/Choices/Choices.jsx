@@ -15,15 +15,23 @@ const RadioGroup = Radio.Group;
 class Choices extends React.Component {
     getSectorQuotes = () => {
         let that = this;
+        that.context.fetching()
         let sectors = getSectorQuotes(this.state.selectedSector)
         sectors.then((response) => {
             let sorted = sortCompaniesYTDChangeForChoices(response)
             let filtered = filterLowVolumeCompaniesOut(sorted);
+            that.context.fetchingComplete();
             (filtered.forEach(company => {
+                let { changePercent, ytdChange } = company;
+
                 that.context.addCompanyToTrackedCompanies(company.symbol, {
                     date: new Date(),
                     isEnabled: true,
-                    symbol: company.symbol
+                    symbol: company.symbol,
+                    quote: {
+                        changePercent: changePercent,
+                        ytdChange: ytdChange,
+                    }
                 })
             }));
         })
