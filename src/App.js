@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { BrowserRouter, Route, Redirect, Switch, withRouter } from "react-router-dom";
+import { connect } from "react-redux";
 
 import './App.css';
 import './Overrides.css'
@@ -560,4 +561,24 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => {
+  let { active } = state;
+  let { symbol, price } = active;
+  return {
+    age: state.age,
+    active: active,
+    symbol: symbol,
+    price: price,
+  };
+};
+
+const mapDispachToProps = dispatch => {
+  return {
+    onAgeUp: () => dispatch({ type: "AGE_UP", value: 1 }),
+    onAgeDown: () => dispatch({ type: "AGE_DOWN", value: 1 })
+  };
+};
+export default connect(
+  mapStateToProps,
+  mapDispachToProps
+)(App);
