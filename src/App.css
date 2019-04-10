@@ -4,6 +4,12 @@
     border-radius: 5px;
     margin-right: 15px;
 }
+.logo-loading{
+    max-width: 40px;
+    border-radius: 5px;
+    position: relative;
+    top: 60px;
+}
 
 .left-sider-small{
     max-width: 100px !important;
@@ -155,16 +161,19 @@
     padding: 5px;
 
 }
+.spacing-right{
+    padding-right: 20px;
+    margin-right: 20px;
+}
 .your-companies{
-    position: absolute;
-    top: -20px;
+    position: fixed;
+    top: 64px;
     left: 0;
-    min-width: 100%;
+    min-width: 300px;
     background-color: white;
     border-bottom: 2px dashed #ebebeb;
     border-right: 2px dashed #ebebeb;
     border-bottom-right-radius: 12px;
-    border-top-right-radius: 12px;
     border-top: 2px dashed #ebebeb;
     z-index: 2;
 }
@@ -237,7 +246,8 @@
 .add-button-button-desktop{
     border-top-right-radius: 12px;
     border-right: 2px dashed #eeeeee;
-    position: absolute;
+    position: fixed;
+    min-width: 300px;
     bottom: 0;
 
 }

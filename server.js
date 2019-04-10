@@ -86,43 +86,47 @@ app.post('/api/portfolio/total', (req, res) => {
 
     // console.log(companies);
     for (let company of companies) {
-        currentTotal = currentTotal + (quotes[company.symbol].quote.latestPrice * company.shares.count);
-        previousTotal = previousTotal + (quotes[company.symbol].quote.previousClose * company.shares.count);
+        if (quotes[company.symbol]) {
+            currentTotal = currentTotal + (quotes[company.symbol].quote.latestPrice * company.shares.count);
+            previousTotal = previousTotal + (quotes[company.symbol].quote.previousClose * company.shares.count);
 
-        if (previousCompanySymbol === '') {
-            if (quotes[company.symbol].quote.changePercent > 0) {
-                gainer = company;
-                gainer['changePercent'] = quotes[company.symbol].quote.changePercent * 100;
-                gainer['price'] = quotes[company.symbol].quote.latestPrice;
-                previousCompanySymbol = company.symbol;
+            if (previousCompanySymbol === '') {
+                if (quotes[company.symbol].quote.changePercent > 0) {
+                    gainer = company;
+                    gainer['changePercent'] = quotes[company.symbol].quote.changePercent * 100;
+                    gainer['price'] = quotes[company.symbol].quote.latestPrice;
+                    previousCompanySymbol = company.symbol;
+                }
             }
-        }
-        else {
-            if (quotes[company.symbol].quote && quotes[company.symbol].quote.changePercent > quotes[gainer.symbol].quote.changePercent) {
-                gainer = company;
-                gainer['changePercent'] = quotes[company.symbol].quote.changePercent * 100;
-                gainer['price'] = quotes[company.symbol].quote.latestPrice;
-                previousCompanySymbol = company.symbol;
+            else {
+                if (quotes[company.symbol].quote && quotes[company.symbol].quote.changePercent > quotes[gainer.symbol].quote.changePercent) {
+                    gainer = company;
+                    gainer['changePercent'] = quotes[company.symbol].quote.changePercent * 100;
+                    gainer['price'] = quotes[company.symbol].quote.latestPrice;
+                    previousCompanySymbol = company.symbol;
+                }
             }
         }
     }
     previousCompanySymbol = '';
     for (let company of companies) {
         // currentTotal = currentTotal + (quotes[company.symbol].quote.latestPrice * company.shares.count);
-        if (previousCompanySymbol === '') {
-            if (quotes[company.symbol].quote.changePercent < 0) {
-                loser = company;
-                loser['changePercent'] = quotes[company.symbol].quote.changePercent * 100;
-                loser['price'] = quotes[company.symbol].quote.latestPrice;
-                previousCompanySymbol = company.symbol;
+        if (quotes[company.symbol]) {
+            if (previousCompanySymbol === '') {
+                if (quotes[company.symbol].quote.changePercent < 0) {
+                    loser = company;
+                    loser['changePercent'] = quotes[company.symbol].quote.changePercent * 100;
+                    loser['price'] = quotes[company.symbol].quote.latestPrice;
+                    previousCompanySymbol = company.symbol;
+                }
             }
-        }
-        else {
-            if (quotes[company.symbol].quote && quotes[company.symbol].quote.changePercent < quotes[loser.symbol].quote.changePercent) {
-                loser = company;
-                loser['changePercent'] = quotes[company.symbol].quote.changePercent * 100;
-                loser['price'] = quotes[company.symbol].quote.latestPrice;
-                previousCompanySymbol = company.symbol;
+            else {
+                if (quotes[company.symbol].quote && quotes[company.symbol].quote.changePercent < quotes[loser.symbol].quote.changePercent) {
+                    loser = company;
+                    loser['changePercent'] = quotes[company.symbol].quote.changePercent * 100;
+                    loser['price'] = quotes[company.symbol].quote.latestPrice;
+                    previousCompanySymbol = company.symbol;
+                }
             }
         }
     }
