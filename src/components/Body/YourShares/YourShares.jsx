@@ -8,7 +8,7 @@ import { getPrice } from '../../../api/StatsAPI';
 import { GREEN, RED, GREY } from '../../../Constants';
 import { LoafContext } from './../../../LoafContext';
 import { getPercentChangeGeneric } from '../../HelperFunctions/Helper';
-
+import BuyShares from './BuyShares';
 
 class YourShares extends Component {
     showAddShares = () => {
@@ -123,6 +123,7 @@ class YourShares extends Component {
                             </div>
                             : null
                     }
+                    <BuyShares />
                 </div>
             )
         }
