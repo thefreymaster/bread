@@ -77,7 +77,7 @@ class LineChart extends Component {
             )
         else {
             return (
-                <div className={classnames("flex flex-column flex-center-start show-zoom-animation", { 'dashed-border-right': this.props.rightDivider })} style={{ height: (window.innerHeight - 84) * 0.27, width: this.props.width }}>
+                <div className={classnames("flex flex-column flex-center-start show-zoom-animation", { 'dashed-border-right': this.props.rightDivider })} style={{ height: ((window.innerHeight - 95) * 0.60) * 0.50, width: this.props.width }}>
 
                     <div className={classnames('', { 'absolute': this.context.screen.md || this.context.screen.lg || this.context.screen.xl })}>
                         <Metric color={this.determineGraphColor(this.state.data)} fontFamily={'Open Sans'} fontWeight={900} titleFontSize={18} label={this.props.title} labelFontSize={14} center title={this.getGraphPercentChange()} />

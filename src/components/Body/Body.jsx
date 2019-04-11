@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import { connect } from "react-redux";
 import classnames from 'classnames';
 import "./Body.css";
 import Today from './Today/Today';
@@ -152,7 +153,7 @@ class Bread extends Component {
 
             return (
                 <div className="flex flex-column" style={{ marginRight: 15, height: window.innerHeight - 95 }}>
-                    <div className={classnames("flex", { "flex-column": this.props.screen.xs, "flex-row": !this.props.screen.xs || !this.props.screen.sm })}>
+                    <div style={{ height: (window.innerHeight - 95)*0.4 }} className={classnames("flex", { "flex-column": this.props.screen.xs, "flex-row": !this.props.screen.xs || !this.props.screen.sm })}>
                         <Today sendUpdateToParent={this.receiveUpdateFromChild} screen={this.props.screen} trackedCompanies={this.props.trackedCompanies} removeCompanyFromTrackedCompanies={this.props.removeCompanyFromTrackedCompanies} ticker={this.props.activeTicker} />
                         <YourShares
                             week52High={quote.week52High}
@@ -167,7 +168,7 @@ class Bread extends Component {
                             ticker={this.props.activeTicker}
                             userHasShares={userHasShares} />
                     </div>
-                    <div className='flex flex-row'>
+                    <div style={{ height: (window.innerHeight - 95)*0.6 }} className='flex flex-row'>
                         <div className="flex flex-column dashed-border-top width-50">
                             <div className="flex flex-row dashed-border-bottom width-100">
                                 <LineChart screen={this.props.screen} width={'50%'} ticker={this.props.activeTicker} timeframe={'1d'} interval={8} title='1 Day' rightDivider />
@@ -194,7 +195,7 @@ class Bread extends Component {
                                 null
                         }
 
-                        <div className={classnames('flex flex-column dashed-border-top flex-center-start news-container', { 'width-30': this.context.screen.lg || this.context.screen.xl, 'width-50': this.context.screen.xs || this.context.screen.sm || this.context.screen.md })} style={{ height: (window.innerHeight - 20) * 0.5 }}>
+                        <div className={classnames('flex flex-column dashed-border-top flex-center-start news-container', { 'width-30': this.context.screen.lg || this.context.screen.xl, 'width-50': this.context.screen.xs || this.context.screen.sm || this.context.screen.md })}>
                             {<News news={this.state.news} />}
                         </div>
                     </div>
@@ -205,5 +206,21 @@ class Bread extends Component {
 
     }
 }
-
-export default withRouter(Bread);
+const mapStateToProps = state => {
+    let { active } = state;
+    return {
+      age: state.age,
+      active: active,
+    };
+  };
+  
+  const mapDispachToProps = dispatch => {
+    return {
+      onAgeUp: () => dispatch({ type: "AGE_UP", value: 1 }),
+      onAgeDown: () => dispatch({ type: "AGE_DOWN", value: 1 })
+    };
+  };
+  export default connect(
+    mapStateToProps,
+    mapDispachToProps
+  )(withRouter(Bread));
