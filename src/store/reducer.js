@@ -7,6 +7,7 @@ const initialState = {
   portfolio: {},
   quotes: {},
   screen: {},
+  trackedCompanies: {},
   active: {
     symbol: '',
     chartOneMonthData: {},

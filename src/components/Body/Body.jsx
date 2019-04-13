@@ -78,25 +78,26 @@ class Bread extends Component {
             }
         }
         else {
-            this.props.setActiveTicker(this.props.trackedCompanies[0].symbol, this.props.trackedCompanies[0], false);
-            this.newsIsLoading()
-            let news = getCompanyNews(this.props.trackedCompanies[0].symbol);
-            news.then(response => {
-                let newsFiltered = [];
-                let index = 0;
-                if (response !== undefined) {
-                    response.forEach(element => {
-                        if (index < 4) {
-                            newsFiltered.push(element);
-                        }
-                        index++;
-                    });
-                }
-                this.setState({
-                    news: newsFiltered
-                });
-                this.newsComplete();
-            })
+            
+            // this.props.setActiveTicker(this.props.trackedCompanies[0].symbol, this.props.trackedCompanies[0], false);
+            // this.newsIsLoading()
+            // let news = getCompanyNews(this.props.trackedCompanies[0].symbol);
+            // news.then(response => {
+            //     let newsFiltered = [];
+            //     let index = 0;
+            //     if (response !== undefined) {
+            //         response.forEach(element => {
+            //             if (index < 4) {
+            //                 newsFiltered.push(element);
+            //             }
+            //             index++;
+            //         });
+            //     }
+            //     this.setState({
+            //         news: newsFiltered
+            //     });
+            //     this.newsComplete();
+            // })
         }
     }
     componentDidUpdate(prevProps) {
@@ -134,6 +135,7 @@ class Bread extends Component {
             red: "#c61515",
             getRecomendations: false,
             newsIsLoading: false,
+            news: []
         }
     }
     render() {
@@ -195,7 +197,12 @@ class Bread extends Component {
                                 null
                         }
 
-                        <div className={classnames('flex flex-column dashed-border-top flex-center-start news-container', { 'width-30': this.context.screen.lg || this.context.screen.xl, 'width-50': this.context.screen.xs || this.context.screen.sm || this.context.screen.md })}>
+                        <div className={classnames('flex flex-column dashed-border-top news-container', { 
+                                'width-30': this.context.screen.lg || this.context.screen.xl, 
+                                'width-50': this.context.screen.xs || this.context.screen.sm || this.context.screen.md,
+                                'flex-center-start': this.state.news.length > 0,
+                                'flex-center': this.state.news.length === 0, })
+                            }>
                             {<News news={this.state.news} />}
                         </div>
                     </div>

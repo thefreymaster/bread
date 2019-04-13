@@ -253,24 +253,10 @@ class App extends Component {
                     <Content>
                       <Switch>
                         <Route path="/add" render={props => <AddCompany />} />
-                        <Route path="/choices" render={props =>
-                          this.state.trackedCompanies.length === 0
-                            ?
-                            <Choices />
-                            :
-                            <Redirect
-                              to={'/quote'}
-                            />
-                        } />
-                        <Route path="/login" render={props =>
-                          localStorage.getItem('LOAF_USER')
-                            ?
-                            <Redirect to={'/quote'} />
-                            :
-                            <Login />
-                        } />
+                        <Route path="/choices" render={props => this.state.trackedCompanies.length === 0 ? <Choices /> : <Redirect to={'/quote'} />} />
+                        <Route path="/login" render={props => localStorage.getItem('LOAF_USER') ? <Redirect to={'/quote'} /> : <Login />} />
                         <Route path="/rise" render={props => <GetStarted />} />
-                        <Route path="/quote" render={props =>
+                        <Route path="/quote/:symbol" render={props =>
                           this.state.trackedCompanies.length === 0
                             ?
                             <AddCompany />
@@ -290,15 +276,8 @@ class App extends Component {
                               <Companies activeTicker={this.state.activeTicker} />
                         }
                         />
-                        <Route path="/portfolio" render={props =>
-                          this.state.trackedCompanies.length === 0
-                            ?
-                            <AddCompany />
-                            :
-                            <Portfolio
-                              setActiveTicker={this.setActiveTicker} />
-                        }
-                        />
+                        <Route exact path="/quote" render={props => <Redirect to={'/portfolio'} />} />
+                        <Route path="/portfolio" render={props => this.state.trackedCompanies.length === 0 ? <AddCompany /> : <Portfolio setActiveTicker={this.setActiveTicker} />} />
                         <Route path="/settings" render={props =>
                           this.state.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
                             ?
@@ -436,15 +415,9 @@ class App extends Component {
         this.getQuotesData();
       })
     }
-    // this.checkDeviceSize();
-    // window.addEventListener('resize', () => {
-    //   this.checkDeviceSize();
-    // })
     setTimeout(() => {
       window.location.reload()
     }, 3600000);
-
-
   }
   getQuotesData = () => {
     let that = this;
@@ -486,14 +459,14 @@ class App extends Component {
         index++;
       }
 
-      that.props.addQuotesToStore(response)
+      that.props.addQuotesToStore(response);
       that.getPortfolioData();
       that.fetchingTrackedCompaniesComplete();
     })
   }
   getPortfolioData = () => {
     let that = this;
-    let data = getPortfolioTotal(that.state.trackedCompanies, that.state.quotes);
+    let data = getPortfolioTotal(that.state.trackedCompanies, that.props.quotes);
     data.then(response => {
       that.setState({
         portfolio: response.data
