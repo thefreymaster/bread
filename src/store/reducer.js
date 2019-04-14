@@ -1,5 +1,5 @@
 const initialState = {
-  account: {},
+  account: JSON.parse(localStorage.getItem('LOAF_USER')),
   authenticated: false,
   companies: {},
   error: false,

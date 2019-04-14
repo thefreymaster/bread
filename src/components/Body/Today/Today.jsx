@@ -109,10 +109,10 @@ class Today extends Component {
             return (
                 <div className={"loaf-component flex flex-column flex-center border-top border-right"} style={{ width: '50%' }}>
                     <Metric
-                        titleFontSize={72}
+                        titleFontSize={64}
                         center
                         title={quote.symbol}
-                        labelFontSize={24}
+                        labelFontSize={18}
                         label={quote.companyName}
                         labelCloseToTitle={true} />
                     <div className="flex flex-row">
@@ -145,8 +145,8 @@ class Today extends Component {
                     {
                         this.props.trackedCompanies.length !== 1
                             ?
-                            <div className="paddingTop10 flex flex-center-end ">
-                                <Button style={{ borderRadius: 50 }} onClick={() => this.props.removeCompanyFromTrackedCompanies(this.props.ticker)}>Untrack Company</Button>
+                            <div style={{position: 'relative', bottom: -14}} className="flex flex-center-end width100">
+                                <Button style={{ borderRadius: 50, minWidth: '100%' }} onClick={() => this.props.removeCompanyFromTrackedCompanies(this.props.ticker)}>Untrack Company</Button>
                             </div>
                             :
                             null

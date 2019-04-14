@@ -1,7 +1,7 @@
 import React from 'react'
 import { Icon, notification } from 'antd'
 
-function showNotification(message, description, color, icon){
+function showNotification(message, description, color, icon) {
     notification.open({
         message: message,
         description: description,
@@ -9,7 +9,9 @@ function showNotification(message, description, color, icon){
             notification.destroy()
         },
         duration: 10,
-        icon: <Icon type={icon} style={{ color: color }} />,
+        icon: <div className='center-icon'>
+            <Icon type={icon} style={{ color: color }} />
+        </div>,
     });
 }
 

@@ -2,6 +2,7 @@
     padding-left: 25px;
     padding-right: 25px;
     padding-bottom: 25px;
+    padding-top: 25px;
 }
 .company-name{
     font-size: 72px;
@@ -13,7 +14,7 @@
     margin-top: -12px;
 }
 .price-metric{
-    font-size: 40px;
+    font-size: 32px;
     font-family: 'Abril Fatface', cursive;
 }
 .percent-metric{

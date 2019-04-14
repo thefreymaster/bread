@@ -95,7 +95,7 @@ class YourShares extends Component {
                 })}>
                     <div className={classnames('flex flex-row', { 'shares-divider': this.context.screen.xs || this.context.screen.sm })}>
                         <div className='width-60'>
-                            <Metric titleFontSize={mobile ? 14 : 24} title="Your Shares" labelFontSize={mobile ? 12 : 21} label={this.props.count === '' ? '0 Shares' : this.props.count + " Shares"} />
+                            <Metric titleFontSize={mobile ? 14 : 24} title="Your Shares" labelFontSize={mobile ? 12 : 16} label={this.props.count === '' ? '0 Shares' : this.props.count + " Shares"} />
                         </div>
                         <div className='width-40 flex-center flex'>
                             <Button style={{ borderRadius: 50 }} onClick={this.showAddShares} className="width100 loaf-button">Add Shares</Button>

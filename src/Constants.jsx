@@ -10,8 +10,8 @@ const IEXENDPOINTV1 = process.env.REACT_APP_IEX_ENDPOINT_V1;
 const IEXTOKEN = '?token=' + process.env.REACT_APP_IEX_TOKEN;
 const IEXTOKEN_WITHAND = '&token=' + process.env.REACT_APP_IEX_TOKEN
 
-const POSITIVE_WORDS = ['strong', 'outperforming', 'gainers', 'leads', 'brilliant', 'increases', 'jumped', 'well', 'rises', 'unbelievable', 'king', 'rose'];
-const NEGATIVE_WORDS = ['sell', 'despite', 'pricey', 'frustrated', 'issues', 'struggles', 'layoffs', 'denies', 'restructure'];
+const POSITIVE_WORDS = ['strong', 'outperforming', 'gainers', 'leads', 'brilliant', 'increases', 'jumped', 'well', 'rises', 'unbelievable', 'king', 'rose', 'wow', 'buys', 'awarded', 'wins'];
+const NEGATIVE_WORDS = ['sell', 'despite', 'pricey', 'frustrated', 'issues', 'struggles', 'layoffs', 'denies', 'restructure', 'beating', 'fears'];
 const SECTORS = [
     {
         "type": "sector",

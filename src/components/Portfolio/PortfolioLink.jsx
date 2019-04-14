@@ -32,7 +32,7 @@ class Portfolio extends Component {
             return (
                 <Link to="/portfolio">
                     <div
-                        className={classnames('padding10 margin10 companies-button loaf-button-hover-action', { 'active-loaf-button ': this.props.activeTicker === 'portfolio', 'box-shadow-bottom': this.props.trackedCompanies.length !== parseInt(index) })}
+                        className={classnames('padding10 companies-button loaf-button-hover-action', { 'active-loaf-button ': this.props.activeTicker === 'portfolio'})}
                         onClick={() => { this.props.setActiveTicker('portfolio', '', false, -1) }}>
                         <div className={classnames("flex flex-row")}>
                             <div className={'flex flex-column width-100'}>
