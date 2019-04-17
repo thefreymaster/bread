@@ -218,6 +218,6 @@ app.get('/rise', function (request, response) {
 app.get('/portfolio', function (request, response) {
     response.sendFile(path.resolve(__dirname, 'build/index.html'));
 });
-app.get('*', function (req, res) {
+app.get('*', function (request, response) {
     response.sendFile(path.resolve(__dirname, 'build/index.html'));
 });
