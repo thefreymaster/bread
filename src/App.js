@@ -148,6 +148,8 @@ class App extends Component {
     }
     this.setState({
       trackedCompanies: _trackedCompanies
+    }, () => {
+      this.props.addOneCompanyToTrackedCompanies(company);
     })
   }
   removeCompanyFromTrackedCompanies = (symbol) => {
@@ -226,7 +228,7 @@ class App extends Component {
               account: JSON.parse(localStorage.getItem('LOAF_USER')),
               activeTicker: this.state.activeTicker,
               screen: this.props.screen,
-              trackedCompanies: this.state.trackedCompanies,
+              trackedCompanies: this.props.trackedCompanies,
               setActiveTicker: this.setActiveTicker,
               quotes: this.props.quotes,
               sortAscending: this.sortAscending,
@@ -244,7 +246,7 @@ class App extends Component {
                     <Navigation title={'Bread'} screen={this.props.screen} />
                   </Header>
                   <Layout style={{ minHeight: window.innerHeight - 64 }}>
-                    {this.state.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false || mobile
+                    {this.props.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false || mobile
                       ? null :
                       <Sider className={classnames("left-sider left-sider-large")} style={{ maxHeight: window.innerHeight - 84, marginTop: 42 }}>
                         <Companies activeTicker={this.state.activeTicker} />
@@ -253,11 +255,11 @@ class App extends Component {
                     <Content>
                       <Switch>
                         <Route path="/add" render={props => <AddCompany />} />
-                        <Route path="/choices" render={props => this.state.trackedCompanies.length === 0 ? <Choices /> : <Redirect to={'/quote'} />} />
+                        <Route path="/choices" render={props => this.props.trackedCompanies.length === 0 ? <Choices /> : <Redirect to={'/quote'} />} />
                         <Route path="/login" render={props => localStorage.getItem('LOAF_USER') ? <Redirect to={'/quote'} /> : <Login />} />
                         <Route path="/rise" render={props => <GetStarted />} />
                         <Route path="/quote/:symbol" render={props =>
-                          this.state.trackedCompanies.length === 0
+                          this.props.trackedCompanies.length === 0
                             ?
                             <AddCompany />
                             :
@@ -268,7 +270,7 @@ class App extends Component {
                                 setActiveTicker={this.setActiveTicker}
                                 screen={this.props.screen}
                                 removeCompanyFromTrackedCompanies={this.removeCompanyFromTrackedCompanies}
-                                trackedCompanies={this.state.trackedCompanies}
+                                trackedCompanies={this.props.trackedCompanies}
                                 activeTicker={this.state.activeTicker}
                                 activeTickerIndex={this.state.activeTickerIndex}
                               />
@@ -277,9 +279,9 @@ class App extends Component {
                         }
                         />
                         <Route exact path="/quote" render={props => <Redirect to={'/portfolio'} />} />
-                        <Route path="/portfolio" render={props => this.state.trackedCompanies.length === 0 ? <AddCompany /> : <Portfolio setActiveTicker={this.setActiveTicker} />} />
+                        <Route path="/portfolio" render={props => this.props.trackedCompanies.length === 0 ? <AddCompany /> : <Portfolio setActiveTicker={this.setActiveTicker} />} />
                         <Route path="/settings" render={props =>
-                          this.state.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
+                          this.props.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
                             ?
                             <Redirect
                               to={'/rise'}
@@ -289,7 +291,7 @@ class App extends Component {
                         }
                         />
                         <Route path="/" render={props =>
-                          this.state.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
+                          this.props.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
                             ?
                             <Redirect
                               to={'/rise'}
@@ -303,7 +305,7 @@ class App extends Component {
                       </Switch>
                     </Content>
                     {
-                      this.state.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false
+                      this.props.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false
                         ?
                         null
                         :
@@ -328,7 +330,7 @@ class App extends Component {
   }
   sortAscending = () => {
     localStorage.setItem('COMPANIES_SORT', 'ASCENDING')
-    let trackedCompanies = sortCompaniesAscending(this.state.trackedCompanies);
+    let trackedCompanies = sortCompaniesAscending(this.props.trackedCompanies);
     this.setState({
       trackedCompanies: trackedCompanies
     }, () => {
@@ -338,7 +340,7 @@ class App extends Component {
   }
   sortDecending = () => {
     localStorage.setItem('COMPANIES_SORT', 'DESCENDING')
-    let trackedCompanies = sortCompaniesDescending(this.state.trackedCompanies);
+    let trackedCompanies = sortCompaniesDescending(this.props.trackedCompanies);
     this.setState({
       trackedCompanies: trackedCompanies
     }, () => {
@@ -348,7 +350,7 @@ class App extends Component {
   }
   sortABC = () => {
     localStorage.setItem('COMPANIES_SORT', 'ABC')
-    let trackedCompanies = sortCompaniesABC(this.state.trackedCompanies);
+    let trackedCompanies = sortCompaniesABC(this.props.trackedCompanies);
     this.setState({
       trackedCompanies: trackedCompanies
     }, () => {
@@ -359,7 +361,7 @@ class App extends Component {
 
   sortYTD = () => {
     localStorage.setItem('COMPANIES_SORT', 'YTD')
-    let trackedCompanies = sortCompaniesYTDChange(this.state.trackedCompanies);
+    let trackedCompanies = sortCompaniesYTDChange(this.props.trackedCompanies);
     this.setState({
       trackedCompanies: trackedCompanies
     }, () => {
@@ -368,7 +370,28 @@ class App extends Component {
     })
   }
 
+  componentDidUpdate(prevProps){
+    let that = this;
+
+    if (prevProps.trackedCompanies.length !== this.props.trackedCompanies.length) {
+      this.fetchingTrackedCompanies();
+      let _trackedCompanies = JSON.parse(localStorage.getItem("trackedCompanies"));
+      that.props.addTrackedCompaniesToStore(_trackedCompanies);
+      this.setState({
+        trackedCompanies: _trackedCompanies,
+      }, () => {
+        if (this.state.activeTicker !== "portfolio" || this.state.activeTicker === undefined)
+          this.setActiveTicker(_trackedCompanies[0].symbol, _trackedCompanies[0], false, 0)
+        else
+          this.setActiveTicker(_trackedCompanies[this.state.activeTickerIndex].symbol, _trackedCompanies[this.state.activeTickerIndex], false, this.state.activeTickerIndex)
+
+        this.getQuotesData();
+      })
+    }
+  }
+
   componentDidMount() {
+    let that = this;
     if (localStorage.getItem('LOAF_USER')) {
       this.fetchingTrackedCompanies();
       if (!localStorage.getItem('LOAF_WELCOME_SHOWN')) {
@@ -378,6 +401,7 @@ class App extends Component {
       let userID = JSON.parse(localStorage.getItem('LOAF_USER')).uid;
       let _trackedCompanies = readUserCompanyData(userID);
       _trackedCompanies = _trackedCompanies.then((companies) => {
+        that.props.addTrackedCompaniesToStore(companies);
         if (companies) {
           companies.sort(function (a, b) {
             if (a.symbol < b.symbol) { return -1; }
@@ -395,6 +419,7 @@ class App extends Component {
     else if (localStorage.getItem("trackedCompanies")) {
       this.fetchingTrackedCompanies();
       let _trackedCompanies = JSON.parse(localStorage.getItem("trackedCompanies"));
+      that.props.addTrackedCompaniesToStore(_trackedCompanies);
       this.setState({
         trackedCompanies: _trackedCompanies,
       }, () => {
@@ -466,7 +491,7 @@ class App extends Component {
   }
 }
 const mapStateToProps = state => {
-  let { active, quotes, screen, account } = state;
+  let { active, quotes, screen, account, trackedCompanies } = state;
   let { symbol, price } = active;
   return {
     age: state.age,
@@ -475,12 +500,15 @@ const mapStateToProps = state => {
     price: price,
     quotes: quotes,
     screen: screen,
+    trackedCompanies: trackedCompanies
   };
 };
 
 const mapDispachToProps = dispatch => {
   return {
-    addQuotesToStore: (quotes) => dispatch({ type: "ADD_QUOTE_TO_STORE", quotes: quotes })
+    addQuotesToStore: (quotes) => dispatch({ type: "ADD_QUOTE_TO_STORE", quotes: quotes }),
+    addTrackedCompaniesToStore: (trackedCompanies) => dispatch({ type: "ADD_COMPANIES_TO_STORE", trackedCompanies: trackedCompanies}),
+    addOneCompanyToTrackedCompanies: (company) => dispatch({ type: "ADD_ONE_COMPANY_TO_TRACKED_COMPANIES", company: company })
   };
 };
 export default connect(

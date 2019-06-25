@@ -140,7 +140,6 @@ class Companies extends Component {
         let messageJSON = JSON.parse(message)
         // console.log(JSON.parse(message))
         let change;
-        debugger;
         if (messageJSON && messageJSON.lastSalePrice !== _quickQuotes[messageJSON.symbol].quote.latestPrice) {
             console.log('Websockets Update')
             setTimeout(() => {

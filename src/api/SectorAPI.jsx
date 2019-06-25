@@ -2,10 +2,10 @@
 // https://api.iextrading.com/1.0/stock/market/collection/sector?collectionName=Communication%20Services
 
 import axios from 'axios';
-import { IEXENDPOINTV1, IEXTOKEN, IEXTOKEN_WITHAND } from './../Constants';
+import { IEXENDPOINT, IEXTOKEN, IEXTOKEN_WITHAND } from './../Constants';
 
 function getSectorQuotes(sector) {
-    return axios.get(IEXENDPOINTV1 + '/stock/market/collection/sector?collectionName=' + sector)
+    return axios.get(IEXENDPOINT + '/stock/market/collection/sector?collectionName=' + sector + IEXTOKEN_WITHAND)
         .then(function (response) {
             return response.data;
         })

@@ -7,6 +7,7 @@ import { getSectorQuotes } from '../../api/SectorAPI';
 import { sortCompaniesYTDChangeForChoices, filterLowVolumeCompaniesOut, filterCompaniesWithoutSymbols } from '../HelperFunctions/Helper';
 import { LoafContext } from '../../LoafContext';
 import { Link } from 'react-router-dom';
+import { connect } from "react-redux";
 
 const { CheckableTag } = Tag;
 const RadioButton = Radio.Button;
@@ -15,12 +16,15 @@ const RadioGroup = Radio.Group;
 class Choices extends React.Component {
     getSectorQuotes = () => {
         let that = this;
+        const { addTrackedCompaniesToStore } = this.props;
         that.context.fetching()
         let sectors = getSectorQuotes(this.state.selectedSector)
         sectors.then((response) => {
             let sorted = sortCompaniesYTDChangeForChoices(response)
             let filtered = filterLowVolumeCompaniesOut(sorted);
             that.context.fetchingComplete();
+            let processed = 0;
+            let storeCompanies = [];
             (filtered.forEach(company => {
                 let { changePercent, ytdChange } = company;
 
@@ -33,7 +37,21 @@ class Choices extends React.Component {
                         ytdChange: ytdChange,
                     }
                 })
-            }));
+                // storeCompanies.push({
+                //     date: new Date(),
+                //     isEnabled: true,
+                //     symbol: company.symbol,
+                //     quote: {
+                //         changePercent: changePercent,
+                //         ytdChange: ytdChange,
+                //     }
+                // })
+                processed++;
+                if(processed === filtered.length){
+                    window.location.reload(true);
+                }
+            })
+            );
         })
     }
     markSectionMade = (e) => {
@@ -108,4 +126,22 @@ class Choices extends React.Component {
     }
 }
 
-export default Choices;
+const mapStateToProps = state => {
+    let { trackedCompanies } = state;
+    return {
+        trackedCompanies: trackedCompanies
+    };
+};
+
+const mapDispachToProps = dispatch => {
+    return {
+        addTrackedCompaniesToStore: (trackedCompanies) => {
+            return dispatch({ type: "ADD_COMPANIES_TO_STORE", trackedCompanies: trackedCompanies })
+        }
+    };
+};
+export default connect(
+    mapStateToProps,
+    mapDispachToProps
+)(Choices);
+

@@ -7,7 +7,7 @@ const initialState = {
   portfolio: {},
   quotes: {},
   screen: {},
-  trackedCompanies: {},
+  trackedCompanies: [],
   active: {
     symbol: '',
     chartOneMonthData: {},
@@ -32,6 +32,12 @@ const reducer = (state = initialState, action) => {
       break;
     case "ADD_QUOTE_TO_STORE":
       newState.quotes = action.quotes;
+      break;
+    case "ADD_ONE_COMPANY_TO_TRACKED_COMPANIES":
+      newState.trackedCompanies.push(action.company)
+      break;
+    case "ADD_COMPANIES_TO_STORE":
+      newState.trackedCompanies = action.trackedCompanies;
       break;
     case "SCREEN_SIZE_UPDATE":
       const { screen } = action;
