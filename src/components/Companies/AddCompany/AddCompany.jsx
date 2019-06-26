@@ -83,7 +83,7 @@ class AddCompany extends Component {
                     />
                 </div>
 
-                <SearchedCompanies addCompanyToTrackedCompanies={this.context.addCompanyToTrackedCompanies} setActiveTicker={this.context.activeTicker} searchedCompanies={this.state.searchedCompanies} />
+                <SearchedCompanies setActiveTicker={this.context.activeTicker} searchedCompanies={this.state.searchedCompanies} />
             </div>
         )
     }

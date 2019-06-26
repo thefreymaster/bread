@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import Systems from './../Body/Systems';
 import { LoafContext } from './../../LoafContext';
@@ -24,7 +25,7 @@ class Portfolio extends Component {
         }
     }
     render() {
-        if(!this.context.portfolio)
+        if(!this.props.portfolio)
             return null
         else
         return (
@@ -81,5 +82,15 @@ class Portfolio extends Component {
         )
     }
 }
+const mapStateToProps = state => {
+    let { trackedCompanies } = state;
+    return {
+        trackedCompanies: trackedCompanies
+    };
+};
 
-export default Portfolio;
+
+export default connect(
+    mapStateToProps,
+    null
+)(Portfolio);

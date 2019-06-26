@@ -1,4 +1,7 @@
 import React, { Component, Fragment } from 'react';
+import { connect } from "react-redux";
+import { withRouter } from 'react-router'
+
 import '../Companies/AddCompany/AddCompany.css';
 import { Button, notification, Badge, Tooltip } from 'antd';
 import YourShares from './../Body/YourShares/YourShares';
@@ -14,7 +17,6 @@ import Systems from './../Body/Systems';
 import io from 'socket.io-client'
 import LineChart from './../LineChart/LineChart';
 import PortfolioLink from '../Portfolio/PortfolioLink';
-import { withRouter } from 'react-router-dom';
 // https://ws-api.iextrading.com/1.0/tops
 // "AAPL,ADBE,AMD,ATVI,CMG,CRM,DBX,FDX,GE,HD,IBM,INTC,JD,LMT,MDB,MMM,MRVL,MSFT,NFLX,NOC,NVDA,RDFN,ROKU,SHOP,SPOT,TEAM,TGT,TTWO,TWLO,WB"
 
@@ -138,7 +140,6 @@ class Companies extends Component {
         let that = this;
         let _quickQuotes = that.state.quickQuotes;
         let messageJSON = JSON.parse(message)
-        // console.log(JSON.parse(message))
         let change;
         if (messageJSON && messageJSON.lastSalePrice !== _quickQuotes[messageJSON.symbol].quote.latestPrice) {
             console.log('Websockets Update')
@@ -184,7 +185,7 @@ class Companies extends Component {
             open: false,
             fetchQuickQuotes: true,
             socket: io('https://ws-api.iextrading.com/1.0/tops'),
-            realTimeStreaming: true,
+            realTimeStreaming: false,
             determineIfMarketsAreOpen: determineIfMarketsAreOpen,
             minute: getMinutesOfDay(),
             hour: getHourOfDay(),
@@ -257,6 +258,8 @@ class Companies extends Component {
         const mobile = this.context.screen.xs || this.context.screen.sm ? true : false
         const desktop = this.context.screen.md || this.context.screen.lg || this.context.screen.xl ? true : false
 
+        const { trackedCompanies } = this.props;
+
         return (
             <div className='webkit-scroll' style={{ maxHeight: desktop ? window.innerHeight - 84 : window.innerHeight - 64, overflowY: 'scroll', minWidth: '100%' }}>
                 {
@@ -290,7 +293,7 @@ class Companies extends Component {
                         }
                         {
                             this.context.quotes
-                                ?
+                                &&
                                 <PortfolioLink
                                     screen={this.context.screen}
                                     activeTicker={this.props.activeTicker}
@@ -298,7 +301,6 @@ class Companies extends Component {
                                     setActiveTicker={this.context.setActiveTicker}
                                     quickQuotes={this.state.quickQuotes}
                                 />
-                                : null
                         }
                         <div className={'flex flex-row flex-space margin10'} style={{ marginTop: 10 }}>
                             {
@@ -339,18 +341,18 @@ class Companies extends Component {
                             }
 
                         </div>
-                        {Object.keys(this.context.trackedCompanies).map((index) => {
-                            const company = this.context.trackedCompanies[index];
-                            const userHasShares = this.context.trackedCompanies[index].shares.hasShares
-                            const count = this.context.trackedCompanies[index].shares.count;
-                            const price = this.context.trackedCompanies[index].shares.price;
-
+                        {trackedCompanies.map((company) => {
+                            const { shares } = company;
+                            const userHasShares = shares[0].hasShares
+                            const count = shares[0].count;
+                            const price = shares[0].price;
+                            debugger;
                             const that = this;
                             if(!that.state.quickQuotes[company.symbol]){
                                 return null;
                             }
                             return (
-                                <Link to={`/quote/${company.symbol.toLowerCase()}`} key={company.symbol} onClick={() => { this.context.setActiveTicker(company.symbol, company, false, index) }}>
+                                <Link to={`/quote/${company.symbol.toLowerCase()}`} key={company.symbol} onClick={() => { this.context.setActiveTicker(company.symbol, company, false) }}>
                                     <div
                                         className={classnames('padding10 companies-button loaf-button-hover-action', { 'active-loaf-button ': company.symbol.toUpperCase() === that.props.activeTicker })}>
                                         <div className={classnames("flex flex-row")}>
@@ -451,4 +453,27 @@ class Companies extends Component {
     }
 }
 
-export default Companies;
+
+const mapStateToProps = state => {
+    let { trackedCompanies } = state;
+    return {
+        trackedCompanies
+    };
+};
+
+const mapDispachToProps = dispatch => {
+    return {
+        addOneCompanyToTrackedCompanies: (company, history) => {
+            if (localStorage.getItem('LOAF_USER')){
+                let userID = JSON.parse(localStorage.getItem('LOAF_USER')).uid;
+                // updateUserCompanyData(userID, )
+            }
+            dispatch({ type: "ADD_ONE_COMPANY_TO_TRACKED_COMPANIES", company, history })
+        }
+    };
+};
+
+export default connect(
+    mapStateToProps,
+    null
+)(withRouter(Companies));

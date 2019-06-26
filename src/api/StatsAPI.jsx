@@ -56,6 +56,15 @@ function getQuickQuotes(tickers, filter) {
             console.log(error);
         });
 }
+function getBulkQuotes(tickers, filter) {
+    return axios.get(IEXENDPOINT + '/stock/market/batch?symbols=' + tickers + '&types=quote&filter=' + filter  + IEXTOKEN_WITHAND)
+        .then(function (response) {
+            return response.data;
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+}
 function getRecommendations(ticker) {
     return axios.get(IEXENDPOINT + '/stock/' + ticker + '/recommendation-trends'  + IEXTOKEN)
         .then(function (response) {
@@ -67,4 +76,4 @@ function getRecommendations(ticker) {
 }
 
 
-export { getStatsData, getQuote, getPrice, getBatchData, getQuickQuotes, getRecommendations }
+export { getStatsData, getQuote, getPrice, getBatchData, getQuickQuotes, getRecommendations, getBulkQuotes }

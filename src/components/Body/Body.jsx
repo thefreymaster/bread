@@ -214,10 +214,11 @@ class Bread extends Component {
     }
 }
 const mapStateToProps = state => {
-    let { active } = state;
+    let { active, trackedCompanies } = state;
     return {
       age: state.age,
       active: active,
+      trackedCompanies,
     };
   };
   

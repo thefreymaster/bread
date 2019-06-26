@@ -37,15 +37,6 @@ class Choices extends React.Component {
                         ytdChange: ytdChange,
                     }
                 })
-                // storeCompanies.push({
-                //     date: new Date(),
-                //     isEnabled: true,
-                //     symbol: company.symbol,
-                //     quote: {
-                //         changePercent: changePercent,
-                //         ytdChange: ytdChange,
-                //     }
-                // })
                 processed++;
                 if(processed === filtered.length){
                     window.location.reload(true);

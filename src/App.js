@@ -7,12 +7,15 @@ import './Overrides.css'
 import './Animations.css'
 import 'antd/dist/antd.css';
 import { Layout, message, notification, Icon } from 'antd';
-import { writeUserData, getFirebaseAuthObject, readUserCompanyData, updateUserCompanyData, updateUserCompanyShareData } from './api/FirebaseAPI';
+import { writeUserData, readUserCompanyData, updateUserCompanyData, updateUserCompanyShareData, determineIfUserIsLoggedIn } from './api/FirebaseAPI';
 import { getQuickQuotes, getQuote } from './api/StatsAPI';
+import { getQuotesData } from './api/QuotesAPI';
 
 import { determineIfMarketsAreOpen, getDayOfWeek, getMinutesOfDay, getHourOfDay, getPercentChange, sortCompaniesAscending, sortCompaniesDescending, sortCompaniesABC, sortCompaniesYTDChange } from './components/HelperFunctions/Helper';
 
 import classnames from 'classnames';
+
+import BRouter from './router/router';
 
 import Companies from './components/Companies/Companies';
 import Body from './components/Body/Body';
@@ -34,7 +37,6 @@ import Settings from './components/Settings/Settings';
 import Choices from './components/Choices/Choices';
 import DataManagement from './DataManagement';
 
-const firebase = getFirebaseAuthObject();
 const filter = 'ytdChange,changePercent,week52High,week52Low,latestPrice,previousClose,extendedPrice,companyName,symbol'
 
 
@@ -213,11 +215,45 @@ class App extends Component {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    let that = this;
+    const { handlePopulatingCompanyData, handleGettingQuotesData } = this.props;
+
+    if (prevProps.isLoggedIn !== this.props.isLoggedIn) {
+      if (!localStorage.getItem('LOAF_WELCOME_SHOWN')) {
+        showNotification('Hi ya!', 'Welcome in, ' + JSON.parse(localStorage.getItem('LOAF_USER')).displayName, GREEN, 'smile');
+        localStorage.setItem('LOAF_WELCOME_SHOWN', true)
+      }
+      let userID = JSON.parse(localStorage.getItem('LOAF_USER')).uid;
+      let _trackedCompanies = readUserCompanyData(userID);
+      _trackedCompanies = _trackedCompanies.then((companies) => {
+        that.props.addTrackedCompaniesToStore(companies);
+        if (companies) {
+          companies.sort(function (a, b) {
+            if (a.symbol < b.symbol) { return -1; }
+            if (a.symbol > b.symbol) { return 1; }
+            return 0;
+          })
+          handlePopulatingCompanyData(companies);
+          handleGettingQuotesData(companies);
+        }
+      });
+    }
+  }
+
+  componentDidMount() {
+    const { handleDetermineIfUserIsLoggedIn } = this.props;
+    handleDetermineIfUserIsLoggedIn();
+    setTimeout(() => {
+      window.location.reload()
+    }, 3600000);
+  }
+
   render() {
     const mobile = this.props.screen.xs || this.props.screen.sm ? true : false
     const desktop = this.props.screen.md || this.props.screen.lg || this.props.screen.xl ? true : false
 
-    if (this.state.fetchingTrackedCompanies)
+    if (this.props.isFetching)
       return <Load />;
     else {
       return (
@@ -246,63 +282,14 @@ class App extends Component {
                     <Navigation title={'Bread'} screen={this.props.screen} />
                   </Header>
                   <Layout style={{ minHeight: window.innerHeight - 64 }}>
-                    {this.props.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false || mobile
+                    {this.props.trackedCompanies.length === 0 && this.props.isFetching === false || mobile
                       ? null :
                       <Sider className={classnames("left-sider left-sider-large")} style={{ maxHeight: window.innerHeight - 84, marginTop: 42 }}>
                         <Companies activeTicker={this.state.activeTicker} />
                       </Sider>
                     }
                     <Content>
-                      <Switch>
-                        <Route path="/add" render={props => <AddCompany />} />
-                        <Route path="/choices" render={props => this.props.trackedCompanies.length === 0 ? <Choices /> : <Redirect to={'/quote'} />} />
-                        <Route path="/login" render={props => localStorage.getItem('LOAF_USER') ? <Redirect to={'/quote'} /> : <Login />} />
-                        <Route path="/rise" render={props => <GetStarted />} />
-                        <Route path="/quote/:symbol" render={props =>
-                          this.props.trackedCompanies.length === 0
-                            ?
-                            <AddCompany />
-                            :
-                            desktop
-                              ?
-                              <Body
-                                saveShares={this.saveShares}
-                                setActiveTicker={this.setActiveTicker}
-                                screen={this.props.screen}
-                                removeCompanyFromTrackedCompanies={this.removeCompanyFromTrackedCompanies}
-                                trackedCompanies={this.props.trackedCompanies}
-                                activeTicker={this.state.activeTicker}
-                                activeTickerIndex={this.state.activeTickerIndex}
-                              />
-                              :
-                              <Companies activeTicker={this.state.activeTicker} />
-                        }
-                        />
-                        <Route exact path="/quote" render={props => <Redirect to={'/portfolio'} />} />
-                        <Route path="/portfolio" render={props => this.props.trackedCompanies.length === 0 ? <AddCompany /> : <Portfolio setActiveTicker={this.setActiveTicker} />} />
-                        <Route path="/settings" render={props =>
-                          this.props.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
-                            ?
-                            <Redirect
-                              to={'/rise'}
-                            />
-                            :
-                            <Settings />
-                        }
-                        />
-                        <Route path="/" render={props =>
-                          this.props.trackedCompanies.length === 0 && !localStorage.getItem('LOAF_USER')
-                            ?
-                            <Redirect
-                              to={'/rise'}
-                            />
-                            :
-                            <Redirect to={'/portfolio'} />
-                        }
-                        />
-
-
-                      </Switch>
+                      <BRouter />
                     </Content>
                     {
                       this.props.trackedCompanies.length === 0 && this.state.fetchingTrackedCompanies === false
@@ -370,116 +357,8 @@ class App extends Component {
     })
   }
 
-  componentDidUpdate(prevProps){
-    let that = this;
 
-    if (prevProps.trackedCompanies.length !== this.props.trackedCompanies.length) {
-      this.fetchingTrackedCompanies();
-      let _trackedCompanies = JSON.parse(localStorage.getItem("trackedCompanies"));
-      that.props.addTrackedCompaniesToStore(_trackedCompanies);
-      this.setState({
-        trackedCompanies: _trackedCompanies,
-      }, () => {
-        if (this.state.activeTicker !== "portfolio" || this.state.activeTicker === undefined)
-          this.setActiveTicker(_trackedCompanies[0].symbol, _trackedCompanies[0], false, 0)
-        else
-          this.setActiveTicker(_trackedCompanies[this.state.activeTickerIndex].symbol, _trackedCompanies[this.state.activeTickerIndex], false, this.state.activeTickerIndex)
 
-        this.getQuotesData();
-      })
-    }
-  }
-
-  componentDidMount() {
-    let that = this;
-    if (localStorage.getItem('LOAF_USER')) {
-      this.fetchingTrackedCompanies();
-      if (!localStorage.getItem('LOAF_WELCOME_SHOWN')) {
-        showNotification('Hi ya!', 'Welcome in, ' + JSON.parse(localStorage.getItem('LOAF_USER')).displayName, GREEN, 'smile');
-        localStorage.setItem('LOAF_WELCOME_SHOWN', true)
-      }
-      let userID = JSON.parse(localStorage.getItem('LOAF_USER')).uid;
-      let _trackedCompanies = readUserCompanyData(userID);
-      _trackedCompanies = _trackedCompanies.then((companies) => {
-        that.props.addTrackedCompaniesToStore(companies);
-        if (companies) {
-          companies.sort(function (a, b) {
-            if (a.symbol < b.symbol) { return -1; }
-            if (a.symbol > b.symbol) { return 1; }
-            return 0;
-          })
-          this.setState({
-            trackedCompanies: companies,
-          }, () => {
-            this.getQuotesData();
-          })
-        }
-      });
-    }
-    else if (localStorage.getItem("trackedCompanies")) {
-      this.fetchingTrackedCompanies();
-      let _trackedCompanies = JSON.parse(localStorage.getItem("trackedCompanies"));
-      that.props.addTrackedCompaniesToStore(_trackedCompanies);
-      this.setState({
-        trackedCompanies: _trackedCompanies,
-      }, () => {
-        if (this.state.activeTicker !== "portfolio" || this.state.activeTicker === undefined)
-          this.setActiveTicker(_trackedCompanies[0].symbol, _trackedCompanies[0], false, 0)
-        else
-          this.setActiveTicker(_trackedCompanies[this.state.activeTickerIndex].symbol, _trackedCompanies[this.state.activeTickerIndex], false, this.state.activeTickerIndex)
-
-        this.getQuotesData();
-      })
-    }
-    setTimeout(() => {
-      window.location.reload()
-    }, 3600000);
-  }
-  getQuotesData = () => {
-    let that = this;
-    let symbols = [];
-    for (let symbol in that.state.trackedCompanies) {
-      symbols.push(that.state.trackedCompanies[symbol].symbol)
-    }
-    let index = 0;
-    let quote = getQuickQuotes(symbols, filter);
-    let trackedCompanies = that.state.trackedCompanies;
-    let market = that.state.determineIfMarketsAreOpen(this.state.day, this.state.hour, this.state.minute);
-    quote.then(response => {
-      let change;
-      for (let [key] of Object.entries(response)) {
-        change = getPercentChange(response[key].quote);
-        trackedCompanies[index]['quote'] = response[key].quote;
-        if (parseFloat(change) > 5 && market) {
-          notification.success({
-            message: response[key].quote.companyName,
-            description: key + ' is up ' + getPercentChange(response[key].quote) + '% today.',
-            onClick: () => {
-              this.findIndex(key)
-            },
-            duration: 5,
-            icon: <Icon type="rise" style={{ color: GREEN }} />,
-          });
-        }
-        if (parseFloat(change) < -5 && market) {
-          notification.warning({
-            message: response[key].quote.companyName,
-            description: key + ' is down ' + getPercentChange(response[key].quote) + '% today.',
-            onClick: () => {
-              this.findIndex(key)
-            },
-            duration: 5,
-            icon: <Icon type="fall" style={{ color: RED }} />,
-          });
-        }
-        index++;
-      }
-
-      that.props.addQuotesToStore(response);
-      that.getPortfolioData();
-      that.fetchingTrackedCompaniesComplete();
-    })
-  }
   getPortfolioData = () => {
     let that = this;
     let data = getPortfolioTotal(that.state.trackedCompanies, that.props.quotes);
@@ -491,7 +370,8 @@ class App extends Component {
   }
 }
 const mapStateToProps = state => {
-  let { active, quotes, screen, account, trackedCompanies } = state;
+  let { active, quotes, screen, account, trackedCompanies, meta } = state;
+  let { isFetching, isLoggedIn } = meta;
   let { symbol, price } = active;
   return {
     age: state.age,
@@ -500,15 +380,20 @@ const mapStateToProps = state => {
     price: price,
     quotes: quotes,
     screen: screen,
-    trackedCompanies: trackedCompanies
+    trackedCompanies: trackedCompanies,
+    isFetching,
+    isLoggedIn
   };
 };
 
 const mapDispachToProps = dispatch => {
   return {
     addQuotesToStore: (quotes) => dispatch({ type: "ADD_QUOTE_TO_STORE", quotes: quotes }),
-    addTrackedCompaniesToStore: (trackedCompanies) => dispatch({ type: "ADD_COMPANIES_TO_STORE", trackedCompanies: trackedCompanies}),
-    addOneCompanyToTrackedCompanies: (company) => dispatch({ type: "ADD_ONE_COMPANY_TO_TRACKED_COMPANIES", company: company })
+    addTrackedCompaniesToStore: (trackedCompanies) => dispatch({ type: "ADD_COMPANIES_TO_STORE", trackedCompanies: trackedCompanies }),
+    addOneCompanyToTrackedCompanies: (company) => dispatch({ type: "ADD_ONE_COMPANY_TO_TRACKED_COMPANIES", company: company }),
+    handleDetermineIfUserIsLoggedIn: () => determineIfUserIsLoggedIn(dispatch),
+    handlePopulatingCompanyData: (companies) => dispatch({ type: "POPULATE_COMPANY_DATA", companies }),
+    handleGettingQuotesData: (companies) => getQuotesData(companies, dispatch)
   };
 };
 export default connect(

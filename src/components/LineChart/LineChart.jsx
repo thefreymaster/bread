@@ -7,6 +7,7 @@ import Metric from './../Body/Metric';
 import classnames from 'classnames';
 import './LineChart.css';
 import { LoafContext } from './../../LoafContext';
+import { Icon } from '../../../node_modules/antd';
 
 class LineChart extends Component {
     static contextType = LoafContext;
@@ -66,13 +67,15 @@ class LineChart extends Component {
 
         if (!this.state.data)
             return (
-                <div className="flex flex-row flex-center show-zoom-animation" style={{ height: 200, width: this.props.width }}>
-                    <Loader
+                <div className="flex flex-column flex-center show-zoom-animation" style={{ height: 200, width: this.props.width }}>
+                    {/* <Loader
                         type="Bars"
                         color="#000000a6"
                         height="20"
                         width="20"
-                    />
+                    /> */}
+                    <Icon style={{fontSize: 32}} type="warning" />
+                    <span>Service Unavailable</span>
                 </div>
             )
         else {

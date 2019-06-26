@@ -59,6 +59,9 @@ const SECTORS = [
     }
 ]
 
+const FILTER = 'ytdChange,changePercent,week52High,week52Low,latestPrice,previousClose,extendedPrice,companyName,symbol'
+
+
 export {
     GREEN,
     RED,
@@ -74,4 +77,5 @@ export {
     POSITIVE_WORDS,
     NEGATIVE_WORDS,
     SECTORS,
+    FILTER,
 }
